@@ -1,0 +1,13 @@
+{
+    "name": "zineinc/storage-server",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "psliwa",
+            "email": "piotr.sliwa@zineinc.com"
+        }
+    ],
+    "require": {
+        "symfony/http-foundation": ">=2.1,<2.5"
+    }
+}
