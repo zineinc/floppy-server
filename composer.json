@@ -9,5 +9,8 @@
     ],
     "require": {
         "symfony/http-foundation": ">=2.1,<2.5"
+    },
+    "autoload": {
+    	"psr-0": { "ZineInc\\Storage\\Server\\": "src/" }
     }
 }

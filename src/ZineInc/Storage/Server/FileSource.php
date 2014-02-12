@@ -7,12 +7,7 @@ interface FileSource
     public function getFileType();
 
     /**
-     * @return OutputStream|null Null when FileSource is only readable
+     * @return Stream
      */
-    public function getOutput();
-
-    /**
-     * @return InputStream
-     */
-    public function getInput();
+    public function getStream();
 }
