@@ -2,12 +2,32 @@
 
 namespace ZineInc\Storage\Server;
 
-interface FileSource
+use ZineInc\Storage\Server\Stream\Stream;
+
+final class FileSource
 {
-    public function getFileType();
+    private $stream;
+    private $fileType;
+
+    public function __construct(Stream $stream, FileType $fileType)
+    {
+        $this->stream = $stream;
+        $this->fileType = $fileType;
+    }
+
+    /**
+     * @return FileType
+     */
+    public function fileType()
+    {
+        return $this->fileType;
+    }
 
     /**
      * @return Stream
      */
-    public function getStream();
+    public function stream()
+    {
+        return $this->stream;
+    }
 }

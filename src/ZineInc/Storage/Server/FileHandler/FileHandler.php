@@ -1,14 +1,19 @@
 <?php
 
-namespace ZineInc\Storage\Server;
+namespace ZineInc\Storage\Server\FileHandler;
+
+use ZineInc\Storage\Server\AttributesBag;
+use ZineInc\Storage\Server\FileId;
+use ZineInc\Storage\Server\FileSource;
+use ZineInc\Storage\Server\FileType;
 
 interface FileHandler
 {
     /**
-     * @param FileSource $file
+     * @param FileSource $fileType
      * @return boolean Does given $file is supported by this handler
      */
-    public function supports(FileSource $file);
+    public function supports(FileType $fileType);
 
     /**
      * @return string Unique type code
