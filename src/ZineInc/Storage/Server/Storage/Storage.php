@@ -1,6 +1,10 @@
 <?php
 
-namespace ZineInc\Storage\Server;
+namespace ZineInc\Storage\Server\Storage;
+
+use Exception;
+use ZineInc\Storage\Server\FileId;
+use ZineInc\Storage\Server\FileSource;
 
 interface Storage
 {
@@ -21,7 +25,7 @@ interface Storage
      *
      * @return FileSource
      *
-     * @throws \Exception When file not found
+     * @throws Exception When file not found
      */
     public function getSource(FileId $fileId);
 }
