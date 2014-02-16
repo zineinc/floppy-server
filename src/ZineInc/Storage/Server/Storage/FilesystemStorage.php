@@ -59,7 +59,7 @@ class FilesystemStorage implements Storage
         }
         catch(IOException $e)
         {
-            throw new StoreException('Error while file storing', $e->getCode(), $e);
+            throw new StoreException('Error while file storing', $e);
         }
 
         return $id;

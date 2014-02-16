@@ -2,17 +2,21 @@
 
 namespace ZineInc\Storage\Server;
 
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use ZineInc\Storage\Server\FileHandler\FileHandler;
 use ZineInc\Storage\Server\Storage\Storage;
 
-class RequestHandler
+class RequestHandler implements LoggerAwareInterface
 {
-//    TODO:
-//    private $logger;
-
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
     private $storage;
     private $fileSourceFactory;
     private $fileHandlers;
@@ -22,6 +26,7 @@ class RequestHandler
         $this->storage = $storage;
         $this->fileSourceFactory = $fileSourceFactory;
         $this->fileHandlers = $handlers;
+        $this->logger = new NullLogger();
     }
 
     /**
@@ -35,24 +40,43 @@ class RequestHandler
 
     private function handleUploadRequest(Request $request)
     {
-        //TODO: handle FileSourceNotFoundEx
-        $fileSource = $this->fileSourceFactory->createFileSource($request);
+        try
+        {
+            $fileSource = $this->fileSourceFactory->createFileSource($request);
 
-        $fileHandler = $this->findFileHandler($fileSource);
+            $fileHandler = $this->findFileHandler($fileSource);
 
-        if($fileHandler === null) {
-            //TODO: return response with 40x code
+            $fileSource = $fileHandler->beforeStoreProcess($fileSource);
+            $attrs = $fileHandler->getStoreAttributes($fileSource);
+
+            $id = $this->storage->store($fileSource);
+
+            $attrs['id'] = $id;
+
+            return new JsonResponse(array(
+                'message' => null,
+                'attributes' => $attrs,
+            ));
         }
+        catch(StorageError $e)
+        {
+            $this->logger->error($e);
+            return $this->createErrorResponse($e, 500);
+        }
+        catch(StorageException $e)
+        {
+            $this->logger->warning($e);
+            return $this->createErrorResponse($e, 400);
+        }
+    }
 
-        $fileSource = $fileHandler->beforeStoreProcess($fileSource);
-        $attrs = $fileHandler->getStoreAttributes($fileSource);
-
-        //TODO: handle StoreException
-        $id = $this->storage->store($fileSource);
-        
-        $attrs['id'] = $id;
-
-        return new JsonResponse($attrs);
+    private function createErrorResponse(StorageException $e, $httpStatusCode)
+    {
+        return new JsonResponse(array(
+            'message' => $e->getMessage(),
+            'code' => $e->getCode(),
+            'attributes' => null,
+        ), $httpStatusCode);
     }
 
     /**
@@ -66,6 +90,11 @@ class RequestHandler
             }
         }
 
-        return null;
+        throw new FileHandlerNotFoundException(sprintf('File type "%s" is unsupported', $fileSource->fileType()->mimeType()));
+    }
+
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 }

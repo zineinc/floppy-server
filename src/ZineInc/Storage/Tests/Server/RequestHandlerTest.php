@@ -5,8 +5,10 @@ namespace ZineInc\Storage\Tests\Server;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use ZineInc\Storage\Server\FileSource;
+use ZineInc\Storage\Server\FileSourceNotFoundException;
 use ZineInc\Storage\Server\FileType;
 use ZineInc\Storage\Server\RequestHandler;
+use ZineInc\Storage\Server\Storage\StoreException;
 use ZineInc\Storage\Server\Stream\StringStream;
 
 class RequestHandlerTest extends PHPUnit_Framework_TestCase
@@ -17,7 +19,7 @@ class RequestHandlerTest extends PHPUnit_Framework_TestCase
     const FILE_ID = 'abc';
     const FILE_HANDLER_TYPE = 'f';
 
-    const UNSUPPORTED_MIME_TYPE = 'text/plain3';
+    private static $attrs = array('a' => 'b');
 
     /**
      * @var RequestHandler
@@ -47,14 +49,8 @@ class RequestHandlerTest extends PHPUnit_Framework_TestCase
         //given
 
         $request = $this->createUploadRequest();
-        $fileSource = $this->createFileSource();
-        $attrs = array('a' => 'b');
 
-        $this->expectsCreateFileSource($request, $fileSource);
-
-        $this->expectsFileHandlerProcess($this->fileHandlers[0], $fileSource, $attrs, self::FILE_HANDLER_TYPE);
-        $this->expectsFileHandlerUnused($this->fileHandlers[1]);
-
+        $fileSource = $this->expectsCreateFileSourceAndFindFileHandler($request);
         $this->expectsStore($fileSource, self::FILE_ID);
 
         //when
@@ -67,9 +63,112 @@ class RequestHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(200, $response->getStatusCode());
 
         $actualResponseData = json_decode($response->getContent(), true);
-        $expectedResponseData = $attrs + array('id' => self::FILE_ID);
+        $expectedAttributes = self::$attrs + array('id' => self::FILE_ID);
 
-        $this->assertEquals($expectedResponseData, $actualResponseData);
+        $this->assertTrue(isset($actualResponseData['attributes']));
+        $this->assertEquals($expectedAttributes, $actualResponseData['attributes']);
+    }
+
+    /**
+     * @test
+     */
+    public function uploadRequest_fileSourceNotFound_400response()
+    {
+        //given
+
+        $request = $this->createUploadRequest();
+
+        $this->expectsFileSourceNotFound();
+
+        $this->expectsFileHandlerUnused($this->fileHandlers[0]);
+        $this->expectsFileHandlerUnused($this->fileHandlers[1]);
+
+        $this->expectsNoStore();
+
+        //when
+
+        $response = $this->requestHandler->handle($request);
+
+        //then
+
+        $this->verifyMockObjects();
+        $this->assertGreaterThanOrEqual(400, $response->getStatusCode());
+    }
+
+    /**
+     * @test
+     */
+    public function uploadRequest_fileHandlerNotFound_400response()
+    {
+        //given
+
+        $request = $this->createUploadRequest();
+ 
+        $fileSource = $this->createFileSource();
+
+        $this->expectsCreateFileSource($request, $fileSource);
+
+        $this->expectsFileHandlerUnused($this->fileHandlers[0]);
+        $this->expectsFileHandlerUnused($this->fileHandlers[1]);
+
+        $this->expectsNoStore();
+
+        //when
+
+        $response = $this->requestHandler->handle($request);
+
+        //then
+
+        $this->verifyMockObjects();
+        $this->assertGreaterThanOrEqual(400, $response->getStatusCode());
+    }
+    
+    private function expectsCreateFileSourceAndFindFileHandler(Request $request)
+    {
+        $fileSource = $this->createFileSource();
+
+        $this->expectsCreateFileSource($request, $fileSource);
+
+        $this->expectsFileHandlerProcess($this->fileHandlers[0], $fileSource, self::$attrs, self::FILE_HANDLER_TYPE);
+        $this->expectsFileHandlerUnused($this->fileHandlers[1]);
+
+        return $fileSource;
+    }
+
+    /**
+     * @test
+     */
+    public function uploadRequest_storeEx_500response()
+    {
+        //given
+
+        $request = $this->createUploadRequest();
+
+        $this->expectsCreateFileSourceAndFindFileHandler($request);
+        $this->expectsStoreException();
+
+        //when
+
+        $response = $this->requestHandler->handle($request);
+
+        //then
+
+        $this->verifyMockObjects();
+        $this->assertGreaterThanOrEqual(500, $response->getStatusCode());
+    }
+
+    private function expectsFileSourceNotFound()
+    {
+        $this->fileSourceFactory->expects($this->once())
+                                ->method('createFileSource')
+                                ->will($this->throwException(new FileSourceNotFoundException()));
+    }
+
+    private function expectsStoreException()
+    {
+        $this->storage->expects($this->once())
+                    ->method('store')
+                    ->will($this->throwException(new StoreException()));
     }
     
     private function createUploadRequest()
@@ -128,5 +227,11 @@ class RequestHandlerTest extends PHPUnit_Framework_TestCase
                     ->method('store')
                     ->with($fileSource)
                     ->will($this->returnValue($id));
+    }
+
+    private function expectsNoStore()
+    {
+        $this->storage->expects($this->never())
+                    ->method('store');
     }
 }

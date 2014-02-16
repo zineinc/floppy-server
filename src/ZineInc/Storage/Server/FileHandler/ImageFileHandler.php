@@ -58,25 +58,32 @@ class ImageFileHandler implements FileHandler
 
     public function beforeStoreProcess(FileSource $file)
     {
-        $image = $this->imagine->load($this->fileContent($file));
+        try
+        {
+            $image = $this->imagine->load($this->fileContent($file));
 
-        $size = $image->getSize();
+            $size = $image->getSize();
 
-        if($size->getWidth() <= $this->options['maxWidth'] && $size->getHeight() <= $this->options['maxHeight']) {
-            return $file;
+            if($size->getWidth() <= $this->options['maxWidth'] && $size->getHeight() <= $this->options['maxHeight']) {
+                return $file;
+            }
+
+            $ratio = $size->getWidth()/$size->getHeight();
+
+            $newSize = $ratio > 1 ? new Box($this->options['maxWidth'], $this->options['maxHeight']/$ratio)
+                    : new Box($this->options['maxWidth']*$ratio, $this->options['maxHeight']);
+
+            $image->resize($newSize);
+
+            $content = $image->get($file->fileType()->prefferedExtension());
+            $file->stream()->close();
+
+            return new FileSource(new StringStream($content), $file->fileType());
         }
-
-        $ratio = $size->getWidth()/$size->getHeight();
-
-        $newSize = $ratio > 1 ? new Box($this->options['maxWidth'], $this->options['maxHeight']/$ratio)
-                : new Box($this->options['maxWidth']*$ratio, $this->options['maxHeight']);
-
-        $image->resize($newSize);
-
-        $content = $image->get($file->fileType()->prefferedExtension());
-        $file->stream()->close();
-
-        return new FileSource(new StringStream($content), $file->fileType());
+        catch(\Imagine\Exception\Exception $e)
+        {
+            throw new FileProcessException('Image before store processing error', $e);
+        }
     }
 
     private function fileContent(FileSource $file)
@@ -87,19 +94,26 @@ class ImageFileHandler implements FileHandler
 
     public function getStoreAttributes(FileSource $file)
     {
-        $file->stream()->resetInput();
-        $content = $file->stream()->read();
+        try
+        {
+            $file->stream()->resetInput();
+            $content = $file->stream()->read();
 
-        $image = $this->imagine->load($content);
-        $size = $image->getSize();
+            $image = $this->imagine->load($content);
+            $size = $image->getSize();
 
-        return array(
-            'width' => $size->getWidth(),
-            'height' => $size->getHeight(),
-            'mime-type' => $file->fileType()->mimeType(),
-            'extension' => $file->fileType()->prefferedExtension(),
-            'size' => strlen($content),
-        );
+            return array(
+                'width' => $size->getWidth(),
+                'height' => $size->getHeight(),
+                'mime-type' => $file->fileType()->mimeType(),
+                'extension' => $file->fileType()->prefferedExtension(),
+                'size' => strlen($content),
+            );
+        }
+        catch(\Imagine\Exception\Exception $e)
+        {
+            throw new FileProcessException('Image load error', $e);
+        }
     }
 
     public function supports(FileType $fileType)
