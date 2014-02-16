@@ -1,9 +1,11 @@
 <?php
 
-namespace ZineInc\Storage\Server;
+namespace ZineInc\Storage\Server\RequestHandler;
 
-use ZineInc\Storage\Server\Stream\StringStream;
 use Symfony\Component\HttpFoundation\Request;
+use ZineInc\Storage\Server\FileSource;
+use ZineInc\Storage\Server\FileType;
+use ZineInc\Storage\Server\Stream\StringStream;
 
 class FileSourceFactoryImpl implements FileSourceFactory
 {

@@ -1,13 +1,14 @@
 <?php
 
-namespace ZineInc\Storage\Tests\Server;
+namespace ZineInc\Storage\Tests\Server\RequestHandler;
 
-use ZineInc\Storage\Server\FileType;
+use PHPUnit_Framework_TestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
-use ZineInc\Storage\Server\FileSourceFactoryImpl;
+use ZineInc\Storage\Server\FileType;
+use ZineInc\Storage\Server\RequestHandler\FileSourceFactoryImpl;
 
-class FileSourceFactoryImplTest extends \PHPUnit_Framework_TestCase
+class FileSourceFactoryImplTest extends PHPUnit_Framework_TestCase
 {
     const FILE_KEY = 'file';
 
@@ -47,7 +48,7 @@ class FileSourceFactoryImplTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException ZineInc\Storage\Server\FileSourceNotFoundException
+     * @expectedException ZineInc\Storage\Server\RequestHandler\FileSourceNotFoundException
      */
     public function fileDoesntExist_throwFileSourceNotFoundEx()
     {
@@ -63,7 +64,7 @@ class FileSourceFactoryImplTest extends \PHPUnit_Framework_TestCase
     private function createRequestWithFile()
     {
         $request = new Request();
-        $file = new UploadedFile(__DIR__.'/../Resources/text.txt', 'text.txt');
+        $file = new UploadedFile(__DIR__.'/../../Resources/text.txt', 'text.txt');
         $request->files->set(self::FILE_KEY, $file);
 
         return $request;
@@ -72,7 +73,7 @@ class FileSourceFactoryImplTest extends \PHPUnit_Framework_TestCase
     public function fileProvider()
     {
         return array(
-            array(__DIR__.'/../Resources/text.txt', 'text/plain', 'txt'),
+            array(__DIR__.'/../../Resources/text.txt', 'text/plain', 'txt'),
         );
     }
 }

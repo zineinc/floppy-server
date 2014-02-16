@@ -7,7 +7,7 @@ use ZineInc\Storage\Server\FileId;
 use ZineInc\Storage\Server\FileSource;
 use ZineInc\Storage\Server\FileType;
 
-interface FileHandler
+interface FileHandler extends VariantMatcher
 {
     /**
      * @param FileSource $fileType

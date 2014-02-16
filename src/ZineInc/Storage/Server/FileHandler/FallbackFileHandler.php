@@ -8,8 +8,10 @@ class FallbackFileHandler extends AbstractFileHandler
 
     private $supportedMimeTypes;
 
-    public function __construct(array $supportedMimeTypes)
+    public function __construct(VariantMatcher $variantMatcher, array $supportedMimeTypes)
     {
+        parent::__construct($variantMatcher);
+
         $this->supportedMimeTypes = $supportedMimeTypes;
     }
 

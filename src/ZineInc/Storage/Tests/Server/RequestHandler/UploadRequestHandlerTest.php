@@ -1,17 +1,17 @@
 <?php
 
-namespace ZineInc\Storage\Tests\Server;
+namespace ZineInc\Storage\Tests\Server\RequestHandler;
 
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use ZineInc\Storage\Server\FileSource;
-use ZineInc\Storage\Server\FileSourceNotFoundException;
 use ZineInc\Storage\Server\FileType;
-use ZineInc\Storage\Server\RequestHandler;
+use ZineInc\Storage\Server\RequestHandler\FileSourceNotFoundException;
+use ZineInc\Storage\Server\RequestHandler\RequestHandler;
 use ZineInc\Storage\Server\Storage\StoreException;
 use ZineInc\Storage\Server\Stream\StringStream;
 
-class RequestHandlerTest extends PHPUnit_Framework_TestCase
+class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
 {
     const FILE_MIME_TYPE = 'text/plain';
     const FILE_EXT = 'txt';
@@ -32,7 +32,7 @@ class RequestHandlerTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->storage = $this->getMock('ZineInc\Storage\Server\Storage\Storage');
-        $this->fileSourceFactory = $this->getMock('ZineInc\Storage\Server\FileSourceFactory');
+        $this->fileSourceFactory = $this->getMock('ZineInc\Storage\Server\RequestHandler\FileSourceFactory');
         $this->fileHandlers = array(
             $this->getMock('ZineInc\Storage\Server\FileHandler\FileHandler'),
             $this->getMock('ZineInc\Storage\Server\FileHandler\FileHandler'),
@@ -44,7 +44,7 @@ class RequestHandlerTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function uploadRequest_fileSourceExists_storeInStorage()
+    public function fileSourceExists_storeInStorage()
     {
         //given
 
@@ -72,7 +72,7 @@ class RequestHandlerTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function uploadRequest_fileSourceNotFound_400response()
+    public function fileSourceNotFound_400response()
     {
         //given
 
@@ -98,7 +98,7 @@ class RequestHandlerTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function uploadRequest_fileHandlerNotFound_400response()
+    public function fileHandlerNotFound_400response()
     {
         //given
 
@@ -138,7 +138,7 @@ class RequestHandlerTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function uploadRequest_storeEx_500response()
+    public function storeEx_500response()
     {
         //given
 

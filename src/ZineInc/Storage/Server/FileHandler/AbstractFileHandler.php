@@ -10,6 +10,18 @@ abstract class AbstractFileHandler implements FileHandler
 {
     const TYPE = 'f';
 
+    private $variantMatcher;
+
+    public function __construct(VariantMatcher $variantMatcher)
+    {
+        $this->variantMatcher = $variantMatcher;
+    }
+
+    public function match($variantFilepath)
+    {
+        return $this->variantMatcher->match($variantFilepath);
+    }
+
     public function beforeSendProcess(FileSource $file, FileId $fileId)
     {
         return $file;

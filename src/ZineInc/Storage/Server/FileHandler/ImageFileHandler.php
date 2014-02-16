@@ -28,8 +28,10 @@ class ImageFileHandler extends AbstractFileHandler
         'maxHeight' => 1200,
     );
 
-    public function __construct(ImagineInterface $imagine, array $options = array())
+    public function __construct(ImagineInterface $imagine, array $options = array(), VariantMatcher $variantMatcher)
     {
+        parent::__construct($variantMatcher ?: null);
+
         $this->options['supportedMimeTypes'] = self::$defaultSupportedMimeTypes;
         
         $this->setOptions($options);

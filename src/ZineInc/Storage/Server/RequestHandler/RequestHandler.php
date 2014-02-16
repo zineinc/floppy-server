@@ -1,6 +1,6 @@
 <?php
 
-namespace ZineInc\Storage\Server;
+namespace ZineInc\Storage\Server\RequestHandler;
 
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
@@ -9,7 +9,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use ZineInc\Storage\Server\FileHandler\FileHandler;
+use ZineInc\Storage\Server\FileSource;
 use ZineInc\Storage\Server\Storage\Storage;
+use ZineInc\Storage\Server\StorageError;
+use ZineInc\Storage\Server\StorageException;
 
 class RequestHandler implements LoggerAwareInterface
 {

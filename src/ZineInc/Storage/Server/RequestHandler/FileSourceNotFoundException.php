@@ -1,8 +1,10 @@
 <?php
 
-namespace ZineInc\Storage\Server;
+namespace ZineInc\Storage\Server\RequestHandler;
 
 use Exception;
+use ZineInc\Storage\Server\ErrorCodes;
+use ZineInc\Storage\Server\StorageException;
 
 class FileSourceNotFoundException extends Exception implements StorageException
 {

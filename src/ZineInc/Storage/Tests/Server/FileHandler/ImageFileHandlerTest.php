@@ -28,7 +28,7 @@ class ImageFileHandlerTest extends PHPUnit_Framework_TestCase
     {
         $this->imagine = new Imagine();
 
-        $this->handler = new ImageFileHandler($this->imagine);
+        $this->handler = new ImageFileHandler($this->imagine, array(), $this->getMock('ZineInc\Storage\Server\FileHandler\VariantMatcher'));
     }
 
     /**
