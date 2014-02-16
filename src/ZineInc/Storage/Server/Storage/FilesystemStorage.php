@@ -2,6 +2,7 @@
 
 namespace ZineInc\Storage\Server\Storage;
 
+use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use ZineInc\Storage\Server\FileId;
 use ZineInc\Storage\Server\FileSource;
@@ -18,7 +19,23 @@ class FilesystemStorage implements Storage
         $this->storageDir = rtrim((string)$storageDir, '/');
         $this->filepathChoosingStrategy = $filepathChoosingStrategy;
         $this->idFactory = $idFactory;
-        $this->filesystem = new Filesystem();
+    }
+
+    /**
+     * @return Filesystem
+     */
+    private function getFilesystem()
+    {
+        if($this->filesystem === null) {
+            $this->filesystem = new Filesystem();
+        }
+
+        return $this->filesystem;
+    }
+
+    public function setFilesystem(Filesystem $filesystem)
+    {
+        $this->filesystem = $filesystem;
     }
 
     public function getSource(FileId $fileId)
@@ -36,8 +53,14 @@ class FilesystemStorage implements Storage
 
         $fileSource->stream()->resetInput();
 
-        //TODO: exception support
-        $this->filesystem->dumpFile($fullFilepath, $fileSource->stream()->read());
+        try
+        {
+            $this->getFilesystem()->dumpFile($fullFilepath, $fileSource->stream()->read());
+        }
+        catch(IOException $e)
+        {
+            throw new StoreException('Error while file storing', $e->getCode(), $e);
+        }
 
         return $id;
     }

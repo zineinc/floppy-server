@@ -61,7 +61,7 @@ class ImageFileHandlerTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function shouldBuildValidAttributesForImage()
+    public function shouldBuildCorrectAttributesForImage()
     {
         //given
 
@@ -111,7 +111,7 @@ class ImageFileHandlerTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function processBeforeStore_imageIsSmall_doNotTouchIt()
+    public function processBeforeStore_imageIsSmall_dontTouchIt()
     {
         //given
 

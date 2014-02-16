@@ -12,6 +12,8 @@ interface Storage
      * Stores file to persistent storage
      *
      * @return string file id
+     *
+     * @throws StoreException
      */
     public function store(FileSource $file);
 

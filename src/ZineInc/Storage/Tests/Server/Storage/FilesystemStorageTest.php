@@ -31,11 +31,11 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function shouldStoreFileInValidLocation()
+    public function shouldStoreFileInCorrectLocation()
     {
         //given
 
-        $fileSource = new FileSource(new StringStream(self::FILESOURCE), new FileType('text/plain', 'txt'));
+        $fileSource = $this->createFileSource();
 
         //when
 
@@ -46,6 +46,33 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
         $this->assertNotNull($id);
         $this->assertTrue(file_exists($this->filepath));
         $this->assertEquals(self::FILESOURCE, file_get_contents($this->filepath));
+    }
+    
+    private function createFileSource()
+    {
+        return new FileSource(new StringStream(self::FILESOURCE), new FileType('text/plain', 'txt'));
+    }
+
+    /**
+     * @test
+     * @expectedException ZineInc\Storage\Server\Storage\StoreException
+     */
+    public function filesystemExceptionOnStore_wrapEx()
+    {
+        //given
+
+        $fileSource = $this->createFileSource();
+        
+        $filesystem = $this->getMock('Symfony\Component\Filesystem\Filesystem');
+        $this->storage->setFilesystem($filesystem);
+
+        $filesystem->expects($this->once())
+                    ->method('dumpFile')
+                    ->will($this->throwException(new \Symfony\Component\Filesystem\Exception\IOException('')));
+
+        //when
+
+        $this->storage->store($fileSource);
     }
 
     protected function tearDown()
