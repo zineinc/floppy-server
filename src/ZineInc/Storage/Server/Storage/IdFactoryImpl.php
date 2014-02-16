@@ -15,8 +15,7 @@ class IdFactoryImpl implements IdFactory
 
     public function id(FileSource $fileSource)
     {
-        $fileSource->stream()->resetInput();
-        $content = $fileSource->stream()->read();
+        $content = $fileSource->content();
 
         return hash($this->alg, $content).'.'.$fileSource->fileType()->prefferedExtension();
     }

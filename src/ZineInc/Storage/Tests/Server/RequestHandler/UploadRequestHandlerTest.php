@@ -9,7 +9,7 @@ use ZineInc\Storage\Server\FileType;
 use ZineInc\Storage\Server\RequestHandler\FileSourceNotFoundException;
 use ZineInc\Storage\Server\RequestHandler\RequestHandler;
 use ZineInc\Storage\Server\Storage\StoreException;
-use ZineInc\Storage\Server\Stream\StringStream;
+use ZineInc\Storage\Server\Stream\StringInputStream;
 
 class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
 {
@@ -178,7 +178,7 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
 
     private function createFileSource()
     {
-        return new FileSource(new StringStream('aa'), new FileType(self::FILE_MIME_TYPE, self::FILE_EXT));
+        return new FileSource(new StringInputStream('aa'), new FileType(self::FILE_MIME_TYPE, self::FILE_EXT));
     }
 
     private function expectsCreateFileSource(Request $request, FileSource $fileSource)

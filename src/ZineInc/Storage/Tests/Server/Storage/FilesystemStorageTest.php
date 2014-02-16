@@ -9,7 +9,7 @@ use ZineInc\Storage\Server\FileType;
 use ZineInc\Storage\Server\Storage\FilepathChoosingStrategy;
 use ZineInc\Storage\Server\Storage\FilesystemStorage;
 use ZineInc\Storage\Server\Storage\IdFactoryImpl;
-use ZineInc\Storage\Server\Stream\StringStream;
+use ZineInc\Storage\Server\Stream\StringInputStream;
 
 class FilesystemStorageTest extends PHPUnit_Framework_TestCase
 {
@@ -50,7 +50,7 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
     
     private function createFileSource()
     {
-        return new FileSource(new StringStream(self::FILESOURCE), new FileType('text/plain', 'txt'));
+        return new FileSource(new StringInputStream(self::FILESOURCE), new FileType('text/plain', 'txt'));
     }
 
     /**

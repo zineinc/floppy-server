@@ -10,9 +10,8 @@ interface InputStream
     public function close();
 
     /**
-     * @param $len int Number of bytes to read
+     * @return string
+     * @throws IOException
      */
-    public function read($len = null);
-
-    public function resetInput();
+    public function read();
 }

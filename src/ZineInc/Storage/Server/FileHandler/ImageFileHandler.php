@@ -7,7 +7,7 @@ use Imagine\Image\ImagineInterface;
 use InvalidArgumentException;
 use ZineInc\Storage\Server\FileId;
 use ZineInc\Storage\Server\FileSource;
-use ZineInc\Storage\Server\Stream\StringStream;
+use ZineInc\Storage\Server\Stream\StringInputStream;
 
 class ImageFileHandler extends AbstractFileHandler
 {
@@ -78,9 +78,9 @@ class ImageFileHandler extends AbstractFileHandler
             $image->resize($newSize);
 
             $content = $image->get($file->fileType()->prefferedExtension());
-            $file->stream()->close();
+            $file->discard();
 
-            return new FileSource(new StringStream($content), $file->fileType());
+            return new FileSource(new StringInputStream($content), $file->fileType());
         }
         catch(\Imagine\Exception\Exception $e)
         {
@@ -90,8 +90,7 @@ class ImageFileHandler extends AbstractFileHandler
 
     private function fileContent(FileSource $file)
     {
-        $file->stream()->resetInput();
-        return $file->stream()->read();
+        return $file->content();
     }
 
     protected function doGetStoreAttributes(FileSource $file, $content)

@@ -5,7 +5,7 @@ namespace ZineInc\Storage\Server\RequestHandler;
 use Symfony\Component\HttpFoundation\Request;
 use ZineInc\Storage\Server\FileSource;
 use ZineInc\Storage\Server\FileType;
-use ZineInc\Storage\Server\Stream\StringStream;
+use ZineInc\Storage\Server\Stream\StringInputStream;
 
 class FileSourceFactoryImpl implements FileSourceFactory
 {
@@ -29,6 +29,6 @@ class FileSourceFactoryImpl implements FileSourceFactory
 
         $content = file_get_contents($file->getPathname());
 
-        return new FileSource(new StringStream($content), new FileType($file->getMimeType(), $file->guessExtension()));
+        return new FileSource(new StringInputStream($content), new FileType($file->getMimeType(), $file->guessExtension()));
     }
 }

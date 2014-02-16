@@ -34,8 +34,7 @@ abstract class AbstractFileHandler implements FileHandler
 
     public function getStoreAttributes(FileSource $file)
     {
-        $file->stream()->resetInput();
-        $content = $file->stream()->read();
+        $content = $file->content();
 
         return array(
             'mime-type' => $file->fileType()->mimeType(),

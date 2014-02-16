@@ -51,11 +51,9 @@ class FilesystemStorage implements Storage
 
         $fullFilepath = $this->storageDir.'/'.$filepath;
 
-        $fileSource->stream()->resetInput();
-
         try
         {
-            $this->getFilesystem()->dumpFile($fullFilepath, $fileSource->stream()->read());
+            $this->getFilesystem()->dumpFile($fullFilepath, $fileSource->content());
         }
         catch(IOException $e)
         {

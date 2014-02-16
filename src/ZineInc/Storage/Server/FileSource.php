@@ -2,14 +2,14 @@
 
 namespace ZineInc\Storage\Server;
 
-use ZineInc\Storage\Server\Stream\Stream;
+use ZineInc\Storage\Server\Stream\InputStream;
 
 final class FileSource
 {
     private $stream;
     private $fileType;
 
-    public function __construct(Stream $stream, FileType $fileType)
+    public function __construct(InputStream $stream, FileType $fileType)
     {
         $this->stream = $stream;
         $this->fileType = $fileType;
@@ -24,10 +24,15 @@ final class FileSource
     }
 
     /**
-     * @return Stream
+     * @return string
      */
-    public function stream()
+    public function content()
     {
-        return $this->stream;
+        return $this->stream->read();
+    }
+
+    public function discard()
+    {
+        $this->stream->close();
     }
 }

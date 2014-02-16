@@ -38,12 +38,11 @@ class FileSourceFactoryImplTest extends PHPUnit_Framework_TestCase
         $this->assertNotNull($fileSource);
         $this->assertEquals(new FileType($mimeType, $ext), $fileSource->fileType());
 
-        $stream = $fileSource->stream();
         $expectedContent = file_get_contents($filepath);
 
-        $this->assertEquals($expectedContent, $stream->read());
+        $this->assertEquals($expectedContent, $fileSource->content());
 
-        $stream->close();
+        $fileSource->discard();
     }
 
     /**

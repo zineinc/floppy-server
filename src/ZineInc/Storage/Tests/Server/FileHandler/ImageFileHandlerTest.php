@@ -7,7 +7,7 @@ use PHPUnit_Framework_TestCase;
 use ZineInc\Storage\Server\FileHandler\ImageFileHandler;
 use ZineInc\Storage\Server\FileSource;
 use ZineInc\Storage\Server\FileType;
-use ZineInc\Storage\Server\Stream\StringStream;
+use ZineInc\Storage\Server\Stream\StringInputStream;
 
 class ImageFileHandlerTest extends PHPUnit_Framework_TestCase
 {
@@ -80,7 +80,7 @@ class ImageFileHandlerTest extends PHPUnit_Framework_TestCase
 
     private function createImageFileSource($path)
     {
-        return new FileSource(new StringStream(file_get_contents($path)), new FileType('image/png', 'png'));
+        return new FileSource(new StringInputStream(file_get_contents($path)), new FileType('image/png', 'png'));
     }
 
     /**
@@ -103,7 +103,7 @@ class ImageFileHandlerTest extends PHPUnit_Framework_TestCase
 
         //then
 
-        $image = $this->imagine->load($actualSource->stream()->read());
+        $image = $this->imagine->load($actualSource->content());
 
         $this->assertEquals($maxSize, $image->getSize()->getWidth());
     }
