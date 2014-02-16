@@ -7,10 +7,9 @@ use Imagine\Image\ImagineInterface;
 use InvalidArgumentException;
 use ZineInc\Storage\Server\FileId;
 use ZineInc\Storage\Server\FileSource;
-use ZineInc\Storage\Server\FileType;
 use ZineInc\Storage\Server\Stream\StringStream;
 
-class ImageFileHandler implements FileHandler
+class ImageFileHandler extends AbstractFileHandler
 {
     const TYPE = 'i';
 
@@ -51,9 +50,10 @@ class ImageFileHandler implements FileHandler
         }
     }
 
+    //TODO
     public function beforeSendProcess(FileSource $file, FileId $fileId)
     {
-        
+        return $file;
     }
 
     public function beforeStoreProcess(FileSource $file)
@@ -92,22 +92,16 @@ class ImageFileHandler implements FileHandler
         return $file->stream()->read();
     }
 
-    public function getStoreAttributes(FileSource $file)
+    protected function doGetStoreAttributes(FileSource $file, $content)
     {
         try
         {
-            $file->stream()->resetInput();
-            $content = $file->stream()->read();
-
             $image = $this->imagine->load($content);
             $size = $image->getSize();
 
             return array(
                 'width' => $size->getWidth(),
                 'height' => $size->getHeight(),
-                'mime-type' => $file->fileType()->mimeType(),
-                'extension' => $file->fileType()->prefferedExtension(),
-                'size' => strlen($content),
             );
         }
         catch(\Imagine\Exception\Exception $e)
@@ -116,13 +110,8 @@ class ImageFileHandler implements FileHandler
         }
     }
 
-    public function supports(FileType $fileType)
+    protected function supportedMimeTypes()
     {
-        return in_array($fileType->mimeType(), $this->options['supportedMimeTypes']);
-    }
-
-    public function type()
-    {
-        return static::TYPE;
+        return $this->options['supportedMimeTypes'];
     }
 }
