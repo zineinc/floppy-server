@@ -8,6 +8,7 @@ interface VariantMatcher
 {
     /**
      * @return FileId
+     * @throws VariantMatchingException
      */
     public function match($variantFilepath);
 }

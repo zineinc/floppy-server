@@ -30,7 +30,7 @@ class ImageFileHandler extends AbstractFileHandler
 
     public function __construct(ImagineInterface $imagine, array $options = array(), VariantMatcher $variantMatcher)
     {
-        parent::__construct($variantMatcher ?: null);
+        parent::__construct($variantMatcher);
 
         $this->options['supportedMimeTypes'] = self::$defaultSupportedMimeTypes;
         
