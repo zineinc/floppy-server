@@ -37,8 +37,11 @@ class RequestHandler implements LoggerAwareInterface
      */
     public function handle(Request $request)
     {
-        //TODO: check uri
-        return $this->handleUploadRequest($request);
+        if(rtrim($request->getPathInfo(), '/') === '/upload') {
+            return $this->handleUploadRequest($request);
+        } else {
+            return new Response('', 404);
+        }
     }
 
     private function handleUploadRequest(Request $request)

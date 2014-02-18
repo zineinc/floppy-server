@@ -173,7 +173,7 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
     
     private function createUploadRequest()
     {
-        return Request::create('/upload');
+        return Request::create('http://localhost/upload');
     }
 
     private function createFileSource()
