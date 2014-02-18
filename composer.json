@@ -14,6 +14,6 @@
         "psr/log": "1.0.0"
     },
     "autoload": {
-    	"psr-0": { "ZineInc\\Storage\\Server\\": "src/" }
+    	"psr-0": { "ZineInc\\Storage\\": "src/" }
     }
 }

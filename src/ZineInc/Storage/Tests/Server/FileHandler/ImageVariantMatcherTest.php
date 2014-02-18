@@ -2,37 +2,15 @@
 
 namespace ZineInc\Storage\Tests\Server\FileHandler;
 
-use PHPUnit_Framework_TestCase;
-use ZineInc\Storage\Server\FileHandler\ChecksumChecker;
 use ZineInc\Storage\Server\FileHandler\ImageVariantMatcher;
 use ZineInc\Storage\Server\FileId;
+use ZineInc\Storage\Tests\Server\Stub\ChecksumChecker;
 
-class ImageVariantMatcherTest extends PHPUnit_Framework_TestCase
+class ImageVariantMatcherTest extends AbstractVariantMatcherTest
 {
-    const VALID_CHECKSUM = 'validChecksum';
-    const INVALID_CHECKSUM = 'invalidChecksum';
-
-    private $matcher;
-
-    protected function setUp()
+    protected function createVariantMatcher(ChecksumChecker $checksumChecker)
     {
-        $this->matcher = new ImageVariantMatcher(new ImageVariantMatcherTest_ChecksumChecker(self::VALID_CHECKSUM));
-    }
-
-    /**
-     * @test
-     * @dataProvider dataProvider
-     */
-    public function testMatch($variantFilename, $expectedException, $expectedFileId)
-    {
-        if($expectedException)
-        {
-            $this->setExpectedException('ZineInc\Storage\Server\FileHandler\VariantMatchingException');
-        }
-
-        $actualFileId = $this->matcher->match($variantFilename);
-
-        $this->assertEquals($expectedFileId, $actualFileId);
+        return new ImageVariantMatcher($checksumChecker);
     }
 
     public function dataProvider()
@@ -59,20 +37,5 @@ class ImageVariantMatcherTest extends PHPUnit_Framework_TestCase
                 null,
             ),
         );
-    }
-}
-
-class ImageVariantMatcherTest_ChecksumChecker implements ChecksumChecker
-{
-    private $validChecksum;
-
-    public function __construct($validChecksum)
-    {
-        $this->validChecksum = $validChecksum;
-    }
-
-    public function isChecksumValid($checksum, $data)
-    {
-        return $checksum == $this->validChecksum;
     }
 }
