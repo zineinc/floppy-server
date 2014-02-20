@@ -4,7 +4,7 @@ namespace ZineInc\Storage\Server\Storage;
 
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
-use ZineInc\Storage\Server\FileId;
+use ZineInc\Storage\Common\FileId;
 use ZineInc\Storage\Server\FileSource;
 
 class FilesystemStorage implements Storage

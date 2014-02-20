@@ -1,6 +1,6 @@
 <?php
 
-namespace ZineInc\Storage\Server;
+namespace ZineInc\Storage\Common;
 
 final class FileId
 {

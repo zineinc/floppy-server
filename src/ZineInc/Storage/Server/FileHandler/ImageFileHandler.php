@@ -5,7 +5,10 @@ namespace ZineInc\Storage\Server\FileHandler;
 use Imagine\Image\Box;
 use Imagine\Image\ImagineInterface;
 use InvalidArgumentException;
-use ZineInc\Storage\Server\FileId;
+use ZineInc\Storage\Common\FileHandler\VariantMatcher;
+use ZineInc\Storage\Common\FileId;
+use ZineInc\Storage\Server\FileHandler\AbstractFileHandler;
+use ZineInc\Storage\Server\FileHandler\FileProcessException;
 use ZineInc\Storage\Server\FileSource;
 use ZineInc\Storage\Server\Stream\StringInputStream;
 

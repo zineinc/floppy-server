@@ -2,6 +2,8 @@
 
 namespace ZineInc\Storage\Server\FileHandler;
 
+use ZineInc\Storage\Common\FileHandler\VariantMatcher;
+
 class FallbackFileHandler extends AbstractFileHandler
 {
     const TYPE = 'f';

@@ -1,16 +1,17 @@
 <?php
 
-namespace ZineInc\Storage\Tests\Server\FileHandler;
+namespace ZineInc\Storage\Tests\Common\FileHandler;
 
-use ZineInc\Storage\Server\FileHandler\FileVariantMatcher;
-use ZineInc\Storage\Server\FileId;
-use ZineInc\Storage\Tests\Server\Stub\ChecksumChecker;
+use ZineInc\Storage\Common\FileHandler\FileVariantMatcher;
+use ZineInc\Storage\Common\FileId;
+use ZineInc\Storage\Tests\Common\FileHandler\AbstractVariantMatcherTest;
+use ZineInc\Storage\Tests\Common\Stub\ChecksumChecker;
 
 class FileVariantMatcherTest extends AbstractVariantMatcherTest
 {
     protected function createVariantMatcher(ChecksumChecker $checksumChecker)
     {
-        return new FileVariantMatcher($checksumChecker);
+        return new \ZineInc\Storage\Common\FileHandler\FileVariantMatcher($checksumChecker);
     }
 
     public function dataProvider()

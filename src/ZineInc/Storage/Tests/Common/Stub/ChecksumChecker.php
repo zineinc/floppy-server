@@ -1,8 +1,8 @@
 <?php
 
-namespace ZineInc\Storage\Tests\Server\Stub;
+namespace ZineInc\Storage\Tests\Common\Stub;
 
-use ZineInc\Storage\Server\FileHandler\ChecksumChecker as ChecksumCheckerInterface;
+use ZineInc\Storage\Common\ChecksumChecker as ChecksumCheckerInterface;
 
 class ChecksumChecker implements ChecksumCheckerInterface
 {

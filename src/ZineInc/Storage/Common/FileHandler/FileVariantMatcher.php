@@ -1,8 +1,11 @@
 <?php
 
-namespace ZineInc\Storage\Server\FileHandler;
+namespace ZineInc\Storage\Common\FileHandler;
 
-use ZineInc\Storage\Server\FileId;
+use ZineInc\Storage\Common\FileHandler\VariantMatcher;
+use ZineInc\Storage\Common\FileHandler\VariantMatchingException;
+use ZineInc\Storage\Common\FileId;
+use ZineInc\Storage\Common\ChecksumChecker;
 
 class FileVariantMatcher implements VariantMatcher
 {
@@ -25,7 +28,7 @@ class FileVariantMatcher implements VariantMatcher
         $name = isset($query['name']) ? $query['name'] : null;
         $checksum = isset($query['checksum']) ? $query['checksum'] : null;
 
-        if(!$this->checksumChecker->isChecksumValid($checksum, array($path, $name))) {
+        if(!$name || !$this->checksumChecker->isChecksumValid($checksum, array($path, $name))) {
             throw new VariantMatchingException();
         }
 

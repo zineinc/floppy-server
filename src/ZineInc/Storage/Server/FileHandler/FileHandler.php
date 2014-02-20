@@ -2,8 +2,9 @@
 
 namespace ZineInc\Storage\Server\FileHandler;
 
-use ZineInc\Storage\Server\AttributesBag;
-use ZineInc\Storage\Server\FileId;
+use ZineInc\Storage\Common\AttributesBag;
+use ZineInc\Storage\Common\FileHandler\VariantMatcher;
+use ZineInc\Storage\Common\FileId;
 use ZineInc\Storage\Server\FileSource;
 use ZineInc\Storage\Server\FileType;
 
@@ -21,7 +22,7 @@ interface FileHandler extends VariantMatcher
     public function type();
 
     /**
-     * @return AttributesBag Extra attributes for given file. This attributes should be associative array of primitives
+     * @return \ZineInc\Storage\Common\AttributesBag Extra attributes for given file. This attributes should be associative array of primitives
      */
     public function getStoreAttributes(FileSource $file);
 

@@ -3,7 +3,7 @@
 namespace ZineInc\Storage\Tests\Server\Storage;
 
 use PHPUnit_Framework_TestCase;
-use ZineInc\Storage\Server\FileId;
+use ZineInc\Storage\Common\FileId;
 use ZineInc\Storage\Server\FileSource;
 use ZineInc\Storage\Server\FileType;
 use ZineInc\Storage\Server\Storage\FilepathChoosingStrategy;

@@ -2,7 +2,8 @@
 
 namespace ZineInc\Storage\Server\FileHandler;
 
-use ZineInc\Storage\Server\FileId;
+use ZineInc\Storage\Common\FileHandler\VariantMatcher;
+use ZineInc\Storage\Common\FileId;
 use ZineInc\Storage\Server\FileSource;
 use ZineInc\Storage\Server\FileType;
 

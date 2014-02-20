@@ -3,7 +3,7 @@
 namespace ZineInc\Storage\Tests\Server\Storage;
 
 use PHPUnit_Framework_TestCase;
-use ZineInc\Storage\Server\FileId;
+use ZineInc\Storage\Common\FileId;
 use ZineInc\Storage\Server\Storage\FilepathChoosingStrategyImpl;
 
 class FilepathChoosingStrategyImplTest extends PHPUnit_Framework_TestCase

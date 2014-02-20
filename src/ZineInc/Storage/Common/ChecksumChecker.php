@@ -1,6 +1,6 @@
 <?php
 
-namespace ZineInc\Storage\Server\FileHandler;
+namespace ZineInc\Storage\Common;
 
 interface ChecksumChecker
 {

@@ -3,7 +3,7 @@
 namespace ZineInc\Storage\Server\Storage;
 
 use InvalidArgumentException;
-use ZineInc\Storage\Server\FileId;
+use ZineInc\Storage\Common\FileId;
 
 class FilepathChoosingStrategyImpl implements FilepathChoosingStrategy
 {

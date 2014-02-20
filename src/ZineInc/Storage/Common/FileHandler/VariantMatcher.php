@@ -1,8 +1,8 @@
 <?php
 
-namespace ZineInc\Storage\Server\FileHandler;
+namespace ZineInc\Storage\Common\FileHandler;
 
-use ZineInc\Storage\Server\FileId;
+use ZineInc\Storage\Common\FileId;
 
 interface VariantMatcher
 {

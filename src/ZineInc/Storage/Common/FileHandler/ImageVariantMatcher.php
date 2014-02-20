@@ -1,8 +1,11 @@
 <?php
 
-namespace ZineInc\Storage\Server\FileHandler;
+namespace ZineInc\Storage\Common\FileHandler;
 
-use ZineInc\Storage\Server\FileId;
+use ZineInc\Storage\Common\FileHandler\VariantMatcher;
+use ZineInc\Storage\Common\FileHandler\VariantMatchingException;
+use ZineInc\Storage\Common\FileId;
+use ZineInc\Storage\Common\ChecksumChecker;
 
 class ImageVariantMatcher implements VariantMatcher
 {
