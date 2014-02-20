@@ -2,12 +2,10 @@
 
 namespace ZineInc\Storage\Common\FileHandler;
 
-use ZineInc\Storage\Common\FileHandler\VariantMatcher;
-use ZineInc\Storage\Common\FileHandler\VariantMatchingException;
 use ZineInc\Storage\Common\FileId;
 use ZineInc\Storage\Common\ChecksumChecker;
 
-class ImageVariantMatcher implements VariantMatcher
+class ImagePathMatcher implements PathMatcher
 {
     private $checksumChecker;
 
@@ -24,14 +22,14 @@ class ImageVariantMatcher implements VariantMatcher
 
         if(count($params) !== 9)
         {
-            throw new VariantMatchingException(sprintf('Invalid variant filepath format, given: "%s"', $variantFilepath));
+            throw new PathMatchingException(sprintf('Invalid variant filepath format, given: "%s"', $variantFilepath));
         }
 
         $checksum = array_shift($params);
 
         if(!$this->checksumChecker->isChecksumValid($checksum, $params))
         {
-            throw new VariantMatchingException(sprintf('checksum is invalid for variant: "%s"', $variantFilepath));
+            throw new PathMatchingException(sprintf('checksum is invalid for variant: "%s"', $variantFilepath));
         }
 
         $id = array_pop($params);

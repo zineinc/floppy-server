@@ -4,11 +4,11 @@ namespace ZineInc\Storage\Common\FileHandler;
 
 use ZineInc\Storage\Common\FileId;
 
-interface VariantMatcher
+interface PathMatcher
 {
     /**
      * @return FileId
-     * @throws VariantMatchingException
+     * @throws PathMatchingException
      */
     public function match($variantFilepath);
 }

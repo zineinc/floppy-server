@@ -2,12 +2,10 @@
 
 namespace ZineInc\Storage\Common\FileHandler;
 
-use ZineInc\Storage\Common\FileHandler\VariantMatcher;
-use ZineInc\Storage\Common\FileHandler\VariantMatchingException;
 use ZineInc\Storage\Common\FileId;
 use ZineInc\Storage\Common\ChecksumChecker;
 
-class FileVariantMatcher implements VariantMatcher
+class FilePathMatcher implements PathMatcher
 {
     private $checksumChecker;
 
@@ -29,7 +27,7 @@ class FileVariantMatcher implements VariantMatcher
         $checksum = isset($query['checksum']) ? $query['checksum'] : null;
 
         if(!$name || !$this->checksumChecker->isChecksumValid($checksum, array($path, $name))) {
-            throw new VariantMatchingException();
+            throw new PathMatchingException();
         }
 
         return new FileId($path, array(

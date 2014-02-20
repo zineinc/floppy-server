@@ -3,12 +3,12 @@
 namespace ZineInc\Storage\Server\FileHandler;
 
 use ZineInc\Storage\Common\AttributesBag;
-use ZineInc\Storage\Common\FileHandler\VariantMatcher;
+use ZineInc\Storage\Common\FileHandler\PathMatcher;
 use ZineInc\Storage\Common\FileId;
 use ZineInc\Storage\Server\FileSource;
 use ZineInc\Storage\Server\FileType;
 
-interface FileHandler extends VariantMatcher
+interface FileHandler extends PathMatcher
 {
     /**
      * @param FileSource $fileType

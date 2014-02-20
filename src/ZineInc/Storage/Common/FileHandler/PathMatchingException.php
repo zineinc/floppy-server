@@ -2,6 +2,6 @@
 
 namespace ZineInc\Storage\Common\FileHandler;
 
-class VariantMatchingException extends \Exception
+class PathMatchingException extends \Exception
 {
 }

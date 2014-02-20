@@ -2,7 +2,7 @@
 
 namespace ZineInc\Storage\Server\FileHandler;
 
-use ZineInc\Storage\Common\FileHandler\VariantMatcher;
+use ZineInc\Storage\Common\FileHandler\PathMatcher;
 
 class FallbackFileHandler extends AbstractFileHandler
 {
@@ -10,7 +10,7 @@ class FallbackFileHandler extends AbstractFileHandler
 
     private $supportedMimeTypes;
 
-    public function __construct(VariantMatcher $variantMatcher, array $supportedMimeTypes)
+    public function __construct(PathMatcher $variantMatcher, array $supportedMimeTypes)
     {
         parent::__construct($variantMatcher);
 

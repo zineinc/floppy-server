@@ -2,16 +2,16 @@
 
 namespace ZineInc\Storage\Tests\Common\FileHandler;
 
-use ZineInc\Storage\Common\FileHandler\FileVariantMatcher;
+use ZineInc\Storage\Common\FileHandler\FilePathMatcher;
 use ZineInc\Storage\Common\FileId;
-use ZineInc\Storage\Tests\Common\FileHandler\AbstractVariantMatcherTest;
+use ZineInc\Storage\Tests\Common\FileHandler\AbstractPathMatcherTest;
 use ZineInc\Storage\Tests\Common\Stub\ChecksumChecker;
 
-class FileVariantMatcherTest extends AbstractVariantMatcherTest
+class FilePathMatcherTest extends AbstractPathMatcherTest
 {
     protected function createVariantMatcher(ChecksumChecker $checksumChecker)
     {
-        return new \ZineInc\Storage\Common\FileHandler\FileVariantMatcher($checksumChecker);
+        return new \ZineInc\Storage\Common\FileHandler\FilePathMatcher($checksumChecker);
     }
 
     public function dataProvider()

@@ -5,7 +5,7 @@ namespace ZineInc\Storage\Tests\Common\FileHandler;
 use PHPUnit_Framework_TestCase;
 use ZineInc\Storage\Tests\Common\Stub\ChecksumChecker;
 
-abstract class AbstractVariantMatcherTest extends PHPUnit_Framework_TestCase
+abstract class AbstractPathMatcherTest extends PHPUnit_Framework_TestCase
 {
     const VALID_CHECKSUM = 'validChecksum';
     const INVALID_CHECKSUM = 'invalidChecksum';
@@ -27,7 +27,7 @@ abstract class AbstractVariantMatcherTest extends PHPUnit_Framework_TestCase
     {
         if($expectedException)
         {
-            $this->setExpectedException('ZineInc\Storage\Common\FileHandler\VariantMatchingException');
+            $this->setExpectedException('ZineInc\Storage\Common\FileHandler\PathMatchingException');
         }
 
         $actualFileId = $this->matcher->match($variantFilename);

@@ -5,7 +5,7 @@ namespace ZineInc\Storage\Server\FileHandler;
 use Imagine\Image\Box;
 use Imagine\Image\ImagineInterface;
 use InvalidArgumentException;
-use ZineInc\Storage\Common\FileHandler\VariantMatcher;
+use ZineInc\Storage\Common\FileHandler\PathMatcher;
 use ZineInc\Storage\Common\FileId;
 use ZineInc\Storage\Server\FileHandler\AbstractFileHandler;
 use ZineInc\Storage\Server\FileHandler\FileProcessException;
@@ -31,7 +31,7 @@ class ImageFileHandler extends AbstractFileHandler
         'maxHeight' => 1200,
     );
 
-    public function __construct(ImagineInterface $imagine, array $options = array(), VariantMatcher $variantMatcher)
+    public function __construct(ImagineInterface $imagine, array $options = array(), PathMatcher $variantMatcher)
     {
         parent::__construct($variantMatcher);
 
