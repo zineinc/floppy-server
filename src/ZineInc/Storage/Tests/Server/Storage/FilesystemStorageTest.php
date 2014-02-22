@@ -9,6 +9,7 @@ use ZineInc\Storage\Server\FileSource;
 use ZineInc\Storage\Server\FileType;
 use ZineInc\Storage\Server\Storage\FilepathChoosingStrategy;
 use ZineInc\Storage\Server\Storage\FilesystemStorage;
+use ZineInc\Storage\Server\Storage\IdFactory;
 use ZineInc\Storage\Server\Storage\IdFactoryImpl;
 use ZineInc\Storage\Server\Storage\StoreException;
 use ZineInc\Storage\Server\Stream\StringInputStream;
@@ -18,6 +19,7 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
     const FILEPATH = 'some/file.txt';
     const FILESOURCE = 'abc';
     const STORAGE_RELATIVE_DIR = '/../../Resources/storage/';
+    const ID = 'abcdefghijk';
 
     private $storage;
     private $storageDir;
@@ -27,7 +29,7 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
     {
         $this->storageDir = __DIR__.self::STORAGE_RELATIVE_DIR;
         $this->filepath = $this->storageDir.self::FILEPATH;
-        $this->storage = new FilesystemStorage($this->storageDir, new FilesystemStorageTest_FilepathChoosingStrategy(self::FILEPATH), new IdFactoryImpl());
+        $this->storage = new FilesystemStorage($this->storageDir, new FilesystemStorageTest_FilepathChoosingStrategy(self::FILEPATH), new FilesystemStorageTest_IdFactory(self::ID));
     }
     
     /**
@@ -46,7 +48,7 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
 
         //then
 
-        $this->assertNotNull($id);
+        $this->assertEquals(self::ID, $id);
         $this->assertTrue(file_exists($expectedFilepath));
         $this->assertEquals(self::FILESOURCE, file_get_contents($expectedFilepath));
     }
@@ -102,6 +104,36 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
         $this->storage->store($fileSource);
     }
 
+
+    /**
+     * @test
+     */
+    public function getSource_fileExists_returnFileSource()
+    {
+        //given
+
+        $filesystem = new Filesystem();
+        $filesystem->dumpFile($this->filepath, self::FILESOURCE);
+
+        //when
+
+        $fileSource = $this->storage->getSource(new FileId(self::ID));
+
+        //then
+
+        $this->assertNotNull($fileSource);
+        $this->assertEquals(self::FILESOURCE, $fileSource->content());
+    }
+
+    /**
+     * @test
+     * @expectedException ZineInc\Storage\Server\Storage\FileSourceNotFoundException
+     */
+    public function getSource_fileDoesntExist_throwEx()
+    {
+        $this->storage->getSource(new FileId(self::ID));
+    }
+
     protected function tearDown()
     {
         $filesystem = new Filesystem();
@@ -122,5 +154,21 @@ class FilesystemStorageTest_FilepathChoosingStrategy implements FilepathChoosing
     public function filepath(FileId $fileId)
     {
         return $this->filepath;
+    }
+}
+
+class FilesystemStorageTest_IdFactory implements IdFactory
+{
+    private $id;
+
+    public function __construct($id)
+    {
+        $this->id = $id;
+    }
+
+
+    public function id(FileSource $fileSource)
+    {
+        return $this->id;
     }
 }

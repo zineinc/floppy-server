@@ -4,6 +4,8 @@ namespace ZineInc\Storage\Server\Storage;
 
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
+use Symfony\Component\HttpFoundation\File\File;
 use ZineInc\Storage\Common\FileId;
 use ZineInc\Storage\Server\FileSource;
 
@@ -40,14 +42,23 @@ class FilesystemStorage implements Storage
 
     public function getSource(FileId $fileId)
     {
-        //TODO: impl
+        $filepath = $this->filepathChoosingStrategy->filepath($fileId);
+        $fullFilepath = $this->storageDir.'/'.$filepath;
+
+        try
+        {
+            $file = new File($fullFilepath, true);
+            return FileSource::fromFile($file);
+        }
+        catch (FileNotFoundException $e)
+        {
+            throw new FileSourceNotFoundException($e->getMessage(), $e);
+        }
     }
 
     public function store(FileSource $fileSource, $filepath = null)
     {
-        if($filepath !== null && strpos($filepath, '..') !== false) {
-            throw new StoreException(sprintf('Invalid filepath: %s', $filepath));
-        }
+        $this->ensureValidFilepath($filepath);
 
         $id = $this->idFactory->id($fileSource);
 
@@ -65,5 +76,16 @@ class FilesystemStorage implements Storage
         }
 
         return $id;
+    }
+
+    /**
+     * @param $filepath
+     * @throws StoreException
+     */
+    private function ensureValidFilepath($filepath)
+    {
+        if ($filepath !== null && strpos($filepath, '..') !== false) {
+            throw new StoreException(sprintf('Invalid filepath: %s', $filepath));
+        }
     }
 }

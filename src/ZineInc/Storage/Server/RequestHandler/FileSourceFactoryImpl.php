@@ -27,8 +27,6 @@ class FileSourceFactoryImpl implements FileSourceFactory
 
         $file = $request->files->get($this->fileKey);
 
-        $content = file_get_contents($file->getPathname());
-
-        return new FileSource(new StringInputStream($content), new FileType($file->getMimeType(), $file->guessExtension()));
+        return FileSource::fromFile($file);
     }
 }

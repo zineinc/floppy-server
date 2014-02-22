@@ -2,12 +2,24 @@
 
 namespace ZineInc\Storage\Server;
 
+use Symfony\Component\HttpFoundation\File\File;
 use ZineInc\Storage\Server\Stream\InputStream;
+use ZineInc\Storage\Server\Stream\StringInputStream;
 
 final class FileSource
 {
     private $stream;
     private $fileType;
+
+    /**
+     * @param File $file
+     * @return FileSource
+     */
+    public static function fromFile(File $file)
+    {
+        $content = file_get_contents($file->getPathname());
+        return new self(new StringInputStream($content), new FileType($file->getMimeType(), $file->guessExtension()));
+    }
 
     public function __construct(InputStream $stream, FileType $fileType)
     {
