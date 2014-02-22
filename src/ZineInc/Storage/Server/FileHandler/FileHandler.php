@@ -2,6 +2,7 @@
 
 namespace ZineInc\Storage\Server\FileHandler;
 
+use Symfony\Component\HttpFoundation\Response;
 use ZineInc\Storage\Common\AttributesBag;
 use ZineInc\Storage\Common\FileHandler\PathMatcher;
 use ZineInc\Storage\Common\FileId;
@@ -42,4 +43,11 @@ interface FileHandler extends PathMatcher
      * @return FileSource
      */
     public function beforeSendProcess(FileSource $file, FileId $fileId);
+
+    /**
+     * @param FileSource $file File that should be in response
+     * @param FileId $fileId
+     * @return Response
+     */
+    public function createResponse(FileSource $file, FileId $fileId);
 }

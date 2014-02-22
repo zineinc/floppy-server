@@ -2,6 +2,7 @@
 
 namespace ZineInc\Storage\Server\FileHandler;
 
+use Symfony\Component\HttpFoundation\Response;
 use ZineInc\Storage\Common\FileHandler\PathMatcher;
 use ZineInc\Storage\Common\FileId;
 use ZineInc\Storage\Server\FileSource;
@@ -11,16 +12,21 @@ abstract class AbstractFileHandler implements FileHandler
 {
     const TYPE = 'f';
 
-    private $variantMatcher;
+    private $pathMatcher;
 
-    public function __construct(PathMatcher $variantMatcher)
+    public function __construct(PathMatcher $pathMatcher)
     {
-        $this->variantMatcher = $variantMatcher;
+        $this->pathMatcher = $pathMatcher;
     }
 
     public function match($variantFilepath)
     {
-        return $this->variantMatcher->match($variantFilepath);
+        return $this->pathMatcher->match($variantFilepath);
+    }
+
+    public function matches($variantFilepath)
+    {
+        return $this->pathMatcher->matches($variantFilepath);
     }
 
     public function beforeSendProcess(FileSource $file, FileId $fileId)
@@ -59,5 +65,17 @@ abstract class AbstractFileHandler implements FileHandler
     public function type()
     {
         return static::TYPE;
+    }
+
+    public function createResponse(FileSource $fileSource, FileId $fileId)
+    {
+        return $this->filterResponse(new Response($fileSource->content(), 200, array(
+            'Content-Type' => $fileSource->fileType()->mimeType(),
+        )), $fileSource, $fileId);
+    }
+
+    protected function filterResponse(Response $response, FileSource $fileSource, FileId $fileId)
+    {
+        return $response;
     }
 }

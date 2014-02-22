@@ -14,7 +14,7 @@ class ImagePathMatcherTest extends AbstractPathMatcherTest
         return new \ZineInc\Storage\Common\FileHandler\ImagePathMatcher($checksumChecker);
     }
 
-    public function dataProvider()
+    public function matchDataProvider()
     {
         return array(
             array(
@@ -36,6 +36,21 @@ class ImagePathMatcherTest extends AbstractPathMatcherTest
                 'some/dirs/to/ignore/'.self::VALID_CHECKSUM.'_0_0_0_fileid.jpeg',
                 true,
                 null,
+            ),
+        );
+    }
+
+    public function matchesDataProvider()
+    {
+        return array(
+            array(
+                'some/dirs/to/ignore/'.self::INVALID_CHECKSUM.'_900_502_ffffff_0_0_0_0_fileid.jpeg',
+                true,
+            ),
+            //some params missiong
+            array(
+                'some/dirs/to/ignore/'.self::VALID_CHECKSUM.'_502_ffffff_0_0_0_0_fileid.jpeg',
+                false,
             ),
         );
     }

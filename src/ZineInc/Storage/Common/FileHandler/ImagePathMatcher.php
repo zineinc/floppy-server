@@ -41,4 +41,17 @@ class ImagePathMatcher implements PathMatcher
             'crop' => array((float)$params[3], (float)$params[4], (float)$params[5], (float)$params[6]),
         ));
     }
+
+    /**
+     * @param $variantFilepath
+     * @return boolean
+     */
+    public function matches($variantFilepath)
+    {
+        $variantFilepath = basename($variantFilepath);
+
+        $params = explode('_', $variantFilepath);
+
+        return count($params) === 9;
+    }
 }

@@ -8,8 +8,8 @@ use ZineInc\Storage\Server\StorageException;
 
 class FileHandlerNotFoundException extends Exception implements StorageException
 {
-    public function __construct($message = null, Exception $previous = null)
+    public function __construct($message = null, $code = ErrorCodes::UNSUPPORTED_FILE_TYPE, Exception $previous = null)
     {
-        parent::__construct($message, ErrorCodes::UNSUPPORTED_FILE_TYPE, $previous);
+        parent::__construct($message, $code, $previous);
     }
 }

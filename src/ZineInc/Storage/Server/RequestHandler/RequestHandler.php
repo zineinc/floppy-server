@@ -8,9 +8,12 @@ use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use ZineInc\Storage\Common\FileHandler\PathMatchingException;
+use ZineInc\Storage\Server\ErrorCodes;
 use ZineInc\Storage\Server\FileHandler\FileHandler;
 use ZineInc\Storage\Server\FileSource;
 use ZineInc\Storage\Server\Storage\Storage;
+use ZineInc\Storage\Server\Storage\StoreException;
 use ZineInc\Storage\Server\StorageError;
 use ZineInc\Storage\Server\StorageException;
 
@@ -40,7 +43,7 @@ class RequestHandler implements LoggerAwareInterface
         if(rtrim($request->getPathInfo(), '/') === '/upload') {
             return $this->handleUploadRequest($request);
         } else {
-            return new Response('', 404);
+            return $this->handleDownloadRequest($request);
         }
     }
 
@@ -97,6 +100,44 @@ class RequestHandler implements LoggerAwareInterface
         }
 
         throw new FileHandlerNotFoundException(sprintf('File type "%s" is unsupported', $fileSource->fileType()->mimeType()));
+    }
+
+    private function handleDownloadRequest(Request $request) {
+        try {
+            $path = rtrim($request->getPathInfo(), '/');
+            $handler = $this->findFileHandlerMatches($path);
+
+            $fileId = $handler->match($path);
+
+            $fileSource = $this->storage->getSource($fileId);
+
+            $processedFileSource = $handler->beforeSendProcess($fileSource, $fileId);
+
+            if($processedFileSource !== $fileSource) {
+                //TODO: store
+            }
+
+            return $handler->createResponse($fileSource, $fileId);
+        } catch(StorageError $e) {
+            $this->logger->error($e);
+            return $this->createErrorResponse($e, 500);
+        } catch(StorageException $e) {
+            $this->logger->error($e);
+            return $this->createErrorResponse($e, 400);
+        }
+    }
+
+    /**
+     * @return FileHandler
+     */
+    private function findFileHandlerMatches($path){
+        foreach ($this->fileHandlers as $handler) {
+            if($handler->matches($path)) {
+                return $handler;
+            }
+        }
+
+        throw new FileHandlerNotFoundException('file not found', ErrorCodes::FILE_NOT_FOUND);
     }
 
     public function setLogger(LoggerInterface $logger)

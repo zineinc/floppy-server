@@ -27,7 +27,7 @@ interface Storage
      *
      * @return FileSource
      *
-     * @throws Exception When file not found
+     * @throws FileSourceNotFoundException When file not found
      */
     public function getSource(FileId $fileId);
 }

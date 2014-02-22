@@ -46,4 +46,16 @@ class FilePathMatcher implements PathMatcher
 
         return $result;
     }
+
+    /**
+     * @param $variantFilepath
+     * @return boolean
+     */
+    public function matches($variantFilepath)
+    {
+        $parsedUrl = parse_url($variantFilepath);
+        $query = $this->parseQuery($parsedUrl['query']);
+
+        return isset($query['name'], $query['checksum']);
+    }
 }

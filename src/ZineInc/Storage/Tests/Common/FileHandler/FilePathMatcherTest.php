@@ -14,7 +14,7 @@ class FilePathMatcherTest extends AbstractPathMatcherTest
         return new \ZineInc\Storage\Common\FileHandler\FilePathMatcher($checksumChecker);
     }
 
-    public function dataProvider()
+    public function matchDataProvider()
     {
         return array(
             array(
@@ -28,6 +28,27 @@ class FilePathMatcherTest extends AbstractPathMatcherTest
                 'some/dirs/to/ignore/fileid.zip?name=some-name&checksum='.self::INVALID_CHECKSUM,
                 true,
                 null,
+            ),
+        );
+    }
+
+    public function matchesDataProvider()
+    {
+
+        return array(
+            array(
+                'some/dirs/to/ignore/file.zip?name=some&checksum='.self::INVALID_CHECKSUM,
+                true
+            ),
+            //checksum is missing
+            array(
+                'some/dir/to/ignore/file.zip?name=some',
+                false
+            ),
+            //name is missing
+            array(
+                'some/dir/to/ignore/file.zip?checksum=some',
+                false
             ),
         );
     }

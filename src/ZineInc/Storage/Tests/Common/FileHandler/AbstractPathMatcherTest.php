@@ -21,12 +21,11 @@ abstract class AbstractPathMatcherTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @dataProvider dataProvider
+     * @dataProvider matchDataProvider
      */
     public function testMatch($variantFilename, $expectedException, $expectedFileId)
     {
-        if($expectedException)
-        {
+        if($expectedException) {
             $this->setExpectedException('ZineInc\Storage\Common\FileHandler\PathMatchingException');
         }
 
@@ -35,5 +34,34 @@ abstract class AbstractPathMatcherTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expectedFileId, $actualFileId);
     }
 
-    public abstract function dataProvider();
+    public abstract function matchDataProvider();
+
+    /**
+     * @test
+     * @dataProvider matchesDataProvider
+     */
+    public function testMatches($variantFilename, $expectedMatches)
+    {
+        $this->assertEquals($expectedMatches, $this->matcher->matches($variantFilename));
+    }
+
+    public abstract function matchesDataProvider();
+
+    /**
+     * @test
+     * @dataProvider matchesDataProvider
+     */
+    public function testMatch_throwExceptionWhenMatchesReturnFalse($variantFilepath, $expectedMatches)
+    {
+        if($expectedMatches) {
+            //skip, this tests only condition when PathMatcher::matches return false
+            return;
+        }
+
+        if(!$expectedMatches) {
+            $this->setExpectedException('ZineInc\Storage\Common\FileHandler\PathMatchingException');
+        }
+
+        $this->matcher->match($variantFilepath);
+    }
 }
