@@ -28,7 +28,12 @@ class ImageFileHandlerTest extends PHPUnit_Framework_TestCase
     {
         $this->imagine = new Imagine();
 
-        $this->handler = new ImageFileHandler($this->imagine, array(), $this->getMock('ZineInc\Storage\Common\FileHandler\PathMatcher'));
+        $this->handler = new ImageFileHandler(
+            $this->imagine,
+            $this->getMock('ZineInc\Storage\Common\FileHandler\PathMatcher'),
+            $this->getMock('ZineInc\Storage\Server\FileHandler\ImageProcess'),
+            array()
+        );
     }
 
     /**
@@ -65,7 +70,7 @@ class ImageFileHandlerTest extends PHPUnit_Framework_TestCase
     {
         //given
 
-        $fileSource = $this->createImageFileSource(__DIR__.'/../../Resources/100x80.png');
+        $fileSource = $this->createImageFileSource(__DIR__.'/../../Resources/100x80-black.png');
 
         //when
 
@@ -95,7 +100,7 @@ class ImageFileHandlerTest extends PHPUnit_Framework_TestCase
             'maxHeight' => $maxSize,
             'maxWidth' => $maxSize
         ));
-        $fileSource = $this->createImageFileSource(__DIR__.'/../../Resources/100x80.png');
+        $fileSource = $this->createImageFileSource(__DIR__.'/../../Resources/100x80-black.png');
 
         //when
 
@@ -121,7 +126,7 @@ class ImageFileHandlerTest extends PHPUnit_Framework_TestCase
             'maxWidth' => $maxSize
         ));
 
-        $fileSource = $this->createImageFileSource(__DIR__.'/../../Resources/100x80.png');
+        $fileSource = $this->createImageFileSource(__DIR__.'/../../Resources/100x80-black.png');
 
         //when
 

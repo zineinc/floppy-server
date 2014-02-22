@@ -24,6 +24,7 @@ class ImageFileHandler extends AbstractFileHandler
         'image/gif',
     );
     private $imagine;
+    private $imageProcess;
 
     private $options = array(
         'supportedMimeTypes' => null,
@@ -31,7 +32,7 @@ class ImageFileHandler extends AbstractFileHandler
         'maxHeight' => 1200,
     );
 
-    public function __construct(ImagineInterface $imagine, array $options = array(), PathMatcher $variantMatcher)
+    public function __construct(ImagineInterface $imagine, PathMatcher $variantMatcher, ImageProcess $imageProcess, array $options = array())
     {
         parent::__construct($variantMatcher);
 
@@ -40,6 +41,7 @@ class ImageFileHandler extends AbstractFileHandler
         $this->setOptions($options);
 
         $this->imagine = $imagine;
+        $this->imageProcess = $imageProcess;
     }
 
     public function setOptions(array $options)
@@ -55,17 +57,16 @@ class ImageFileHandler extends AbstractFileHandler
         }
     }
 
-    //TODO
     public function beforeSendProcess(FileSource $file, FileId $fileId)
     {
-        return $file;
+        return $this->imageProcess->process($this->imagine, $file, $fileId->attributes());
     }
 
     public function beforeStoreProcess(FileSource $file)
     {
         try
         {
-            $image = $this->imagine->load($this->fileContent($file));
+            $image = $this->imagine->load($file->content());
 
             $size = $image->getSize();
 
@@ -89,11 +90,6 @@ class ImageFileHandler extends AbstractFileHandler
         {
             throw new FileProcessException('Image before store processing error', $e);
         }
-    }
-
-    private function fileContent(FileSource $file)
-    {
-        return $file->content();
     }
 
     protected function doGetStoreAttributes(FileSource $file, $content)
