@@ -114,7 +114,7 @@ class RequestHandler implements LoggerAwareInterface
             $processedFileSource = $handler->beforeSendProcess($fileSource, $fileId);
 
             if($processedFileSource !== $fileSource) {
-                //TODO: store
+                $this->storage->store($processedFileSource, $path);
             }
 
             return $handler->createResponse($fileSource, $fileId);

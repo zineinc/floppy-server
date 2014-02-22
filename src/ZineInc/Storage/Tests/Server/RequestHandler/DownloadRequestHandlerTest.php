@@ -65,6 +65,37 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function fileHandlerFound_fileExists_processSuccesAndFileSourceChanges_storeFileVariant_returnOkResponse() {
+        //given
+
+        $fileSource = $this->createFileSource();
+        $processedFileSource = $this->createFileSource();
+        $fileId = $this->createFileId();
+        $response = $this->createResponse();
+
+        $this->expectsFileHandlerMatchesAndMatch($this->fileHandlers[0], $fileId);
+        $this->expectsGetFileSourceFromStorage($fileId, $fileSource);
+        $this->expectsFileHandlerSuccessProcess($this->fileHandlers[0], $fileId, $processedFileSource);
+        $this->expectsFileHandlerCreateResponse($this->fileHandlers[0], $fileId, $fileSource, $response);
+
+        $this->storage->expects($this->once())
+            ->method('store')
+            ->with($processedFileSource, self::DOWNLOAD_URI);
+
+
+        //when
+
+        $actualResponse = $this->requestHandler->handle($this->createDownloadRequest());
+
+        //then
+
+        $this->verifyMockObjects();
+        $this->assertEquals($response, $actualResponse);
+    }
+
+    /**
+     * @test
+     */
     public function fileHandlerFound_fileExists_processFailed_returnBadResponse() {
         //given
 
