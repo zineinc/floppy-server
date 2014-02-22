@@ -43,11 +43,15 @@ class FilesystemStorage implements Storage
         //TODO: impl
     }
 
-    public function store(FileSource $fileSource)
+    public function store(FileSource $fileSource, $filepath = null)
     {
+        if($filepath !== null && strpos($filepath, '..') !== false) {
+            throw new StoreException(sprintf('Invalid filepath: %s', $filepath));
+        }
+
         $id = $this->idFactory->id($fileSource);
 
-        $filepath = $this->filepathChoosingStrategy->filepath(new FileId($id));
+        $filepath = ltrim($filepath ? : $this->filepathChoosingStrategy->filepath(new FileId($id)), '/');
 
         $fullFilepath = $this->storageDir.'/'.$filepath;
 
@@ -61,10 +65,5 @@ class FilesystemStorage implements Storage
         }
 
         return $id;
-    }
-
-    public function storeVariant(FileSource $file, FileId $fileId)
-    {
-        //TODO: impl
     }
 }

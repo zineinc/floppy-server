@@ -15,12 +15,7 @@ interface Storage
      *
      * @throws StoreException
      */
-    public function store(FileSource $file);
-
-    /**
-     * Stores file variant to persistent storage
-     */
-    public function storeVariant(FileSource $file, FileId $fileId);
+    public function store(FileSource $file, $filepath = null);
 
     /**
      * Returns file source for given $fileId
