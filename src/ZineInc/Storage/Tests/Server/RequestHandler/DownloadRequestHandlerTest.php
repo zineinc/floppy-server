@@ -69,14 +69,14 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
         //given
 
         $fileSource = $this->createFileSource();
-        $processedFileSource = $this->createFileSource();
+        $processedFileSource = $this->createFileSource('processed-content');
         $fileId = $this->createFileId();
         $response = $this->createResponse();
 
         $this->expectsFileHandlerMatchesAndMatch($this->fileHandlers[0], $fileId);
         $this->expectsGetFileSourceFromStorage($fileId, $fileSource);
-        $this->expectsFileHandlerSuccessProcess($this->fileHandlers[0], $fileId, $processedFileSource);
-        $this->expectsFileHandlerCreateResponse($this->fileHandlers[0], $fileId, $fileSource, $response);
+        $this->expectsFileHandlerSuccessProcess($this->fileHandlers[0], $fileId, $fileSource, $processedFileSource);
+        $this->expectsFileHandlerCreateResponse($this->fileHandlers[0], $fileId, $processedFileSource, $response);
 
         $this->storage->expects($this->once())
             ->method('store')
@@ -190,8 +190,8 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
         return new FileId(self::SOME_ID);
     }
 
-    private function createFileSource(){
-        return new FileSource(new StringInputStream('some'), new FileType('text/plain', 'text'));
+    private function createFileSource($content = 'some'){
+        return new FileSource(new StringInputStream($content), new FileType('text/plain', 'text'));
     }
 
     private function createDownloadRequest()
@@ -241,12 +241,12 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
      * @param $fileId
      * @param $fileSource
      */
-    private function expectsFileHandlerSuccessProcess($handler, $fileId, $fileSource)
+    private function expectsFileHandlerSuccessProcess($handler, $fileId, $fileSource, $processedFileSource = null)
     {
         $handler->expects($this->once())
             ->method('beforeSendProcess')
             ->with($fileSource, $fileId)
-            ->will($this->returnValue($fileSource));
+            ->will($this->returnValue($processedFileSource ?: $fileSource));
     }
 
     /**

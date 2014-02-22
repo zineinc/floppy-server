@@ -117,7 +117,7 @@ class RequestHandler implements LoggerAwareInterface
                 $this->storage->store($processedFileSource, $path);
             }
 
-            return $handler->createResponse($fileSource, $fileId);
+            return $handler->createResponse($processedFileSource, $fileId);
         } catch(StorageError $e) {
             $this->logger->error($e);
             return $this->createErrorResponse($e, 500);
