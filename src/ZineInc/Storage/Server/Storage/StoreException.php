@@ -4,7 +4,7 @@ namespace ZineInc\Storage\Server\Storage;
 
 use Exception;
 use ZineInc\Storage\Server\ErrorCodes;
-use ZineInc\Storage\Server\StorageError;
+use ZineInc\Storage\Common\StorageError;
 
 class StoreException extends Exception implements StorageError
 {

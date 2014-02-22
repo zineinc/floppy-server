@@ -5,6 +5,7 @@ namespace ZineInc\Storage\Tests\Server\RequestHandler;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use ZineInc\Storage\Common\FileHandler\PathMatchingException;
 use ZineInc\Storage\Common\FileId;
 use ZineInc\Storage\Server\FileHandler\FileProcessException;
 use ZineInc\Storage\Server\FileSource;
@@ -70,7 +71,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
         $fileSource = $this->createFileSource();
         $fileId = $this->createFileId();
 
-        $this->expectsFileHandlerMatches($this->fileHandlers[0], $fileId);
+        $this->expectsFileHandlerMatchesAndMatch($this->fileHandlers[0], $fileId);
         $this->expectsGetFileSourceFromStorage($fileId, $fileSource);
         $this->expectsFileHandlerErrorProcess($this->fileHandlers[0]);
 
@@ -94,7 +95,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
         //given
 
         $fileId = $this->createFileId();
-        $this->expectsFileHandlerMatches($this->fileHandlers[0], $fileId);
+        $this->expectsFileHandlerMatchesAndMatch($this->fileHandlers[0], $fileId);
         $this->expectsFileSourceNotFound();
 
         //when
@@ -128,6 +129,28 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertGreaterThanOrEqual(400, $actualResponse->getStatusCode());
     }
 
+    /**
+     * @test
+     */
+    public function fileHandlerFound_fileHandlerMatchError_returnBadResponse() {
+        //given
+
+        $this->expectsFileHandlerMatches($this->fileHandlers[0]);
+        $this->fileHandlers[0]->expects($this->atLeastOnce())
+            ->method('match')
+            ->will($this->throwException(new PathMatchingException()));
+
+        //when
+
+        $actualResponse = $this->requestHandler->handle($this->createDownloadRequest());
+
+        //then
+
+        $this->verifyMockObjects();
+        $this->assertNotNull($actualResponse);
+        $this->assertGreaterThanOrEqual(400, $actualResponse->getStatusCode());
+    }
+
     private function createResponse() {
         return new Response('some-content');
     }
@@ -147,7 +170,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
 
     private function expectsSuccessFileHandler($handler, $fileId, $fileSource, $response)
     {
-        $this->expectsFileHandlerMatches($handler, $fileId);
+        $this->expectsFileHandlerMatchesAndMatch($handler, $fileId);
         $this->expectsFileHandlerSuccessProcess($handler, $fileId, $fileSource);
         $this->expectsFileHandlerCreateResponse($handler, $fileId, $fileSource, $response);
     }
@@ -174,18 +197,13 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
      * @param $handler
      * @param $fileId
      */
-    private function expectsFileHandlerMatches($handler, $fileId)
+    private function expectsFileHandlerMatchesAndMatch($handler, $fileId)
     {
-        $handler->expects($this->any())
-            ->method('matches')
-            ->with(self::DOWNLOAD_URI)
-            ->will($this->returnValue(true));
-
-        $handler->expects($this->atLeastOnce())
-            ->method('match')
-            ->with(self::DOWNLOAD_URI)
-            ->will($this->returnValue($fileId));
+        $this->expectsFileHandlerMatches($handler);
+        $this->expectsFileHandlerMatch($handler, $fileId);
     }
+
+
 
     /**
      * @param $handler
@@ -234,5 +252,28 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue(false));
         $handler->expects($this->never())
             ->method('match');
+    }
+
+    /**
+     * @param $handler
+     */
+    private function expectsFileHandlerMatches($handler)
+    {
+        $handler->expects($this->any())
+            ->method('matches')
+            ->with(self::DOWNLOAD_URI)
+            ->will($this->returnValue(true));
+    }
+
+    /**
+     * @param $handler
+     * @param $fileId
+     */
+    private function expectsFileHandlerMatch($handler, $fileId)
+    {
+        $handler->expects($this->atLeastOnce())
+            ->method('match')
+            ->with(self::DOWNLOAD_URI)
+            ->will($this->returnValue($fileId));
     }
 }

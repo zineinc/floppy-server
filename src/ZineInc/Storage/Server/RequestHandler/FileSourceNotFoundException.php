@@ -4,7 +4,7 @@ namespace ZineInc\Storage\Server\RequestHandler;
 
 use Exception;
 use ZineInc\Storage\Server\ErrorCodes;
-use ZineInc\Storage\Server\StorageException;
+use ZineInc\Storage\Common\StorageException;
 
 class FileSourceNotFoundException extends Exception implements StorageException
 {

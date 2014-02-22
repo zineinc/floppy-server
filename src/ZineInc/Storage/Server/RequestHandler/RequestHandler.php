@@ -14,8 +14,8 @@ use ZineInc\Storage\Server\FileHandler\FileHandler;
 use ZineInc\Storage\Server\FileSource;
 use ZineInc\Storage\Server\Storage\Storage;
 use ZineInc\Storage\Server\Storage\StoreException;
-use ZineInc\Storage\Server\StorageError;
-use ZineInc\Storage\Server\StorageException;
+use ZineInc\Storage\Common\StorageError;
+use ZineInc\Storage\Common\StorageException;
 
 class RequestHandler implements LoggerAwareInterface
 {

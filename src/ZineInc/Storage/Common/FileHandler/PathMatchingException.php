@@ -2,6 +2,8 @@
 
 namespace ZineInc\Storage\Common\FileHandler;
 
-class PathMatchingException extends \Exception
+use ZineInc\Storage\Common\StorageException;
+
+class PathMatchingException extends \Exception implements StorageException
 {
 }
