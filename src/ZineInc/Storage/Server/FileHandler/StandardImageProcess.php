@@ -25,8 +25,8 @@ class StandardImageProcess implements ImageProcess
 
         $requestedColor = $attrs->get('cropBackgroundColor');
 
-        $newSize = $ratio > 1 ? new Box($requestedWidth, $requestedHeight/$ratio)
-            : new Box($requestedWidth*$ratio, $requestedHeight);
+        $newSize = $ratio > 1 ? new Box($requestedWidth, $requestedWidth/$ratio)
+            : new Box($requestedHeight*$ratio, $requestedHeight);
 
         $image->resize($newSize);
 

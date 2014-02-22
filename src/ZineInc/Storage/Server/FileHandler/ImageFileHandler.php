@@ -76,8 +76,8 @@ class ImageFileHandler extends AbstractFileHandler
 
             $ratio = $size->getWidth()/$size->getHeight();
 
-            $newSize = $ratio > 1 ? new Box($this->options['maxWidth'], $this->options['maxHeight']/$ratio)
-                    : new Box($this->options['maxWidth']*$ratio, $this->options['maxHeight']);
+            $newSize = $ratio > 1 ? new Box($this->options['maxWidth'], $this->options['maxWidth']/$ratio)
+                    : new Box($this->options['maxHeight']*$ratio, $this->options['maxHeight']);
 
             $image->resize($newSize);
 
