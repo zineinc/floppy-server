@@ -41,10 +41,9 @@ class FilesystemStorage implements Storage
         $this->filesystem = $filesystem;
     }
 
-    public function getSource(FileId $fileId)
+    public function getSource(FileId $fileId, $filename = null)
     {
-        $filepath = $this->filepathChoosingStrategy->filepath($fileId);
-        $fullFilepath = $this->storageDir . '/' . $filepath . '/' . $fileId->id();
+        $fullFilepath = $this->getFilepath($fileId, $filename);
 
         try {
             $file = new File($fullFilepath, true);
@@ -52,6 +51,18 @@ class FilesystemStorage implements Storage
         } catch (FileNotFoundException $e) {
             throw new FileSourceNotFoundException($e->getMessage(), $e);
         }
+    }
+
+
+    /**
+     * @return string
+     */
+    private function getFilepath(FileId $fileId, $filename = null)
+    {
+        $filepath = $this->filepathChoosingStrategy->filepath($fileId);
+        $fullFilepath = $this->storageDir . '/' . $filepath . '/' . ($filename ?: $fileId->id());
+
+        return $fullFilepath;
     }
 
     public function store(FileSource $fileSource, FileId $fileId = null, $filename = null)
@@ -82,5 +93,13 @@ class FilesystemStorage implements Storage
         if ($filepath !== null && strpos($filepath, '..') !== false) {
             throw new StoreException(sprintf('Invalid filepath: %s', $filepath));
         }
+    }
+
+    public function exists(FileId $fileId, $filename = null)
+    {
+        $filepath = $this->getFilepath($fileId, $filename);
+
+        $file = new File($filepath, false);
+        return $file->isFile();
     }
 }

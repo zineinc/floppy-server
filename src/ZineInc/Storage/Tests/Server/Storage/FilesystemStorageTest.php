@@ -124,19 +124,37 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
      */
     public function getSource_fileExists_returnFileSource()
     {
+        $this->verifyGetSource(self::ID);
+    }
+
+    /**
+     * @test
+     */
+    public function getSource_givenFilename_fileExists_returnFileSource()
+    {
+        $this->verifyGetSource(self::ID, 'some-filename.jpg');
+    }
+
+    private function verifyGetSource($id, $filename = null)
+    {
         //given
 
-        $filesystem = new Filesystem();
-        $filesystem->dumpFile($this->filepath . '/' . self::ID, self::FILESOURCE);
+        $this->dumpFile($this->filepath . '/' . ($filename ?: $id));
 
         //when
 
-        $fileSource = $this->storage->getSource(new FileId(self::ID));
+        $fileSource = $this->storage->getSource(new FileId(self::ID), $filename);
 
         //then
 
         $this->assertNotNull($fileSource);
         $this->assertEquals(self::FILESOURCE, $fileSource->content());
+    }
+
+    private function dumpFile($filepath)
+    {
+        $filesystem = new Filesystem();
+        $filesystem->dumpFile($filepath, self::FILESOURCE);
     }
 
     /**
@@ -146,6 +164,55 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
     public function getSource_fileDoesntExist_throwEx()
     {
         $this->storage->getSource(new FileId(self::ID));
+    }
+
+    /**
+     * @test
+     */
+    public function exists_fileExists_returnTrue()
+    {
+        $this->verifyExists(self::ID);
+    }
+
+    /**
+     * @test
+     */
+    public function exists_givenFilename_fileExists_returnTrue()
+    {
+        $this->verifyExists(self::ID, 'some-another-filename.jpg');
+    }
+
+    private function verifyExists($id, $filename = null)
+    {
+        //given
+
+        $this->dumpFile($this->filepath . '/' . ($filename ?: $id));
+
+        //when
+
+        $actual = $this->storage->exists(new FileId($id), $filename);
+
+        //then
+
+        $this->assertTrue($actual);
+    }
+
+    /**
+     * @test
+     */
+    public function exists_givenFilename_originalFileExistsButGivenFilenameDoesNot_returnFalse()
+    {
+        //given
+
+        $this->dumpFile($this->filepath . '/' . self::ID);
+
+        //when
+
+        $actual = $this->storage->exists(new FileId(self::ID), 'some-filepath.jpg');
+
+        //then
+
+        $this->assertFalse($actual);
     }
 
     protected function tearDown()

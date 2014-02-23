@@ -50,7 +50,8 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
 
         $this->expectsSuccessFileHandler($this->fileHandlers[0], $fileId, $fileSource, $response);
 
-        $this->expectsGetFileSourceFromStorage($fileId, $fileSource);
+        $this->expectsProcessedFileDoesNotExistsInStorage($fileId);
+        $this->expectsGetFileSourceFromStorage($fileId->original(), $fileSource);
         $this->expectsDontStoreFileVariant();
 
         //when
@@ -76,7 +77,8 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
         $response = $this->createResponse();
 
         $this->expectsFileHandlerMatchesAndMatch($this->fileHandlers[0], $fileId);
-        $this->expectsGetFileSourceFromStorage($fileId, $fileSource);
+        $this->expectsProcessedFileDoesNotExistsInStorage($fileId);
+        $this->expectsGetFileSourceFromStorage($fileId->original(), $fileSource);
         $this->expectsFileHandlerSuccessProcess($this->fileHandlers[0], $fileId, $fileSource, $processedFileSource);
         $this->expectsFileHandlerCreateResponse($this->fileHandlers[0], $fileId, $processedFileSource, $response);
 
@@ -106,7 +108,8 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
         $fileId = $this->createProcessedFileId();
 
         $this->expectsFileHandlerMatchesAndMatch($this->fileHandlers[0], $fileId);
-        $this->expectsGetFileSourceFromStorage($fileId, $fileSource);
+        $this->expectsProcessedFileDoesNotExistsInStorage($fileId);
+        $this->expectsGetFileSourceFromStorage($fileId->original(), $fileSource);
         $this->expectsFileHandlerErrorProcess($this->fileHandlers[0]);
 
         $this->expectsDontStoreFileVariant();
@@ -188,6 +191,34 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertGreaterThanOrEqual(400, $actualResponse->getStatusCode());
     }
 
+    /**
+     * @test
+     */
+    public function fileHandlerFound_processedFileAlreadyExist_skipProcessing_returnOkResponse()
+    {
+        //given
+
+        $fileId = $this->createProcessedFileId();
+        $fileSource = $this->createFileSource();
+        $response = $this->createResponse();
+
+        $this->expectsFileHandlerMatchesAndMatch($this->fileHandlers[0], $fileId);
+        $this->expectsProcessedFileExistsInStorage($fileId);
+        $this->expectsSkipFileHandlerProcess($this->fileHandlers[0]);
+        $this->expectsDontStoreFileVariant();
+        $this->expectsGetFileSourceFromStorage($fileId, $fileSource, basename(self::DOWNLOAD_URI));
+        $this->expectsFileHandlerCreateResponse($this->fileHandlers[0], $fileId, $fileSource, $response);
+
+        //when
+
+        $actualResponse = $this->requestHandler->handle($this->createDownloadRequest());
+
+        //then
+
+        $this->verifyMockObjects();
+        $this->assertEquals($response, $actualResponse);
+    }
+
     private function createResponse()
     {
         return new Response('some-content');
@@ -219,18 +250,26 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
      * @param $fileId
      * @param $fileSource
      */
-    private function expectsGetFileSourceFromStorage($fileId, $fileSource)
+    private function expectsGetFileSourceFromStorage($fileId, $fileSource, $filename = null)
     {
         $this->storage->expects($this->atLeastOnce())
             ->method('getSource')
-            ->with($fileId->original())
+            ->with($fileId)
             ->will($this->returnValue($fileSource));
+    }
+
+    private function expectsProcessedFileExistsInStorage($fileId)
+    {
+        $this->storage->expects($this->atLeastOnce())
+            ->method('exists')
+            ->with($fileId, basename(self::DOWNLOAD_URI))
+            ->will($this->returnValue(true));
     }
 
     private function expectsDontStoreFileVariant()
     {
         $this->storage->expects($this->never())
-            ->method('storeVariant');
+            ->method('store');
     }
 
     /**
@@ -278,6 +317,12 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
             ->will($this->throwException(new FileProcessException()));
     }
 
+    private function expectsSkipFileHandlerProcess($handler)
+    {
+        $handler->expects($this->never())
+            ->method('beforeSendProcess');
+    }
+
     private function expectsFileSourceNotFound()
     {
         $this->storage->expects($this->once())
@@ -315,5 +360,16 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
             ->method('match')
             ->with(self::DOWNLOAD_URI)
             ->will($this->returnValue($fileId));
+    }
+
+    /**
+     * @param $fileId
+     */
+    private function expectsProcessedFileDoesNotExistsInStorage($fileId)
+    {
+        $this->storage->expects($this->atLeastOnce())
+            ->method('exists')
+            ->with($fileId, basename(self::DOWNLOAD_URI))
+            ->will($this->returnValue(false));
     }
 }
