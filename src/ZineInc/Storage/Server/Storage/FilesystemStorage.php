@@ -43,7 +43,7 @@ class FilesystemStorage implements Storage
     public function getSource(FileId $fileId)
     {
         $filepath = $this->filepathChoosingStrategy->filepath($fileId);
-        $fullFilepath = $this->storageDir.'/'.$filepath;
+        $fullFilepath = $this->storageDir.'/'.$filepath.'/'.$fileId->id();
 
         try
         {

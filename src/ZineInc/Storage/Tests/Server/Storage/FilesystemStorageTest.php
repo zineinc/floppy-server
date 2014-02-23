@@ -113,7 +113,7 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
         //given
 
         $filesystem = new Filesystem();
-        $filesystem->dumpFile($this->filepath, self::FILESOURCE);
+        $filesystem->dumpFile($this->filepath.'/'.self::ID, self::FILESOURCE);
 
         //when
 
