@@ -62,7 +62,7 @@ class RequestHandler implements LoggerAwareInterface
             $attrs['id'] = $id;
 
             return new JsonResponse(array(
-                'message' => null,
+                'code' => 0,
                 'attributes' => $attrs,
             ));
         } catch (StorageError $e) {
@@ -70,14 +70,18 @@ class RequestHandler implements LoggerAwareInterface
             return $this->createErrorResponse($e, 500);
         } catch (StorageException $e) {
             $this->logger->warning($e);
-            return $this->createErrorResponse($e, 400);
+            return $this->createErrorResponse($e, $this->convertErrorCodeToHttpStatusCode($e->getCode()));
         }
+    }
+
+    private function convertErrorCodeToHttpStatusCode($errorCode)
+    {
+        return $errorCode === ErrorCodes::FILE_NOT_FOUND ? 404 : 400;
     }
 
     private function createErrorResponse(StorageException $e, $httpStatusCode)
     {
         return new JsonResponse(array(
-            'message' => $e->getMessage(),
             'code' => $e->getCode(),
             'attributes' => null,
         ), $httpStatusCode);
@@ -118,8 +122,8 @@ class RequestHandler implements LoggerAwareInterface
             $this->logger->error($e);
             return $this->createErrorResponse($e, 500);
         } catch (StorageException $e) {
-            $this->logger->error($e);
-            return $this->createErrorResponse($e, 400);
+            $this->logger->warning($e);
+            return $this->createErrorResponse($e, $this->convertErrorCodeToHttpStatusCode($e->getCode()));
         }
     }
 
