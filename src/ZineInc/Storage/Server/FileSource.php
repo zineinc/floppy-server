@@ -3,6 +3,7 @@
 namespace ZineInc\Storage\Server;
 
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use ZineInc\Storage\Server\Stream\InputStream;
 use ZineInc\Storage\Server\Stream\StringInputStream;
 
@@ -18,7 +19,9 @@ final class FileSource
     public static function fromFile(File $file)
     {
         $content = file_get_contents($file->getPathname());
-        return new self(new StringInputStream($content), new FileType($file->getMimeType(), $file->getExtension()));
+        $extension = $file instanceof UploadedFile ? $file->getClientOriginalExtension() : $file->getExtension();
+
+        return new self(new StringInputStream($content), new FileType($file->getMimeType(), $extension));
     }
 
     public function __construct(InputStream $stream, FileType $fileType)
