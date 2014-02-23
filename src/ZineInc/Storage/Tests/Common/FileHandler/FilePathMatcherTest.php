@@ -29,6 +29,16 @@ class FilePathMatcherTest extends AbstractPathMatcherTest
                 true,
                 null,
             ),
+            array(
+                'some/dirs/to/ignore/fileid.zip',
+                true,
+                null,
+            ),
+            array(
+                'some/dirs/to/ignore/fileid.zip?name',
+                true,
+                null,
+            ),
         );
     }
 

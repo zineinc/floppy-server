@@ -21,7 +21,7 @@ class FilePathMatcher implements PathMatcher
         $parsedUrl = parse_url($variantFilepath);
 
         $filename = $parsedUrl['path'];
-        $query = $this->parseQuery($parsedUrl['query']);
+        $query = isset($parsedUrl['query']) ? $this->parseQuery($parsedUrl['query']) : array();
 
         $name = isset($query['name']) ? $query['name'] : null;
         $checksum = isset($query['checksum']) ? $query['checksum'] : null;
@@ -40,8 +40,11 @@ class FilePathMatcher implements PathMatcher
         $result = array();
 
         foreach (explode('&', $query) as $value) {
-            list($name, $value) = explode('=', $value);
-            $result[$name] = $value;
+            $parts = explode('=', $value);
+            if (count($parts) >= 2) {
+                list($name, $value) = $parts;
+                $result[$name] = $value;
+            }
         }
 
         return $result;
@@ -55,7 +58,7 @@ class FilePathMatcher implements PathMatcher
     public function matches($variantFilepath)
     {
         $parsedUrl = parse_url($variantFilepath);
-        $query = $this->parseQuery($parsedUrl['query']);
+        $query = isset($parsedUrl['query']) ? $this->parseQuery($parsedUrl['query']) : array();
 
         return isset($query['name'], $query['checksum']);
     }
