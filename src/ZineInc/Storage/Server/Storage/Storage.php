@@ -15,7 +15,7 @@ interface Storage
      *
      * @throws StoreException
      */
-    public function store(FileSource $file, $filename = null);
+    public function store(FileSource $file, $id = null, $filename = null);
 
     /**
      * Returns file source for given $fileId

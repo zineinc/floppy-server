@@ -16,10 +16,14 @@ use ZineInc\Storage\Server\Stream\StringInputStream;
 
 class FilesystemStorageTest extends PHPUnit_Framework_TestCase
 {
-    const FILEPATH = 'some';
     const FILESOURCE = 'abc';
     const STORAGE_RELATIVE_DIR = '/../../Resources/storage/';
+
     const ID = 'abcdefghijk.jpg';
+    const FILEPATH_FOR_ID = 'some';
+
+    const DIFFERENT_ID = 'differentid.jpg';
+    const FILEPATH_FOR_DIFFERENT_ID = 'another';
 
     private $storage;
     private $storageDir;
@@ -28,15 +32,22 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->storageDir = __DIR__.self::STORAGE_RELATIVE_DIR;
-        $this->filepath = $this->storageDir.self::FILEPATH;
-        $this->storage = new FilesystemStorage($this->storageDir, new FilesystemStorageTest_FilepathChoosingStrategy(self::FILEPATH), new FilesystemStorageTest_IdFactory(self::ID));
+        $this->filepath = $this->storageDir.self::FILEPATH_FOR_ID;
+        $this->storage = new FilesystemStorage(
+            $this->storageDir,
+            new FilesystemStorageTest_FilepathChoosingStrategy(array(
+                self::ID => self::FILEPATH_FOR_ID,
+                self::DIFFERENT_ID => self::FILEPATH_FOR_DIFFERENT_ID,
+            )),
+            new FilesystemStorageTest_IdFactory(self::ID)
+        );
     }
     
     /**
      * @test
      * @dataProvider filepathProvider
      */
-    public function shouldStoreFileInCorrectLocation($actualFilepath, $expectedFilepath)
+    public function shouldStoreFileInCorrectLocation($fileId, $actualFilepath, $expectedFilepath)
     {
         //given
 
@@ -44,20 +55,23 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
 
         //when
 
-        $id = $this->storage->store($fileSource, $actualFilepath);
+        $id = $this->storage->store($fileSource, $fileId, $actualFilepath);
 
         //then
 
-        $this->assertEquals(self::ID, $id);
+        $expectedId = $fileId ?: self::ID;
+        $this->assertEquals($expectedId, $id);
         $this->assertTrue(file_exists($expectedFilepath));
         $this->assertEquals(self::FILESOURCE, file_get_contents($expectedFilepath));
     }
 
     public function filepathProvider()
     {
+        $filepath = __DIR__.self::STORAGE_RELATIVE_DIR.self::FILEPATH_FOR_ID;
         return array(
-            array(null, __DIR__.self::STORAGE_RELATIVE_DIR.self::FILEPATH.'/'.self::ID),
-            array('file-variant.file', __DIR__.self::STORAGE_RELATIVE_DIR.self::FILEPATH.'/file-variant.file'),
+            array(null, null, $filepath.'/'.self::ID),
+            array(null, 'file-variant.file', $filepath.'/file-variant.file'),
+            array(self::DIFFERENT_ID, 'file-variant.file', __DIR__.self::STORAGE_RELATIVE_DIR.self::FILEPATH_FOR_DIFFERENT_ID.'/file-variant.file'),
         );
     }
     
@@ -79,7 +93,7 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
 
         //when
 
-        $this->storage->store($fileSource, $invalidFilepath);
+        $this->storage->store($fileSource, self::ID, $invalidFilepath);
     }
 
     /**
@@ -138,22 +152,23 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
     {
         $filesystem = new Filesystem();
         $filesystem->remove($this->storageDir.'/some');
+        $filesystem->remove($this->storageDir.'/another');
         $filesystem->remove($this->storageDir.'/../another');
     }
 }
 
 class FilesystemStorageTest_FilepathChoosingStrategy implements FilepathChoosingStrategy
 {
-    private $filepath;
+    private $filepaths;
 
-    public function __construct($filepath)
+    public function __construct($filepaths)
     {
-        $this->filepath = $filepath;
+        $this->filepaths = $filepaths;
     }
 
     public function filepath(FileId $fileId)
     {
-        return $this->filepath;
+        return $this->filepaths[$fileId->id()];
     }
 }
 

@@ -80,7 +80,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
 
         $this->storage->expects($this->once())
             ->method('store')
-            ->with($processedFileSource, basename(self::DOWNLOAD_URI));
+            ->with($processedFileSource, $fileId->id(), basename(self::DOWNLOAD_URI));
 
 
         //when
