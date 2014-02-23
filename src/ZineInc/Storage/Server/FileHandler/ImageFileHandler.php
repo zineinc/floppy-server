@@ -24,7 +24,7 @@ class ImageFileHandler extends AbstractFileHandler
         'image/gif',
     );
     private static $defaultSupportedExtensions = array(
-        'png', 'jpeg', 'gif',
+        'png', 'jpeg', 'gif', 'jpg'
     );
     private $imagine;
     private $imageProcess;

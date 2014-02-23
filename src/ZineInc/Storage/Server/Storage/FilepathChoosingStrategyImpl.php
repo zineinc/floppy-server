@@ -32,8 +32,6 @@ class FilepathChoosingStrategyImpl implements FilepathChoosingStrategy
             $parts[] = substr($id, $i*$this->charsForDir, $this->charsForDir);
         }
 
-        $parts[] = $id;
-
         return implode('/', $parts);
     }
 }

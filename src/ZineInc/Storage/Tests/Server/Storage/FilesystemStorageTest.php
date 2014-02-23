@@ -16,10 +16,10 @@ use ZineInc\Storage\Server\Stream\StringInputStream;
 
 class FilesystemStorageTest extends PHPUnit_Framework_TestCase
 {
-    const FILEPATH = 'some/file.txt';
+    const FILEPATH = 'some';
     const FILESOURCE = 'abc';
     const STORAGE_RELATIVE_DIR = '/../../Resources/storage/';
-    const ID = 'abcdefghijk';
+    const ID = 'abcdefghijk.jpg';
 
     private $storage;
     private $storageDir;
@@ -56,8 +56,8 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
     public function filepathProvider()
     {
         return array(
-            array(null, __DIR__.self::STORAGE_RELATIVE_DIR.self::FILEPATH),
-            array('some/extra/filepath/file', __DIR__.self::STORAGE_RELATIVE_DIR.'/some/extra/filepath/file'),
+            array(null, __DIR__.self::STORAGE_RELATIVE_DIR.self::FILEPATH.'/'.self::ID),
+            array('file-variant.file', __DIR__.self::STORAGE_RELATIVE_DIR.self::FILEPATH.'/file-variant.file'),
         );
     }
     

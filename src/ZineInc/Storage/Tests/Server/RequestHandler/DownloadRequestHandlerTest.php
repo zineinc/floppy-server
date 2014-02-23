@@ -16,7 +16,7 @@ use ZineInc\Storage\Server\Stream\StringInputStream;
 
 class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
 {
-    const DOWNLOAD_URI = '/some-download-uri';
+    const DOWNLOAD_URI = '/some-download-uri/some-file.jpg';
     const SOME_ID = 'some-id';
 
     /**
@@ -80,7 +80,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
 
         $this->storage->expects($this->once())
             ->method('store')
-            ->with($processedFileSource, self::DOWNLOAD_URI);
+            ->with($processedFileSource, basename(self::DOWNLOAD_URI));
 
 
         //when

@@ -32,7 +32,7 @@ class FilepathChoosingStrategyImplTest extends PHPUnit_Framework_TestCase
     public function fileIdProvider()
     {
         return array(
-            array(new FileId('abcdefghijk'), 'abc/def/abcdefghijk'),
+            array(new FileId('abcdefghijk'), 'abc/def'),
         );
     }
 }

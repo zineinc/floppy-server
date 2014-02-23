@@ -56,13 +56,13 @@ class FilesystemStorage implements Storage
         }
     }
 
-    public function store(FileSource $fileSource, $filepath = null)
+    public function store(FileSource $fileSource, $filename = null)
     {
-        $this->ensureValidFilepath($filepath);
+        $this->ensureValidFilepath($filename);
 
         $id = $this->idFactory->id($fileSource);
 
-        $filepath = ltrim($filepath ? : $this->filepathChoosingStrategy->filepath(new FileId($id)), '/');
+        $filepath = $this->filepathChoosingStrategy->filepath(new FileId($id)).'/'.($filename ?: $id);
 
         $fullFilepath = $this->storageDir.'/'.$filepath;
 
