@@ -9,7 +9,7 @@ final class FileId
 
     public function __construct($id, array $attributes = array())
     {
-        $this->id = (string) $id;
+        $this->id = (string)$id;
         $this->attributes = new AttributesBag($attributes);
     }
 

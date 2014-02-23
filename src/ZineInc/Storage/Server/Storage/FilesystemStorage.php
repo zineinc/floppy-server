@@ -29,7 +29,7 @@ class FilesystemStorage implements Storage
      */
     private function getFilesystem()
     {
-        if($this->filesystem === null) {
+        if ($this->filesystem === null) {
             $this->filesystem = new Filesystem();
         }
 
@@ -44,15 +44,12 @@ class FilesystemStorage implements Storage
     public function getSource(FileId $fileId)
     {
         $filepath = $this->filepathChoosingStrategy->filepath($fileId);
-        $fullFilepath = $this->storageDir.'/'.$filepath.'/'.$fileId->id();
+        $fullFilepath = $this->storageDir . '/' . $filepath . '/' . $fileId->id();
 
-        try
-        {
+        try {
             $file = new File($fullFilepath, true);
             return FileSource::fromFile($file);
-        }
-        catch (FileNotFoundException $e)
-        {
+        } catch (FileNotFoundException $e) {
             throw new FileSourceNotFoundException($e->getMessage(), $e);
         }
     }
@@ -61,17 +58,14 @@ class FilesystemStorage implements Storage
     {
         $this->ensureValidFilepath($filename);
 
-        $fileId = $fileId ?: new FileId($this->idFactory->id($fileSource));
-        $filepath = $this->filepathChoosingStrategy->filepath($fileId).'/'.($filename ?: $fileId->id());
+        $fileId = $fileId ? : new FileId($this->idFactory->id($fileSource));
+        $filepath = $this->filepathChoosingStrategy->filepath($fileId) . '/' . ($filename ? : $fileId->id());
 
-        $fullFilepath = $this->storageDir.'/'.$filepath;
+        $fullFilepath = $this->storageDir . '/' . $filepath;
 
-        try
-        {
+        try {
             $this->getFilesystem()->dumpFile($fullFilepath, $fileSource->content());
-        }
-        catch(IOException $e)
-        {
+        } catch (IOException $e) {
             throw new StoreException('Error while file storing', $e);
         }
 
@@ -80,6 +74,7 @@ class FilesystemStorage implements Storage
 
     /**
      * @param $filepath
+     *
      * @throws StoreException
      */
     private function ensureValidFilepath($filepath)

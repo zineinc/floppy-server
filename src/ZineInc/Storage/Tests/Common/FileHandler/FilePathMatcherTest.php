@@ -18,14 +18,14 @@ class FilePathMatcherTest extends AbstractPathMatcherTest
     {
         return array(
             array(
-                'some/dirs/to/ignore/fileid.zip?name=some-name&checksum='.self::VALID_CHECKSUM,
+                'some/dirs/to/ignore/fileid.zip?name=some-name&checksum=' . self::VALID_CHECKSUM,
                 false,
                 new FileId('fileid.zip', array(
                     'name' => 'some-name',
                 ))
             ),
             array(
-                'some/dirs/to/ignore/fileid.zip?name=some-name&checksum='.self::INVALID_CHECKSUM,
+                'some/dirs/to/ignore/fileid.zip?name=some-name&checksum=' . self::INVALID_CHECKSUM,
                 true,
                 null,
             ),
@@ -37,7 +37,7 @@ class FilePathMatcherTest extends AbstractPathMatcherTest
 
         return array(
             array(
-                'some/dirs/to/ignore/file.zip?name=some&checksum='.self::INVALID_CHECKSUM,
+                'some/dirs/to/ignore/file.zip?name=some&checksum=' . self::INVALID_CHECKSUM,
                 true
             ),
             //checksum is missing

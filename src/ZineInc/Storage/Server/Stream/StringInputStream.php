@@ -9,7 +9,7 @@ class StringInputStream implements InputStream
 
     public function __construct($buffer)
     {
-        $this->bytes = (string) $buffer;
+        $this->bytes = (string)$buffer;
     }
 
     public function close()
@@ -26,8 +26,7 @@ class StringInputStream implements InputStream
 
     private function ensureOpened()
     {
-        if($this->closed)
-        {
+        if ($this->closed) {
             throw new IOException('Stream is closed');
         }
     }

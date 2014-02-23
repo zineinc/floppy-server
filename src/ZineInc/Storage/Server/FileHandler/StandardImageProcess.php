@@ -17,7 +17,7 @@ class StandardImageProcess implements ImageProcess
         $image = $imagine->load($fileSource->content());
 
         $size = $image->getSize();
-        $ratio = $size->getWidth()/$size->getHeight();
+        $ratio = $size->getWidth() / $size->getHeight();
 
         $requestedWidth = $attrs->get('width');
         $requestedHeight = $attrs->get('height');
@@ -25,16 +25,15 @@ class StandardImageProcess implements ImageProcess
 
         $requestedColor = $attrs->get('cropBackgroundColor');
 
-        $newSize = $ratio > 1 ? new Box($requestedWidth, $requestedWidth/$ratio)
-            : new Box($requestedHeight*$ratio, $requestedHeight);
+        $newSize = $ratio > 1 ? new Box($requestedWidth, $requestedWidth / $ratio)
+            : new Box($requestedHeight * $ratio, $requestedHeight);
 
         $image->resize($newSize);
 
-        if($requestedSize != $newSize)
-        {
+        if ($requestedSize != $newSize) {
             $destImage = $imagine->create($requestedSize, $requestedColor > 'ffffff' ? null : new Color($requestedColor));
-            $x = ($requestedSize->getWidth() - $newSize->getWidth())/2;
-            $y = ($requestedSize->getHeight() - $newSize->getHeight())/2;
+            $x = ($requestedSize->getWidth() - $newSize->getWidth()) / 2;
+            $y = ($requestedSize->getHeight() - $newSize->getHeight()) / 2;
             $destImage->paste($image, new Point($x, $y));
 
             $image = $destImage;

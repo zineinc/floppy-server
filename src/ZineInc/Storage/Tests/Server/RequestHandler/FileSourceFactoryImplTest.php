@@ -63,7 +63,7 @@ class FileSourceFactoryImplTest extends PHPUnit_Framework_TestCase
     private function createRequestWithFile()
     {
         $request = new Request();
-        $file = new UploadedFile(__DIR__.'/../../Resources/text.txt', 'text.txt');
+        $file = new UploadedFile(__DIR__ . '/../../Resources/text.txt', 'text.txt');
         $request->files->set(self::FILE_KEY, $file);
 
         return $request;
@@ -72,7 +72,7 @@ class FileSourceFactoryImplTest extends PHPUnit_Framework_TestCase
     public function fileProvider()
     {
         return array(
-            array(__DIR__.'/../../Resources/text.txt', 'text/plain', 'txt'),
+            array(__DIR__ . '/../../Resources/text.txt', 'text/plain', 'txt'),
         );
     }
 }

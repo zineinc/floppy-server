@@ -14,15 +14,14 @@ class FilepathChoosingStrategyImpl implements FilepathChoosingStrategy
 
     public function __construct($dirCount = 2, $charsForDir = 3, $origRootDir = 'orig', $variantRootDir = 'v')
     {
-        if($dirCount < 1 || $charsForDir < 1)
-        {
+        if ($dirCount < 1 || $charsForDir < 1) {
             throw new InvalidArgumentException(sprintf('$dirCount and $charsForDir have to be integer >= 1, given: (%s, %s)', $dirCount, $charsForDir));
         }
 
-        $this->charsForDir = (int) $charsForDir;
-        $this->dirCount = (int) $dirCount;
-        $this->origRootDir = (string) $origRootDir;
-        $this->variantRootDir = (string) $variantRootDir;
+        $this->charsForDir = (int)$charsForDir;
+        $this->dirCount = (int)$dirCount;
+        $this->origRootDir = (string)$origRootDir;
+        $this->variantRootDir = (string)$variantRootDir;
     }
 
     public function filepath(FileId $fileId)
@@ -33,9 +32,8 @@ class FilepathChoosingStrategyImpl implements FilepathChoosingStrategy
 
         $parts[] = $fileId->isVariant() ? $this->variantRootDir : $this->origRootDir;
 
-        for($i=0; $i<$this->dirCount; $i++)
-        {
-            $parts[] = substr($id, $i*$this->charsForDir, $this->charsForDir);
+        for ($i = 0; $i < $this->dirCount; $i++) {
+            $parts[] = substr($id, $i * $this->charsForDir, $this->charsForDir);
         }
 
         return implode('/', $parts);

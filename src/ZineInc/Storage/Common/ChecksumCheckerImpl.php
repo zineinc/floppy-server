@@ -10,12 +10,12 @@ class ChecksumCheckerImpl implements ChecksumChecker
     public function __construct($secretKey, $checksumLength = 5)
     {
         $this->secretKey = $secretKey;
-        $this->checksumLength = (int) $checksumLength;
+        $this->checksumLength = (int)$checksumLength;
     }
 
     public function isChecksumValid($checksum, $data)
     {
         //TODO: safe string comparison?
-        return $checksum === substr(md5(serialize($data).$this->secretKey), 0, $this->checksumLength);
+        return $checksum === substr(md5(serialize($data) . $this->secretKey), 0, $this->checksumLength);
     }
 }

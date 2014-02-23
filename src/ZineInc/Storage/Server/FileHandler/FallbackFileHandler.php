@@ -29,7 +29,7 @@ class FallbackFileHandler extends AbstractFileHandler
 
     protected function filterResponse(Response $response, FileSource $fileSource, FileId $fileId)
     {
-        $response->headers->makeDisposition('attachment', $fileId->attributes()->get('name').'.'.$fileSource->fileType()->prefferedExtension());
+        $response->headers->makeDisposition('attachment', $fileId->attributes()->get('name') . '.' . $fileSource->fileType()->prefferedExtension());
         return $response;
     }
 

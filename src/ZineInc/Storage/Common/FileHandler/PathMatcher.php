@@ -14,6 +14,7 @@ interface PathMatcher
 
     /**
      * @param $variantFilepath
+     *
      * @return boolean
      */
     public function matches($variantFilepath);

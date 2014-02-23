@@ -31,8 +31,8 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->storageDir = __DIR__.self::STORAGE_RELATIVE_DIR;
-        $this->filepath = $this->storageDir.self::FILEPATH_FOR_ID;
+        $this->storageDir = __DIR__ . self::STORAGE_RELATIVE_DIR;
+        $this->filepath = $this->storageDir . self::FILEPATH_FOR_ID;
         $this->storage = new FilesystemStorage(
             $this->storageDir,
             new FilesystemStorageTest_FilepathChoosingStrategy(array(
@@ -42,7 +42,7 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
             new FilesystemStorageTest_IdFactory(self::ID)
         );
     }
-    
+
     /**
      * @test
      * @dataProvider filepathProvider
@@ -59,7 +59,7 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
 
         //then
 
-        $expectedId = $fileId ?: new FileId(self::ID);
+        $expectedId = $fileId ? : new FileId(self::ID);
         $this->assertEquals($expectedId->id(), $id);
         $this->assertTrue(file_exists($expectedFilepath));
         $this->assertEquals(self::FILESOURCE, file_get_contents($expectedFilepath));
@@ -67,14 +67,14 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
 
     public function filepathProvider()
     {
-        $filepath = __DIR__.self::STORAGE_RELATIVE_DIR.self::FILEPATH_FOR_ID;
+        $filepath = __DIR__ . self::STORAGE_RELATIVE_DIR . self::FILEPATH_FOR_ID;
         return array(
-            array(null, null, $filepath.'/'.self::ID),
-            array(null, 'file-variant.file', $filepath.'/file-variant.file'),
-            array(new FileId(self::DIFFERENT_ID), 'file-variant.file', __DIR__.self::STORAGE_RELATIVE_DIR.self::FILEPATH_FOR_DIFFERENT_ID.'/file-variant.file'),
+            array(null, null, $filepath . '/' . self::ID),
+            array(null, 'file-variant.file', $filepath . '/file-variant.file'),
+            array(new FileId(self::DIFFERENT_ID), 'file-variant.file', __DIR__ . self::STORAGE_RELATIVE_DIR . self::FILEPATH_FOR_DIFFERENT_ID . '/file-variant.file'),
         );
     }
-    
+
     private function createFileSource()
     {
         return new FileSource(new StringInputStream(self::FILESOURCE), new FileType('text/plain', 'txt'));
@@ -105,13 +105,13 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
         //given
 
         $fileSource = $this->createFileSource();
-        
+
         $filesystem = $this->getMock('Symfony\Component\Filesystem\Filesystem');
         $this->storage->setFilesystem($filesystem);
 
         $filesystem->expects($this->once())
-                    ->method('dumpFile')
-                    ->will($this->throwException(new \Symfony\Component\Filesystem\Exception\IOException('')));
+            ->method('dumpFile')
+            ->will($this->throwException(new \Symfony\Component\Filesystem\Exception\IOException('')));
 
         //when
 
@@ -127,7 +127,7 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
         //given
 
         $filesystem = new Filesystem();
-        $filesystem->dumpFile($this->filepath.'/'.self::ID, self::FILESOURCE);
+        $filesystem->dumpFile($this->filepath . '/' . self::ID, self::FILESOURCE);
 
         //when
 
@@ -151,9 +151,9 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         $filesystem = new Filesystem();
-        $filesystem->remove($this->storageDir.'/some');
-        $filesystem->remove($this->storageDir.'/another');
-        $filesystem->remove($this->storageDir.'/../another');
+        $filesystem->remove($this->storageDir . '/some');
+        $filesystem->remove($this->storageDir . '/another');
+        $filesystem->remove($this->storageDir . '/../another');
     }
 }
 

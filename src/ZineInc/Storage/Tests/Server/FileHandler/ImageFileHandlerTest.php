@@ -18,7 +18,7 @@ class ImageFileHandlerTest extends PHPUnit_Framework_TestCase
      * @var \ZineInc\Storage\Common\FileHandler\\ZineInc\Storage\Server\FileHandler\ImageFileHandler
      */
     private $handler;
-    
+
     /**
      * @var Imagine
      */
@@ -72,7 +72,7 @@ class ImageFileHandlerTest extends PHPUnit_Framework_TestCase
     {
         //given
 
-        $fileSource = $this->createImageFileSource(__DIR__.'/../../Resources/100x80-black.png');
+        $fileSource = $this->createImageFileSource(__DIR__ . '/../../Resources/100x80-black.png');
 
         //when
 
@@ -102,7 +102,7 @@ class ImageFileHandlerTest extends PHPUnit_Framework_TestCase
             'maxHeight' => $maxSize,
             'maxWidth' => $maxSize
         ));
-        $fileSource = $this->createImageFileSource(__DIR__.'/../../Resources/100x80-black.png');
+        $fileSource = $this->createImageFileSource(__DIR__ . '/../../Resources/100x80-black.png');
 
         //when
 
@@ -128,7 +128,7 @@ class ImageFileHandlerTest extends PHPUnit_Framework_TestCase
             'maxWidth' => $maxSize
         ));
 
-        $fileSource = $this->createImageFileSource(__DIR__.'/../../Resources/100x80-black.png');
+        $fileSource = $this->createImageFileSource(__DIR__ . '/../../Resources/100x80-black.png');
 
         //when
 

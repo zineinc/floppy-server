@@ -13,12 +13,14 @@ use ZineInc\Storage\Common\Storage\FilepathChoosingStrategyImpl;
 use ZineInc\Storage\Server\Storage\FilesystemStorage;
 use ZineInc\Storage\Server\Storage\IdFactoryImpl;
 
-class RequestHandlerFactory {
+class RequestHandlerFactory
+{
 
     /**
      * @return RequestHandlerFactory
      */
-    public static function create() {
+    public static function create()
+    {
         return new self();
     }
 
@@ -39,6 +41,7 @@ class RequestHandlerFactory {
      * For more info follow to implementation of this method.
      *
      * @param array $options
+     *
      * @return RequestHandler
      */
     public function createRequestHandler(array $options)
@@ -50,8 +53,7 @@ class RequestHandlerFactory {
         $this->requestHandlerDefinition($container);
         $this->fileHandlersDefinition($container);
 
-        foreach($options as $name => $value)
-        {
+        foreach ($options as $name => $value) {
             $container[$name] = $value;
         }
 

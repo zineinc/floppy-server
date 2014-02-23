@@ -40,7 +40,7 @@ class RequestHandler implements LoggerAwareInterface
      */
     public function handle(Request $request)
     {
-        if(rtrim($request->getPathInfo(), '/') === '/upload') {
+        if (rtrim($request->getPathInfo(), '/') === '/upload') {
             return $this->handleUploadRequest($request);
         } else {
             return $this->handleDownloadRequest($request);
@@ -49,8 +49,7 @@ class RequestHandler implements LoggerAwareInterface
 
     private function handleUploadRequest(Request $request)
     {
-        try
-        {
+        try {
             $fileSource = $this->fileSourceFactory->createFileSource($request);
 
             $fileHandler = $this->findFileHandler($fileSource);
@@ -66,14 +65,10 @@ class RequestHandler implements LoggerAwareInterface
                 'message' => null,
                 'attributes' => $attrs,
             ));
-        }
-        catch(StorageError $e)
-        {
+        } catch (StorageError $e) {
             $this->logger->error($e);
             return $this->createErrorResponse($e, 500);
-        }
-        catch(StorageException $e)
-        {
+        } catch (StorageException $e) {
             $this->logger->warning($e);
             return $this->createErrorResponse($e, 400);
         }
@@ -93,8 +88,8 @@ class RequestHandler implements LoggerAwareInterface
      */
     private function findFileHandler(FileSource $fileSource)
     {
-        foreach($this->fileHandlers as $fileHandler) {
-            if($fileHandler->supports($fileSource->fileType())) {
+        foreach ($this->fileHandlers as $fileHandler) {
+            if ($fileHandler->supports($fileSource->fileType())) {
                 return $fileHandler;
             }
         }
@@ -102,7 +97,8 @@ class RequestHandler implements LoggerAwareInterface
         throw new FileHandlerNotFoundException(sprintf('File type "%s" is unsupported', $fileSource->fileType()->mimeType()));
     }
 
-    private function handleDownloadRequest(Request $request) {
+    private function handleDownloadRequest(Request $request)
+    {
         try {
             $path = rtrim($request->getPathInfo(), '/');
             $handler = $this->findFileHandlerMatches($path);
@@ -113,15 +109,15 @@ class RequestHandler implements LoggerAwareInterface
 
             $processedFileSource = $handler->beforeSendProcess($fileSource, $fileId);
 
-            if($processedFileSource !== $fileSource) {
+            if ($processedFileSource !== $fileSource) {
                 $this->storage->store($processedFileSource, $fileId, basename($path));
             }
 
             return $handler->createResponse($processedFileSource, $fileId);
-        } catch(StorageError $e) {
+        } catch (StorageError $e) {
             $this->logger->error($e);
             return $this->createErrorResponse($e, 500);
-        } catch(StorageException $e) {
+        } catch (StorageException $e) {
             $this->logger->error($e);
             return $this->createErrorResponse($e, 400);
         }
@@ -130,9 +126,10 @@ class RequestHandler implements LoggerAwareInterface
     /**
      * @return FileHandler
      */
-    private function findFileHandlerMatches($path){
+    private function findFileHandlerMatches($path)
+    {
         foreach ($this->fileHandlers as $handler) {
-            if($handler->matches($path)) {
+            if ($handler->matches($path)) {
                 return $handler;
             }
         }

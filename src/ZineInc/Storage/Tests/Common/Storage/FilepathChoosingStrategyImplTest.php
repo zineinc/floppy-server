@@ -34,8 +34,8 @@ class FilepathChoosingStrategyImplTest extends PHPUnit_Framework_TestCase
     public function fileIdProvider()
     {
         return array(
-            array(new FileId('abcdefghijk'), self::ORIG_DIR.'/abc/def'),
-            array(new FileId('abcdefghijk', array('someOption' => 'value')), self::VARIANT_DIR.'/abc/def'),
+            array(new FileId('abcdefghijk'), self::ORIG_DIR . '/abc/def'),
+            array(new FileId('abcdefghijk', array('someOption' => 'value')), self::VARIANT_DIR . '/abc/def'),
         );
     }
 }

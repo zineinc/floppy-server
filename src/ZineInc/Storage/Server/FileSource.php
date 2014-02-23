@@ -14,6 +14,7 @@ final class FileSource
 
     /**
      * @param File $file
+     *
      * @return FileSource
      */
     public static function fromFile(File $file)

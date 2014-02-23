@@ -18,7 +18,7 @@ class ImagePathMatcherTest extends AbstractPathMatcherTest
     {
         return array(
             array(
-                'some/dirs/to/ignore/'.self::VALID_CHECKSUM.'_900_502_ffffff_0_0_0_0_fileid.jpeg',
+                'some/dirs/to/ignore/' . self::VALID_CHECKSUM . '_900_502_ffffff_0_0_0_0_fileid.jpeg',
                 false,
                 new FileId('fileid.jpeg', array(
                     'width' => 900,
@@ -28,12 +28,12 @@ class ImagePathMatcherTest extends AbstractPathMatcherTest
                 ))
             ),
             array(
-                'some/dirs/to/ignore/'.self::INVALID_CHECKSUM.'_900_502_ffffff_0_0_0_0_fileid.jpeg',
+                'some/dirs/to/ignore/' . self::INVALID_CHECKSUM . '_900_502_ffffff_0_0_0_0_fileid.jpeg',
                 true,
                 null,
             ),
             array(
-                'some/dirs/to/ignore/'.self::VALID_CHECKSUM.'_0_0_0_fileid.jpeg',
+                'some/dirs/to/ignore/' . self::VALID_CHECKSUM . '_0_0_0_fileid.jpeg',
                 true,
                 null,
             ),
@@ -44,12 +44,12 @@ class ImagePathMatcherTest extends AbstractPathMatcherTest
     {
         return array(
             array(
-                'some/dirs/to/ignore/'.self::INVALID_CHECKSUM.'_900_502_ffffff_0_0_0_0_fileid.jpeg',
+                'some/dirs/to/ignore/' . self::INVALID_CHECKSUM . '_900_502_ffffff_0_0_0_0_fileid.jpeg',
                 true,
             ),
             //some params missing
             array(
-                'some/dirs/to/ignore/'.self::VALID_CHECKSUM.'_502_ffffff_0_0_0_0_fileid.jpeg',
+                'some/dirs/to/ignore/' . self::VALID_CHECKSUM . '_502_ffffff_0_0_0_0_fileid.jpeg',
                 false,
             ),
         );

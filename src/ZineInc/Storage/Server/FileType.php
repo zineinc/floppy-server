@@ -9,8 +9,8 @@ final class FileType
 
     public function __construct($mimeType, $prefferedExtension)
     {
-        $this->mimeType = (string) $mimeType;
-        $this->prefferedExtension = (string) $prefferedExtension;
+        $this->mimeType = (string)$mimeType;
+        $this->prefferedExtension = (string)$prefferedExtension;
     }
 
     public function mimeType()

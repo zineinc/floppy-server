@@ -20,15 +20,13 @@ class ImagePathMatcher implements PathMatcher
 
         $params = explode('_', $variantFilepath);
 
-        if(count($params) !== 9)
-        {
+        if (count($params) !== 9) {
             throw new PathMatchingException(sprintf('Invalid variant filepath format, given: "%s"', $variantFilepath));
         }
 
         $checksum = array_shift($params);
 
-        if(!$this->checksumChecker->isChecksumValid($checksum, $params))
-        {
+        if (!$this->checksumChecker->isChecksumValid($checksum, $params)) {
             throw new PathMatchingException(sprintf('checksum is invalid for variant: "%s"', $variantFilepath));
         }
 
@@ -44,6 +42,7 @@ class ImagePathMatcher implements PathMatcher
 
     /**
      * @param $variantFilepath
+     *
      * @return boolean
      */
     public function matches($variantFilepath)

@@ -25,7 +25,7 @@ abstract class AbstractPathMatcherTest extends PHPUnit_Framework_TestCase
      */
     public function testMatch($variantFilename, $expectedException, $expectedFileId)
     {
-        if($expectedException) {
+        if ($expectedException) {
             $this->setExpectedException('ZineInc\Storage\Common\FileHandler\PathMatchingException');
         }
 
@@ -53,12 +53,12 @@ abstract class AbstractPathMatcherTest extends PHPUnit_Framework_TestCase
      */
     public function testMatch_throwExceptionWhenMatchesReturnFalse($variantFilepath, $expectedMatches)
     {
-        if($expectedMatches) {
+        if ($expectedMatches) {
             //skip, this tests only condition when PathMatcher::matches return false
             return;
         }
 
-        if(!$expectedMatches) {
+        if (!$expectedMatches) {
             $this->setExpectedException('ZineInc\Storage\Common\FileHandler\PathMatchingException');
         }
 

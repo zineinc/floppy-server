@@ -13,6 +13,7 @@ interface FileHandler extends PathMatcher
 {
     /**
      * @param FileSource $fileType
+     *
      * @return boolean Does given $file is supported by this handler
      */
     public function supports(FileType $fileType);
@@ -47,6 +48,7 @@ interface FileHandler extends PathMatcher
     /**
      * @param FileSource $file File that should be in response
      * @param FileId $fileId
+     *
      * @return Response
      */
     public function createResponse(FileSource $file, FileId $fileId);

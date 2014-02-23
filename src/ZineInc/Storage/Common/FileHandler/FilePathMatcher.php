@@ -26,7 +26,7 @@ class FilePathMatcher implements PathMatcher
         $name = isset($query['name']) ? $query['name'] : null;
         $checksum = isset($query['checksum']) ? $query['checksum'] : null;
 
-        if(!$name || !$this->checksumChecker->isChecksumValid($checksum, array($path, $name))) {
+        if (!$name || !$this->checksumChecker->isChecksumValid($checksum, array($path, $name))) {
             throw new PathMatchingException();
         }
 
@@ -39,7 +39,7 @@ class FilePathMatcher implements PathMatcher
     {
         $result = array();
 
-        foreach(explode('&', $query) as $value) {
+        foreach (explode('&', $query) as $value) {
             list($name, $value) = explode('=', $value);
             $result[$name] = $value;
         }
@@ -49,6 +49,7 @@ class FilePathMatcher implements PathMatcher
 
     /**
      * @param $variantFilepath
+     *
      * @return boolean
      */
     public function matches($variantFilepath)

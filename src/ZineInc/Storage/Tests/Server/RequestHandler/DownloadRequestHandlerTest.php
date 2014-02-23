@@ -40,7 +40,8 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function fileHandlerFound_fileExists_processSuccess_returnOkResponse() {
+    public function fileHandlerFound_fileExists_processSuccess_returnOkResponse()
+    {
         //given
 
         $fileSource = $this->createFileSource();
@@ -65,7 +66,8 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function fileHandlerFound_fileExists_processSuccesAndFileSourceChanges_storeFileVariant_returnOkResponse() {
+    public function fileHandlerFound_fileExists_processSuccesAndFileSourceChanges_storeFileVariant_returnOkResponse()
+    {
         //given
 
         $fileSource = $this->createFileSource();
@@ -96,7 +98,8 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function fileHandlerFound_fileExists_processFailed_returnBadResponse() {
+    public function fileHandlerFound_fileExists_processFailed_returnBadResponse()
+    {
         //given
 
         $fileSource = $this->createFileSource();
@@ -122,7 +125,8 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function fileHandlerFound_fileNotExist_returnBadResponse() {
+    public function fileHandlerFound_fileNotExist_returnBadResponse()
+    {
         //given
 
         $fileId = $this->createProcessedFileId();
@@ -143,7 +147,8 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function fileHandlerNotFound_returnBadResponse() {
+    public function fileHandlerNotFound_returnBadResponse()
+    {
         //given
 
         $this->expectsFileHandlerDoesntMatch($this->fileHandlers[0]);
@@ -163,7 +168,8 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function fileHandlerFound_fileHandlerMatchError_returnBadResponse() {
+    public function fileHandlerFound_fileHandlerMatchError_returnBadResponse()
+    {
         //given
 
         $this->expectsFileHandlerMatches($this->fileHandlers[0]);
@@ -182,15 +188,18 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertGreaterThanOrEqual(400, $actualResponse->getStatusCode());
     }
 
-    private function createResponse() {
+    private function createResponse()
+    {
         return new Response('some-content');
     }
 
-    private function createProcessedFileId(){
+    private function createProcessedFileId()
+    {
         return new FileId(self::SOME_ID, array('some-val' => 'val'));
     }
 
-    private function createFileSource($content = 'some'){
+    private function createFileSource($content = 'some')
+    {
         return new FileSource(new StringInputStream($content), new FileType('text/plain', 'text'));
     }
 
@@ -235,7 +244,6 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
     }
 
 
-
     /**
      * @param $handler
      * @param $fileId
@@ -246,7 +254,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
         $handler->expects($this->once())
             ->method('beforeSendProcess')
             ->with($fileSource, $fileId)
-            ->will($this->returnValue($processedFileSource ?: $fileSource));
+            ->will($this->returnValue($processedFileSource ? : $fileSource));
     }
 
     /**
@@ -277,7 +285,8 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
             ->will($this->throwException(new FileSourceNotFoundException()));
     }
 
-    private function expectsFileHandlerDoesntMatch($handler) {
+    private function expectsFileHandlerDoesntMatch($handler)
+    {
         $handler->expects($this->any())
             ->method('matches')
             ->will($this->returnValue(false));

@@ -103,7 +103,7 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
         //given
 
         $request = $this->createUploadRequest();
- 
+
         $fileSource = $this->createFileSource();
 
         $this->expectsCreateFileSource($request, $fileSource);
@@ -122,7 +122,7 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
         $this->verifyMockObjects();
         $this->assertGreaterThanOrEqual(400, $response->getStatusCode());
     }
-    
+
     private function expectsCreateFileSourceAndFindFileHandler(Request $request)
     {
         $fileSource = $this->createFileSource();
@@ -160,17 +160,17 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
     private function expectsFileSourceNotFound()
     {
         $this->fileSourceFactory->expects($this->once())
-                                ->method('createFileSource')
-                                ->will($this->throwException(new FileSourceNotFoundException()));
+            ->method('createFileSource')
+            ->will($this->throwException(new FileSourceNotFoundException()));
     }
 
     private function expectsStoreException()
     {
         $this->storage->expects($this->once())
-                    ->method('store')
-                    ->will($this->throwException(new StoreException()));
+            ->method('store')
+            ->will($this->throwException(new StoreException()));
     }
-    
+
     private function createUploadRequest()
     {
         return Request::create('http://localhost/upload');
@@ -184,54 +184,54 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
     private function expectsCreateFileSource(Request $request, FileSource $fileSource)
     {
         $this->fileSourceFactory->expects($this->once())
-                                ->method('createFileSource')
-                                ->with($request)
-                                ->will($this->returnValue($fileSource));
+            ->method('createFileSource')
+            ->with($request)
+            ->will($this->returnValue($fileSource));
     }
 
     private function expectsFileHandlerProcess($fileHandler, FileSource $fileSource, array $attrs, $type)
     {
         $fileHandler->expects($this->once())
-                    ->method('beforeStoreProcess')
-                    ->with($fileSource)
-                    ->will($this->returnValue($fileSource));
+            ->method('beforeStoreProcess')
+            ->with($fileSource)
+            ->will($this->returnValue($fileSource));
         $fileHandler->expects($this->any())
-                    ->method('supports')
-                    ->with($fileSource->fileType())
-                    ->will($this->returnValue(true));
+            ->method('supports')
+            ->with($fileSource->fileType())
+            ->will($this->returnValue(true));
         $fileHandler->expects($this->atLeastOnce())
-                    ->method('getStoreAttributes')
-                    ->with($fileSource)
-                    ->will($this->returnValue($attrs));
+            ->method('getStoreAttributes')
+            ->with($fileSource)
+            ->will($this->returnValue($attrs));
         $fileHandler->expects($this->any())
-                    ->method('type')
-                    ->will($this->returnValue($type));
+            ->method('type')
+            ->will($this->returnValue($type));
     }
 
     private function expectsFileHandlerUnused($fileHandler)
     {
         $fileHandler->expects($this->never())
-                    ->method('beforeStoreProcess');
+            ->method('beforeStoreProcess');
         $fileHandler->expects($this->never())
-                    ->method('getStoreAttributes');
+            ->method('getStoreAttributes');
         $fileHandler->expects($this->never())
-                    ->method('type');
+            ->method('type');
         $fileHandler->expects($this->any())
-                    ->method('supports')
-                    ->will($this->returnValue(false));
+            ->method('supports')
+            ->will($this->returnValue(false));
     }
 
     private function expectsStore(FileSource $fileSource, $id)
     {
         $this->storage->expects($this->once())
-                    ->method('store')
-                    ->with($fileSource)
-                    ->will($this->returnValue($id));
+            ->method('store')
+            ->with($fileSource)
+            ->will($this->returnValue($id));
     }
 
     private function expectsNoStore()
     {
         $this->storage->expects($this->never())
-                    ->method('store');
+            ->method('store');
     }
 }

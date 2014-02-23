@@ -10,13 +10,13 @@ class IdFactoryImpl implements IdFactory
 
     public function __construct($alg = 'md5')
     {
-        $this->alg = (string) $alg;
+        $this->alg = (string)$alg;
     }
 
     public function id(FileSource $fileSource)
     {
         $content = $fileSource->content();
 
-        return hash($this->alg, $content).'.'.$fileSource->fileType()->prefferedExtension();
+        return hash($this->alg, $content) . '.' . $fileSource->fileType()->prefferedExtension();
     }
 }

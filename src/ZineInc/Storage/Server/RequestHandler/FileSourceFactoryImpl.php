@@ -20,8 +20,7 @@ class FileSourceFactoryImpl implements FileSourceFactory
 
     public function createFileSource(Request $request)
     {
-        if(!$request->files->has($this->fileKey))
-        {
+        if (!$request->files->has($this->fileKey)) {
             throw new FileSourceNotFoundException();
         }
 
