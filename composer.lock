@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "60da911fc4caef9c911480646f399d41",
+    "hash": "f6656bbb484d90017593a6027c2ed2ac",
     "packages": [
         {
             "name": "imagine/imagine",
@@ -56,6 +56,54 @@
                 "image processing"
             ],
             "time": "2013-07-10 17:25:36"
+        },
+        {
+            "name": "pimple/pimple",
+            "version": "v2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fabpot/Pimple.git",
+                "reference": "f99b3df12991c22463927aa6a18fd9b2212917f2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fabpot/Pimple/zipball/f99b3df12991c22463927aa6a18fd9b2212917f2",
+                "reference": "f99b3df12991c22463927aa6a18fd9b2212917f2",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Pimple": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com",
+                    "homepage": "http://fabien.potencier.org",
+                    "role": "Lead Developer"
+                }
+            ],
+            "description": "Pimple is a simple Dependency Injection Container for PHP 5.3",
+            "homepage": "http://pimple.sensiolabs.org",
+            "keywords": [
+                "container",
+                "dependency injection"
+            ],
+            "time": "2014-02-10 08:05:32"
         },
         {
             "name": "psr/log",
