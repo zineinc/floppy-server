@@ -20,19 +20,19 @@ class FilePathMatcher implements PathMatcher
 
         $parsedUrl = parse_url($variantFilepath);
 
-        $path = $parsedUrl['path'];
+        $filename = $parsedUrl['path'];
         $query = $this->parseQuery($parsedUrl['query']);
 
         $name = isset($query['name']) ? $query['name'] : null;
         $checksum = isset($query['checksum']) ? $query['checksum'] : null;
 
-        if (!$name || !$this->checksumChecker->isChecksumValid($checksum, array($path, $name))) {
+        if (!$name || !$this->checksumChecker->isChecksumValid($checksum, array($filename, $name))) {
             throw new PathMatchingException();
         }
 
-        return new FileId($path, array(
+        return new FileId($filename, array(
             'name' => $name,
-        ));
+        ), $filename);
     }
 
     private function parseQuery($query)

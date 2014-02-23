@@ -41,9 +41,9 @@ class FilesystemStorage implements Storage
         $this->filesystem = $filesystem;
     }
 
-    public function getSource(FileId $fileId, $filename = null)
+    public function getSource(FileId $fileId)
     {
-        $fullFilepath = $this->getFilepath($fileId, $filename);
+        $fullFilepath = $this->getFilepath($fileId);
 
         try {
             $file = new File($fullFilepath, true);
@@ -57,20 +57,21 @@ class FilesystemStorage implements Storage
     /**
      * @return string
      */
-    private function getFilepath(FileId $fileId, $filename = null)
+    private function getFilepath(FileId $fileId)
     {
         $filepath = $this->filepathChoosingStrategy->filepath($fileId);
-        $fullFilepath = $this->storageDir . '/' . $filepath . '/' . ($filename ?: $fileId->id());
+        $fullFilepath = $this->storageDir . '/' . $filepath . '/' . $fileId->filename();
 
         return $fullFilepath;
     }
 
-    public function store(FileSource $fileSource, FileId $fileId = null, $filename = null)
+    public function store(FileSource $fileSource, FileId $fileId = null)
     {
-        $this->ensureValidFilepath($filename);
-
         $fileId = $fileId ? : new FileId($this->idFactory->id($fileSource));
-        $filepath = $this->filepathChoosingStrategy->filepath($fileId) . '/' . ($filename ? : $fileId->id());
+
+        $this->ensureValidFilepath($fileId->filename());
+
+        $filepath = $this->filepathChoosingStrategy->filepath($fileId) . '/' . $fileId->filename();
 
         $fullFilepath = $this->storageDir . '/' . $filepath;
 
@@ -95,9 +96,9 @@ class FilesystemStorage implements Storage
         }
     }
 
-    public function exists(FileId $fileId, $filename = null)
+    public function exists(FileId $fileId)
     {
-        $filepath = $this->getFilepath($fileId, $filename);
+        $filepath = $this->getFilepath($fileId);
 
         $file = new File($filepath, false);
         return $file->isFile();

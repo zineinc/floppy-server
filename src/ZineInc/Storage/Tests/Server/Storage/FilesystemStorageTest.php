@@ -10,8 +10,6 @@ use ZineInc\Storage\Server\FileType;
 use ZineInc\Storage\Common\Storage\FilepathChoosingStrategy;
 use ZineInc\Storage\Server\Storage\FilesystemStorage;
 use ZineInc\Storage\Server\Storage\IdFactory;
-use ZineInc\Storage\Server\Storage\IdFactoryImpl;
-use ZineInc\Storage\Server\Storage\StoreException;
 use ZineInc\Storage\Server\Stream\StringInputStream;
 
 class FilesystemStorageTest extends PHPUnit_Framework_TestCase
@@ -47,7 +45,7 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
      * @test
      * @dataProvider filepathProvider
      */
-    public function shouldStoreFileInCorrectLocation($fileId, $actualFilepath, $expectedFilepath)
+    public function shouldStoreFileInCorrectLocation($fileId, $expectedFilepath)
     {
         //given
 
@@ -55,7 +53,7 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
 
         //when
 
-        $id = $this->storage->store($fileSource, $fileId, $actualFilepath);
+        $id = $this->storage->store($fileSource, $fileId);
 
         //then
 
@@ -69,9 +67,9 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
     {
         $filepath = __DIR__ . self::STORAGE_RELATIVE_DIR . self::FILEPATH_FOR_ID;
         return array(
-            array(null, null, $filepath . '/' . self::ID),
-            array(null, 'file-variant.file', $filepath . '/file-variant.file'),
-            array(new FileId(self::DIFFERENT_ID), 'file-variant.file', __DIR__ . self::STORAGE_RELATIVE_DIR . self::FILEPATH_FOR_DIFFERENT_ID . '/file-variant.file'),
+            array(null, $filepath . '/' . self::ID),
+            array(new FileId(self::ID, array(), 'file-variant.file'), $filepath . '/file-variant.file'),
+            array(new FileId(self::DIFFERENT_ID, array(), 'file-variant.file'), __DIR__ . self::STORAGE_RELATIVE_DIR . self::FILEPATH_FOR_DIFFERENT_ID . '/file-variant.file'),
         );
     }
 
@@ -93,7 +91,7 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
 
         //when
 
-        $this->storage->store($fileSource, new FileId(self::ID), $invalidFilepath);
+        $this->storage->store($fileSource, new FileId(self::ID, array(), $invalidFilepath));
     }
 
     /**
@@ -143,7 +141,7 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
 
         //when
 
-        $fileSource = $this->storage->getSource(new FileId(self::ID), $filename);
+        $fileSource = $this->storage->getSource(new FileId(self::ID, array(), $filename));
 
         //then
 
@@ -190,7 +188,7 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
 
         //when
 
-        $actual = $this->storage->exists(new FileId($id), $filename);
+        $actual = $this->storage->exists(new FileId($id, array(), $filename));
 
         //then
 
@@ -208,7 +206,7 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
 
         //when
 
-        $actual = $this->storage->exists(new FileId(self::ID), 'some-filepath.jpg');
+        $actual = $this->storage->exists(new FileId(self::ID, array(), 'some-filepath.jpg'));
 
         //then
 

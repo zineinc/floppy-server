@@ -84,7 +84,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
 
         $this->storage->expects($this->once())
             ->method('store')
-            ->with($processedFileSource, $fileId, basename(self::DOWNLOAD_URI));
+            ->with($processedFileSource, $fileId);
 
 
         //when
@@ -262,7 +262,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
     {
         $this->storage->expects($this->atLeastOnce())
             ->method('exists')
-            ->with($fileId, basename(self::DOWNLOAD_URI))
+            ->with($fileId)
             ->will($this->returnValue(true));
     }
 
@@ -369,7 +369,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
     {
         $this->storage->expects($this->atLeastOnce())
             ->method('exists')
-            ->with($fileId, basename(self::DOWNLOAD_URI))
+            ->with($fileId)
             ->will($this->returnValue(false));
     }
 }

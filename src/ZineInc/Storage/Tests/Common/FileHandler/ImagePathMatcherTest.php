@@ -25,7 +25,7 @@ class ImagePathMatcherTest extends AbstractPathMatcherTest
                     'height' => 502,
                     'cropBackgroundColor' => 'ffffff',
                     'crop' => array(0, 0, 0, 0)
-                ))
+                ), self::VALID_CHECKSUM . '_900_502_ffffff_0_0_0_0_fileid.jpeg')
             ),
             array(
                 'some/dirs/to/ignore/' . self::INVALID_CHECKSUM . '_900_502_ffffff_0_0_0_0_fileid.jpeg',

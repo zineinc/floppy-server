@@ -6,11 +6,13 @@ final class FileId
 {
     private $id;
     private $attributes;
+    private $filename;
 
-    public function __construct($id, array $attributes = array())
+    public function __construct($id, array $attributes = array(), $filename = null)
     {
         $this->id = (string)$id;
         $this->attributes = new AttributesBag($attributes);
+        $this->filename = $filename;
     }
 
     /**
@@ -29,9 +31,14 @@ final class FileId
         return $this->attributes;
     }
 
+    public function filename()
+    {
+        return $this->filename ?: $this->id;
+    }
+
     public function isVariant()
     {
-        return count($this->attributes->all()) > 0;
+        return count($this->attributes->all()) > 0 || $this->filename() !== $this->id;
     }
 
     public function original()

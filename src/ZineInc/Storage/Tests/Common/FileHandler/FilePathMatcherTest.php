@@ -22,7 +22,7 @@ class FilePathMatcherTest extends AbstractPathMatcherTest
                 false,
                 new FileId('fileid.zip', array(
                     'name' => 'some-name',
-                ))
+                ), 'fileid.zip')
             ),
             array(
                 'some/dirs/to/ignore/fileid.zip?name=some-name&checksum=' . self::INVALID_CHECKSUM,
