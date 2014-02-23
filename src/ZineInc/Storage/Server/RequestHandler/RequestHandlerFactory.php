@@ -9,7 +9,7 @@ use ZineInc\Storage\Common\FileHandler\ImagePathMatcher;
 use ZineInc\Storage\Server\FileHandler\FallbackFileHandler;
 use ZineInc\Storage\Server\FileHandler\ImageFileHandler;
 use ZineInc\Storage\Server\FileHandler\StandardImageProcess;
-use ZineInc\Storage\Server\Storage\FilepathChoosingStrategyImpl;
+use ZineInc\Storage\Common\Storage\FilepathChoosingStrategyImpl;
 use ZineInc\Storage\Server\Storage\FilesystemStorage;
 use ZineInc\Storage\Server\Storage\IdFactoryImpl;
 

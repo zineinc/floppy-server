@@ -1,10 +1,10 @@
 <?php
 
-namespace ZineInc\Storage\Tests\Server\Storage;
+namespace ZineInc\Storage\Tests\Common\Storage;
 
 use PHPUnit_Framework_TestCase;
 use ZineInc\Storage\Common\FileId;
-use ZineInc\Storage\Server\Storage\FilepathChoosingStrategyImpl;
+use ZineInc\Storage\Common\Storage\FilepathChoosingStrategyImpl;
 
 class FilepathChoosingStrategyImplTest extends PHPUnit_Framework_TestCase
 {
@@ -17,7 +17,7 @@ class FilepathChoosingStrategyImplTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->strategy = new FilepathChoosingStrategyImpl(self::DIRS_COUNT, self::CHARS_FOR_DIR, self::ORIG_DIR, self::VARIANT_DIR);
+        $this->strategy = new \ZineInc\Storage\Common\Storage\FilepathChoosingStrategyImpl(self::DIRS_COUNT, self::CHARS_FOR_DIR, self::ORIG_DIR, self::VARIANT_DIR);
     }
 
     /**

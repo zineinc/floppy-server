@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use ZineInc\Storage\Common\FileHandler\PathMatchingException;
-use ZineInc\Storage\Server\ErrorCodes;
+use ZineInc\Storage\Common\ErrorCodes;
 use ZineInc\Storage\Server\FileHandler\FileHandler;
 use ZineInc\Storage\Server\FileSource;
 use ZineInc\Storage\Server\Storage\Storage;

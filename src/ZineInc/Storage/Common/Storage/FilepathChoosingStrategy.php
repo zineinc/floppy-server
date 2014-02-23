@@ -1,10 +1,9 @@
 <?php
 
-namespace ZineInc\Storage\Server\Storage;
+namespace ZineInc\Storage\Common\Storage;
 
 use ZineInc\Storage\Common\FileId;
 
-//TODO: move to ZineInc\Storage\Common
 interface FilepathChoosingStrategy
 {
     /**

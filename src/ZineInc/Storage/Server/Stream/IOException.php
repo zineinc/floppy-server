@@ -3,7 +3,7 @@
 namespace ZineInc\Storage\Server\Stream;
 
 use Exception;
-use ZineInc\Storage\Server\ErrorCodes;
+use ZineInc\Storage\Common\ErrorCodes;
 use ZineInc\Storage\Common\StorageException;
 
 class IOException extends Exception implements StorageException

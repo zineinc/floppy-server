@@ -7,7 +7,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use ZineInc\Storage\Common\FileId;
 use ZineInc\Storage\Server\FileSource;
 use ZineInc\Storage\Server\FileType;
-use ZineInc\Storage\Server\Storage\FilepathChoosingStrategy;
+use ZineInc\Storage\Common\Storage\FilepathChoosingStrategy;
 use ZineInc\Storage\Server\Storage\FilesystemStorage;
 use ZineInc\Storage\Server\Storage\IdFactory;
 use ZineInc\Storage\Server\Storage\IdFactoryImpl;

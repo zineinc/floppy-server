@@ -7,6 +7,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\File\File;
 use ZineInc\Storage\Common\FileId;
+use ZineInc\Storage\Common\Storage\FilepathChoosingStrategy;
 use ZineInc\Storage\Server\FileSource;
 
 class FilesystemStorage implements Storage

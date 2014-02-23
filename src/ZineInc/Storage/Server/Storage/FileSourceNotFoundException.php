@@ -3,7 +3,7 @@
 namespace ZineInc\Storage\Server\Storage;
 
 
-use ZineInc\Storage\Server\ErrorCodes;
+use ZineInc\Storage\Common\ErrorCodes;
 use ZineInc\Storage\Common\StorageError;
 
 class FileSourceNotFoundException extends \Exception implements StorageError {

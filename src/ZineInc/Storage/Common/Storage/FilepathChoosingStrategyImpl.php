@@ -1,6 +1,6 @@
 <?php
 
-namespace ZineInc\Storage\Server\Storage;
+namespace ZineInc\Storage\Common\Storage;
 
 use InvalidArgumentException;
 use ZineInc\Storage\Common\FileId;

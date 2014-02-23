@@ -3,7 +3,7 @@
 namespace ZineInc\Storage\Server\RequestHandler;
 
 use Exception;
-use ZineInc\Storage\Server\ErrorCodes;
+use ZineInc\Storage\Common\ErrorCodes;
 use ZineInc\Storage\Common\StorageException;
 
 class FileHandlerNotFoundException extends Exception implements StorageException

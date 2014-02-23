@@ -47,7 +47,7 @@ class ImagePathMatcherTest extends AbstractPathMatcherTest
                 'some/dirs/to/ignore/'.self::INVALID_CHECKSUM.'_900_502_ffffff_0_0_0_0_fileid.jpeg',
                 true,
             ),
-            //some params missiong
+            //some params missing
             array(
                 'some/dirs/to/ignore/'.self::VALID_CHECKSUM.'_502_ffffff_0_0_0_0_fileid.jpeg',
                 false,
