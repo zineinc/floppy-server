@@ -23,11 +23,15 @@ class ImageFileHandler extends AbstractFileHandler
         'image/jpg',
         'image/gif',
     );
+    private static $defaultSupportedExtensions = array(
+        'png', 'jpeg', 'gif',
+    );
     private $imagine;
     private $imageProcess;
 
     private $options = array(
         'supportedMimeTypes' => null,
+        'supportedExtensions' => null,
         'maxWidth' => 1920,
         'maxHeight' => 1200,
     );
@@ -37,6 +41,7 @@ class ImageFileHandler extends AbstractFileHandler
         parent::__construct($variantMatcher);
 
         $this->options['supportedMimeTypes'] = self::$defaultSupportedMimeTypes;
+        $this->options['supportedExtensions'] = self::$defaultSupportedExtensions;
         
         $this->setOptions($options);
 
@@ -113,5 +118,10 @@ class ImageFileHandler extends AbstractFileHandler
     protected function supportedMimeTypes()
     {
         return $this->options['supportedMimeTypes'];
+    }
+
+    protected function supportedExtensions()
+    {
+        return $this->options['supportedExtensions'];
     }
 }

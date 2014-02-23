@@ -18,7 +18,7 @@ final class FileSource
     public static function fromFile(File $file)
     {
         $content = file_get_contents($file->getPathname());
-        return new self(new StringInputStream($content), new FileType($file->getMimeType(), $file->guessExtension()));
+        return new self(new StringInputStream($content), new FileType($file->getMimeType(), $file->getExtension()));
     }
 
     public function __construct(InputStream $stream, FileType $fileType)

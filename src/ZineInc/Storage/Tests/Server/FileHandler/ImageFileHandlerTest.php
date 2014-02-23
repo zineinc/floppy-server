@@ -59,7 +59,9 @@ class ImageFileHandlerTest extends PHPUnit_Framework_TestCase
     {
         return array(
             array('image/png', 'png', true),
+            array('image/png', 'txt', false),
             array('text/plain', 'txt', false),
+            array('text/plain', 'png', false),
         );
     }
 

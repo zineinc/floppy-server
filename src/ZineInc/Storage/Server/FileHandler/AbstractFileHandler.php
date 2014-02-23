@@ -57,10 +57,12 @@ abstract class AbstractFileHandler implements FileHandler
 
     public function supports(FileType $fileType)
     {
-        return in_array($fileType->mimeType(), $this->supportedMimeTypes());
+        return in_array($fileType->mimeType(), $this->supportedMimeTypes()) && in_array($fileType->prefferedExtension(), $this->supportedExtensions());
     }
 
     protected abstract function supportedMimeTypes();
+
+    protected abstract function supportedExtensions();
 
     public function type()
     {

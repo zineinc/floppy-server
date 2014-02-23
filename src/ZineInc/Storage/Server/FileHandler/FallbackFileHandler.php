@@ -12,12 +12,14 @@ class FallbackFileHandler extends AbstractFileHandler
     const TYPE = 'f';
 
     private $supportedMimeTypes;
+    private $supportedExtensions;
 
-    public function __construct(PathMatcher $pathMatcher, array $supportedMimeTypes)
+    public function __construct(PathMatcher $pathMatcher, array $supportedMimeTypes, array $supportedExtensions)
     {
         parent::__construct($pathMatcher);
 
         $this->supportedMimeTypes = $supportedMimeTypes;
+        $this->supportedExtensions = $supportedExtensions;
     }
 
     protected function supportedMimeTypes()
@@ -29,5 +31,10 @@ class FallbackFileHandler extends AbstractFileHandler
     {
         $response->headers->makeDisposition('attachment', $fileId->attributes()->get('name').'.'.$fileSource->fileType()->prefferedExtension());
         return $response;
+    }
+
+    protected function supportedExtensions()
+    {
+        return $this->supportedExtensions;
     }
 }
