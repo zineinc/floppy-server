@@ -59,8 +59,8 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
 
         //then
 
-        $expectedId = $fileId ?: self::ID;
-        $this->assertEquals($expectedId, $id);
+        $expectedId = $fileId ?: new FileId(self::ID);
+        $this->assertEquals($expectedId->id(), $id);
         $this->assertTrue(file_exists($expectedFilepath));
         $this->assertEquals(self::FILESOURCE, file_get_contents($expectedFilepath));
     }
@@ -71,7 +71,7 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
         return array(
             array(null, null, $filepath.'/'.self::ID),
             array(null, 'file-variant.file', $filepath.'/file-variant.file'),
-            array(self::DIFFERENT_ID, 'file-variant.file', __DIR__.self::STORAGE_RELATIVE_DIR.self::FILEPATH_FOR_DIFFERENT_ID.'/file-variant.file'),
+            array(new FileId(self::DIFFERENT_ID), 'file-variant.file', __DIR__.self::STORAGE_RELATIVE_DIR.self::FILEPATH_FOR_DIFFERENT_ID.'/file-variant.file'),
         );
     }
     
@@ -93,7 +93,7 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
 
         //when
 
-        $this->storage->store($fileSource, self::ID, $invalidFilepath);
+        $this->storage->store($fileSource, new FileId(self::ID), $invalidFilepath);
     }
 
     /**

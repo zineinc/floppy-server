@@ -28,4 +28,14 @@ final class FileId
     {
         return $this->attributes;
     }
+
+    public function isVariant()
+    {
+        return count($this->attributes->all()) > 0;
+    }
+
+    public function original()
+    {
+        return new self($this->id);
+    }
 }

@@ -44,7 +44,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
         //given
 
         $fileSource = $this->createFileSource();
-        $fileId = $this->createFileId();
+        $fileId = $this->createProcessedFileId();
         $response = $this->createResponse();
 
         $this->expectsSuccessFileHandler($this->fileHandlers[0], $fileId, $fileSource, $response);
@@ -70,7 +70,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
 
         $fileSource = $this->createFileSource();
         $processedFileSource = $this->createFileSource('processed-content');
-        $fileId = $this->createFileId();
+        $fileId = $this->createProcessedFileId();
         $response = $this->createResponse();
 
         $this->expectsFileHandlerMatchesAndMatch($this->fileHandlers[0], $fileId);
@@ -80,7 +80,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
 
         $this->storage->expects($this->once())
             ->method('store')
-            ->with($processedFileSource, $fileId->id(), basename(self::DOWNLOAD_URI));
+            ->with($processedFileSource, $fileId, basename(self::DOWNLOAD_URI));
 
 
         //when
@@ -100,7 +100,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
         //given
 
         $fileSource = $this->createFileSource();
-        $fileId = $this->createFileId();
+        $fileId = $this->createProcessedFileId();
 
         $this->expectsFileHandlerMatchesAndMatch($this->fileHandlers[0], $fileId);
         $this->expectsGetFileSourceFromStorage($fileId, $fileSource);
@@ -125,7 +125,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
     public function fileHandlerFound_fileNotExist_returnBadResponse() {
         //given
 
-        $fileId = $this->createFileId();
+        $fileId = $this->createProcessedFileId();
         $this->expectsFileHandlerMatchesAndMatch($this->fileHandlers[0], $fileId);
         $this->expectsFileSourceNotFound();
 
@@ -186,8 +186,8 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
         return new Response('some-content');
     }
 
-    private function createFileId(){
-        return new FileId(self::SOME_ID);
+    private function createProcessedFileId(){
+        return new FileId(self::SOME_ID, array('some-val' => 'val'));
     }
 
     private function createFileSource($content = 'some'){
@@ -214,7 +214,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
     {
         $this->storage->expects($this->atLeastOnce())
             ->method('getSource')
-            ->with($fileId)
+            ->with($fileId->original())
             ->will($this->returnValue($fileSource));
     }
 

@@ -9,8 +9,10 @@ class FilepathChoosingStrategyImpl implements FilepathChoosingStrategy
 {
     private $charsForDir;
     private $dirCount;
+    private $variantRootDir;
+    private $origRootDir;
 
-    public function __construct($dirCount = 2, $charsForDir = 3)
+    public function __construct($dirCount = 2, $charsForDir = 3, $origRootDir = 'orig', $variantRootDir = 'v')
     {
         if($dirCount < 1 || $charsForDir < 1)
         {
@@ -19,6 +21,8 @@ class FilepathChoosingStrategyImpl implements FilepathChoosingStrategy
 
         $this->charsForDir = (int) $charsForDir;
         $this->dirCount = (int) $dirCount;
+        $this->origRootDir = (string) $origRootDir;
+        $this->variantRootDir = (string) $variantRootDir;
     }
 
     public function filepath(FileId $fileId)
@@ -26,6 +30,8 @@ class FilepathChoosingStrategyImpl implements FilepathChoosingStrategy
         $id = $fileId->id();
 
         $parts = array();
+
+        $parts[] = $fileId->isVariant() ? $this->variantRootDir : $this->origRootDir;
 
         for($i=0; $i<$this->dirCount; $i++)
         {

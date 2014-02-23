@@ -109,12 +109,12 @@ class RequestHandler implements LoggerAwareInterface
 
             $fileId = $handler->match($path);
 
-            $fileSource = $this->storage->getSource($fileId);
+            $fileSource = $this->storage->getSource($fileId->original());
 
             $processedFileSource = $handler->beforeSendProcess($fileSource, $fileId);
 
             if($processedFileSource !== $fileSource) {
-                $this->storage->store($processedFileSource, $fileId->id(), basename($path));
+                $this->storage->store($processedFileSource, $fileId, basename($path));
             }
 
             return $handler->createResponse($processedFileSource, $fileId);

@@ -56,12 +56,12 @@ class FilesystemStorage implements Storage
         }
     }
 
-    public function store(FileSource $fileSource, $id = null, $filename = null)
+    public function store(FileSource $fileSource, FileId $fileId = null, $filename = null)
     {
         $this->ensureValidFilepath($filename);
 
-        $id = $id ?: $this->idFactory->id($fileSource);
-        $filepath = $this->filepathChoosingStrategy->filepath(new FileId($id)).'/'.($filename ?: $id);
+        $fileId = $fileId ?: new FileId($this->idFactory->id($fileSource));
+        $filepath = $this->filepathChoosingStrategy->filepath($fileId).'/'.($filename ?: $fileId->id());
 
         $fullFilepath = $this->storageDir.'/'.$filepath;
 
@@ -74,7 +74,7 @@ class FilesystemStorage implements Storage
             throw new StoreException('Error while file storing', $e);
         }
 
-        return $id;
+        return $fileId->id();
     }
 
     /**
