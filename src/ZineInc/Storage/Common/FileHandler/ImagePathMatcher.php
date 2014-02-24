@@ -23,7 +23,7 @@ class ImagePathMatcher implements PathMatcher
 
         $params = explode('_', $filename);
 
-        if (count($params) !== 9) {
+        if (count($params) !== 6) {
             throw new PathMatchingException(sprintf('Invalid variant filepath format, given: "%s"', $variantFilepath));
         }
 
@@ -39,7 +39,7 @@ class ImagePathMatcher implements PathMatcher
             'width' => (int)$params[0],
             'height' => (int)$params[1],
             'cropBackgroundColor' => $params[2],
-            'crop' => array((float)$params[3], (float)$params[4], (float)$params[5], (float)$params[6]),
+            'crop' => (boolean) $params[3],
         ), $filename);
     }
 
@@ -54,6 +54,6 @@ class ImagePathMatcher implements PathMatcher
 
         $params = explode('_', $variantFilepath);
 
-        return count($params) === 9;
+        return count($params) === 6;
     }
 }

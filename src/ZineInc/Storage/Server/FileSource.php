@@ -22,7 +22,7 @@ final class FileSource
         $content = file_get_contents($file->getPathname());
         $extension = $file instanceof UploadedFile ? $file->getClientOriginalExtension() : $file->getExtension();
 
-        return new self(new StringInputStream($content), new FileType($file->getMimeType(), $extension));
+        return new self(new StringInputStream($content), new FileType($file->getMimeType(), strtolower($extension)));
     }
 
     public function __construct(InputStream $stream, FileType $fileType)
