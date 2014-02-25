@@ -70,6 +70,8 @@ class ImageFileHandler extends AbstractFileHandler
     public function beforeStoreProcess(FileSource $file)
     {
         try {
+            //TODO: exteract to MaxSizeImageProcess
+
             $image = $this->imagine->load($file->content());
 
             $size = $image->getSize();
@@ -78,9 +80,10 @@ class ImageFileHandler extends AbstractFileHandler
                 return $file;
             }
 
+            $maxRatio = $this->options['maxWidth'] / $this->options['maxHeight'];
             $ratio = $size->getWidth() / $size->getHeight();
 
-            $newSize = $ratio > 1 ? new Box($this->options['maxWidth'], $this->options['maxWidth'] / $ratio)
+            $newSize = $ratio > $maxRatio ? new Box($this->options['maxWidth'], $this->options['maxWidth'] / $ratio)
                 : new Box($this->options['maxHeight'] * $ratio, $this->options['maxHeight']);
 
             $image->resize($newSize);

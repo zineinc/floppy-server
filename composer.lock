@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "f6656bbb484d90017593a6027c2ed2ac",
+    "hash": "a56fd1352c0ef12d5f89c8512651286f",
     "packages": [
         {
             "name": "imagine/imagine",
@@ -243,6 +243,21 @@
             "description": "Symfony HttpFoundation Component",
             "homepage": "http://symfony.com",
             "time": "2014-02-11 15:39:28"
+        },
+        {
+            "name": "zineinc/storage-common",
+            "version": "0.0.1",
+            "source": {
+                "type": "git",
+                "url": "git@codebasehq.com:advisio/zineinc/storage-common.git",
+                "reference": "master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "ZineInc\\Storage\\": "src/"
+                }
+            }
         }
     ],
     "packages-dev": [
