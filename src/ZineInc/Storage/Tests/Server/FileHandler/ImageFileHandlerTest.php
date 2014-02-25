@@ -32,6 +32,7 @@ class ImageFileHandlerTest extends PHPUnit_Framework_TestCase
             $this->imagine,
             $this->getMock('ZineInc\Storage\Common\FileHandler\PathMatcher'),
             $this->getMock('ZineInc\Storage\Server\FileHandler\ImageProcess'),
+            $this->getMock('ZineInc\Storage\Server\FileHandler\ImageProcess'),
             array()
         );
     }
@@ -88,54 +89,5 @@ class ImageFileHandlerTest extends PHPUnit_Framework_TestCase
     private function createImageFileSource($path)
     {
         return new FileSource(new StringInputStream(file_get_contents($path)), new FileType('image/png', 'png'));
-    }
-
-    /**
-     * @test
-     */
-    public function processBeforeStore_imageIsLarge_resizeIt()
-    {
-        //given
-
-        $maxSize = 10;
-        $this->handler->setOptions(array(
-            'maxHeight' => $maxSize,
-            'maxWidth' => $maxSize
-        ));
-        $fileSource = $this->createImageFileSource(__DIR__ . '/../../Resources/100x80-black.png');
-
-        //when
-
-        $actualSource = $this->handler->beforeStoreProcess($fileSource);
-
-        //then
-
-        $image = $this->imagine->load($actualSource->content());
-
-        $this->assertEquals($maxSize, $image->getSize()->getWidth());
-    }
-
-    /**
-     * @test
-     */
-    public function processBeforeStore_imageIsSmall_dontTouchIt()
-    {
-        //given
-
-        $maxSize = 100;
-        $this->handler->setOptions(array(
-            'maxHeight' => $maxSize,
-            'maxWidth' => $maxSize
-        ));
-
-        $fileSource = $this->createImageFileSource(__DIR__ . '/../../Resources/100x80-black.png');
-
-        //when
-
-        $actualSource = $this->handler->beforeStoreProcess($fileSource);
-
-        //then
-
-        $this->assertTrue($actualSource === $fileSource);
     }
 }

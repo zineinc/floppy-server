@@ -10,7 +10,7 @@ use ZineInc\Storage\Common\AttributesBag;
 use ZineInc\Storage\Server\FileSource;
 use ZineInc\Storage\Server\Stream\StringInputStream;
 
-class StandardImageProcess implements ImageProcess
+class ResizeImageProcess implements ImageProcess
 {
     public function process(ImagineInterface $imagine, FileSource $fileSource, AttributesBag $attrs)
     {

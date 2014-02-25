@@ -8,7 +8,8 @@ use ZineInc\Storage\Common\FileHandler\FilePathMatcher;
 use ZineInc\Storage\Common\FileHandler\ImagePathMatcher;
 use ZineInc\Storage\Server\FileHandler\FallbackFileHandler;
 use ZineInc\Storage\Server\FileHandler\ImageFileHandler;
-use ZineInc\Storage\Server\FileHandler\StandardImageProcess;
+use ZineInc\Storage\Server\FileHandler\MaxSizeImageProcess;
+use ZineInc\Storage\Server\FileHandler\ResizeImageProcess;
 use ZineInc\Storage\Common\Storage\FilepathChoosingStrategyImpl;
 use ZineInc\Storage\Server\Storage\FilesystemStorage;
 use ZineInc\Storage\Server\Storage\IdFactoryImpl;
@@ -88,7 +89,7 @@ class RequestHandlerFactory
             );
         };
         $container['fileHandlers.image'] = function ($container) {
-            return new ImageFileHandler($container['imagine'], $container['fileHandlers.image.pathMatcher'], $container['fileHandlers.image.imageProcess'], /*TODO*/
+            return new ImageFileHandler($container['imagine'], $container['fileHandlers.image.pathMatcher'], $container['fileHandlers.image.beforeStoreImageProcess'], $container['fileHandlers.image.beforeSendImageProcess'], /*TODO*/
                 array());
         };
         $container['imagine'] = function () {
@@ -97,9 +98,14 @@ class RequestHandlerFactory
         $container['fileHandlers.image.pathMatcher'] = function ($container) {
             return new ImagePathMatcher($container['checksumChecker']);
         };
-        $container['fileHandlers.image.imageProcess'] = function ($container) {
-            return new StandardImageProcess();
+        $container['fileHandlers.image.beforeSendImageProcess'] = function ($container) {
+            return new ResizeImageProcess();
         };
+        $container['fileHandlers.image.beforeStoreImageProcess'] = function($container) {
+            return new MaxSizeImageProcess($container['fileHandlers.image.maxWidth'], $container['fileHandlers.image.maxHeight']);
+        };
+        $container['fileHandlers.image.maxWidth'] = 1920;
+        $container['fileHandlers.image.maxHeight'] = 1200;
         $container['fileHandlers.file'] = function ($container) {
             return new FallbackFileHandler($container['fileHandlers.file.pathMatcher'], $container['fileHandlers.file.mimeTypes'], $container['fileHandlers.file.extensions']);
         };

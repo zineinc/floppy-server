@@ -5,6 +5,7 @@ namespace ZineInc\Storage\Server\FileHandler;
 use Imagine\Image\Box;
 use Imagine\Image\ImagineInterface;
 use InvalidArgumentException;
+use ZineInc\Storage\Common\AttributesBag;
 use ZineInc\Storage\Common\FileHandler\PathMatcher;
 use ZineInc\Storage\Common\FileId;
 use ZineInc\Storage\Server\FileHandler\AbstractFileHandler;
@@ -27,16 +28,15 @@ class ImageFileHandler extends AbstractFileHandler
         'png', 'jpeg', 'gif', 'jpg'
     );
     private $imagine;
-    private $imageProcess;
+    private $beforeStoreImageProcess;
+    private $beforeSendImageProcess;
 
     private $options = array(
         'supportedMimeTypes' => null,
         'supportedExtensions' => null,
-        'maxWidth' => 1920,
-        'maxHeight' => 1200,
     );
 
-    public function __construct(ImagineInterface $imagine, PathMatcher $variantMatcher, ImageProcess $imageProcess, array $options = array())
+    public function __construct(ImagineInterface $imagine, PathMatcher $variantMatcher, ImageProcess $beforeStoreImageProcess, ImageProcess $beforeSendImageProcess, array $options = array())
     {
         parent::__construct($variantMatcher);
 
@@ -46,7 +46,8 @@ class ImageFileHandler extends AbstractFileHandler
         $this->setOptions($options);
 
         $this->imagine = $imagine;
-        $this->imageProcess = $imageProcess;
+        $this->beforeSendImageProcess = $beforeSendImageProcess;
+        $this->beforeStoreImageProcess = $beforeStoreImageProcess;
     }
 
     public function setOptions(array $options)
@@ -64,37 +65,12 @@ class ImageFileHandler extends AbstractFileHandler
 
     public function beforeSendProcess(FileSource $file, FileId $fileId)
     {
-        return $this->imageProcess->process($this->imagine, $file, $fileId->attributes());
+        return $this->beforeSendImageProcess->process($this->imagine, $file, $fileId->attributes());
     }
 
     public function beforeStoreProcess(FileSource $file)
     {
-        try {
-            //TODO: exteract to MaxSizeImageProcess
-
-            $image = $this->imagine->load($file->content());
-
-            $size = $image->getSize();
-
-            if ($size->getWidth() <= $this->options['maxWidth'] && $size->getHeight() <= $this->options['maxHeight']) {
-                return $file;
-            }
-
-            $maxRatio = $this->options['maxWidth'] / $this->options['maxHeight'];
-            $ratio = $size->getWidth() / $size->getHeight();
-
-            $newSize = $ratio > $maxRatio ? new Box($this->options['maxWidth'], $this->options['maxWidth'] / $ratio)
-                : new Box($this->options['maxHeight'] * $ratio, $this->options['maxHeight']);
-
-            $image->resize($newSize);
-
-            $content = $image->get($file->fileType()->prefferedExtension());
-            $file->discard();
-
-            return new FileSource(new StringInputStream($content), $file->fileType());
-        } catch (\Imagine\Exception\Exception $e) {
-            throw new FileProcessException('Image before store processing error', $e);
-        }
+        return $this->beforeStoreImageProcess->process($this->imagine, $file, new AttributesBag());
     }
 
     protected function doGetStoreAttributes(FileSource $file, $content)
