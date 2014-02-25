@@ -9,7 +9,7 @@ use ZineInc\Storage\Common\FileId;
 use ZineInc\Storage\Server\FileSource;
 use ZineInc\Storage\Server\FileType;
 
-interface FileHandler extends PathMatcher
+interface FileHandler extends PathMatcher, ResponseFilter
 {
     /**
      * @param FileSource $fileType
@@ -44,12 +44,4 @@ interface FileHandler extends PathMatcher
      * @return FileSource
      */
     public function beforeSendProcess(FileSource $file, FileId $fileId);
-
-    /**
-     * @param FileSource $file File that should be in response
-     * @param FileId $fileId
-     *
-     * @return Response
-     */
-    public function createResponse(FileSource $file, FileId $fileId);
 }

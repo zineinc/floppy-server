@@ -10,6 +10,7 @@ use ZineInc\Storage\Common\FileId;
 use ZineInc\Storage\Server\FileHandler\FileProcessException;
 use ZineInc\Storage\Server\FileSource;
 use ZineInc\Storage\Server\FileType;
+use ZineInc\Storage\Server\RequestHandler\DownloadResponseFactory;
 use ZineInc\Storage\Server\RequestHandler\RequestHandler;
 use ZineInc\Storage\Server\Storage\FileSourceNotFoundException;
 use ZineInc\Storage\Server\Stream\StringInputStream;
@@ -34,7 +35,13 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
             $this->getMock('ZineInc\Storage\Server\FileHandler\FileHandler'),
         );
 
-        $this->requestHandler = new RequestHandler($this->storage, $this->getMock('ZineInc\Storage\Server\RequestHandler\FileSourceFactory'), $this->fileHandlers);
+
+        $this->requestHandler = new RequestHandler(
+            $this->storage,
+            $this->getMock('ZineInc\Storage\Server\RequestHandler\FileSourceFactory'),
+            $this->fileHandlers,
+            new DownloadRequestHandlerTest_DownloadResponseFactory($this->createResponse())
+        );
     }
 
     /**
@@ -46,9 +53,8 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
 
         $fileSource = $this->createFileSource();
         $fileId = $this->createProcessedFileId();
-        $response = $this->createResponse();
 
-        $this->expectsSuccessFileHandler($this->fileHandlers[0], $fileId, $fileSource, $response);
+        $this->expectsSuccessFileHandler($this->fileHandlers[0], $fileId, $fileSource);
 
         $this->expectsProcessedFileDoesNotExistsInStorage($fileId);
         $this->expectsGetFileSourceFromStorage($fileId->original(), $fileSource);
@@ -61,7 +67,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
         //then
 
         $this->verifyMockObjects();
-        $this->assertEquals($response, $actualResponse);
+        $this->assertEquals($this->createResponse(), $actualResponse);
     }
 
     /**
@@ -74,13 +80,12 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
         $fileSource = $this->createFileSource();
         $processedFileSource = $this->createFileSource('processed-content');
         $fileId = $this->createProcessedFileId();
-        $response = $this->createResponse();
 
         $this->expectsFileHandlerMatchesAndMatch($this->fileHandlers[0], $fileId);
         $this->expectsProcessedFileDoesNotExistsInStorage($fileId);
         $this->expectsGetFileSourceFromStorage($fileId->original(), $fileSource);
         $this->expectsFileHandlerSuccessProcess($this->fileHandlers[0], $fileId, $fileSource, $processedFileSource);
-        $this->expectsFileHandlerCreateResponse($this->fileHandlers[0], $fileId, $processedFileSource, $response);
+        $this->expectsFileHandlerFilterResponse($this->fileHandlers[0], $fileId, $processedFileSource);
 
         $this->storage->expects($this->once())
             ->method('store')
@@ -94,7 +99,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
         //then
 
         $this->verifyMockObjects();
-        $this->assertEquals($response, $actualResponse);
+        $this->assertEquals($this->createResponse(), $actualResponse);
     }
 
     /**
@@ -200,14 +205,13 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
 
         $fileId = $this->createProcessedFileId();
         $fileSource = $this->createFileSource();
-        $response = $this->createResponse();
 
         $this->expectsFileHandlerMatchesAndMatch($this->fileHandlers[0], $fileId);
         $this->expectsProcessedFileExistsInStorage($fileId);
         $this->expectsSkipFileHandlerProcess($this->fileHandlers[0]);
         $this->expectsDontStoreFileVariant();
         $this->expectsGetFileSourceFromStorage($fileId, $fileSource, basename(self::DOWNLOAD_URI));
-        $this->expectsFileHandlerCreateResponse($this->fileHandlers[0], $fileId, $fileSource, $response);
+        $this->expectsFileHandlerFilterResponse($this->fileHandlers[0], $fileId, $fileSource);
 
         //when
 
@@ -216,7 +220,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
         //then
 
         $this->verifyMockObjects();
-        $this->assertEquals($response, $actualResponse);
+        $this->assertEquals($this->createResponse(), $actualResponse);
     }
 
     private function createResponse()
@@ -239,11 +243,11 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
         return Request::create(self::DOWNLOAD_URI);
     }
 
-    private function expectsSuccessFileHandler($handler, $fileId, $fileSource, $response)
+    private function expectsSuccessFileHandler($handler, $fileId, $fileSource)
     {
         $this->expectsFileHandlerMatchesAndMatch($handler, $fileId);
         $this->expectsFileHandlerSuccessProcess($handler, $fileId, $fileSource);
-        $this->expectsFileHandlerCreateResponse($handler, $fileId, $fileSource, $response);
+        $this->expectsFileHandlerFilterResponse($handler, $fileId, $fileSource);
     }
 
     /**
@@ -302,12 +306,11 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
      * @param $fileSource
      * @param $response
      */
-    private function expectsFileHandlerCreateResponse($handler, $fileId, $fileSource, $response)
+    private function expectsFileHandlerFilterResponse($handler, $fileId, $fileSource)
     {
         $handler->expects($this->any())
-            ->method('createResponse')
-            ->with($fileSource, $fileId)
-            ->will($this->returnValue($response));
+            ->method('filterResponse')
+            ->with($this->createResponse(), $fileSource, $fileId);
     }
 
     private function expectsFileHandlerErrorProcess($handler)
@@ -371,5 +374,20 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
             ->method('exists')
             ->with($fileId)
             ->will($this->returnValue(false));
+    }
+}
+
+class DownloadRequestHandlerTest_DownloadResponseFactory implements DownloadResponseFactory
+{
+    private $response;
+
+    public function __construct(Response $response)
+    {
+        $this->response = $response;
+    }
+
+    public function createResponse(FileSource $fileSource)
+    {
+        return $this->response;
     }
 }

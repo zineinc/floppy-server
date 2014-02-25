@@ -13,10 +13,12 @@ abstract class AbstractFileHandler implements FileHandler
     const TYPE = 'f';
 
     private $pathMatcher;
+    private $responseFilters;
 
-    public function __construct(PathMatcher $pathMatcher)
+    public function __construct(PathMatcher $pathMatcher, array $responseFilters)
     {
         $this->pathMatcher = $pathMatcher;
+        $this->responseFilters = $responseFilters;
     }
 
     public function match($variantFilepath)
@@ -69,15 +71,10 @@ abstract class AbstractFileHandler implements FileHandler
         return static::TYPE;
     }
 
-    public function createResponse(FileSource $fileSource, FileId $fileId)
+    public function filterResponse(Response $response, FileSource $fileSource, FileId $fileId)
     {
-        return $this->filterResponse(new Response($fileSource->content(), 200, array(
-            'Content-Type' => $fileSource->fileType()->mimeType(),
-        )), $fileSource, $fileId);
-    }
-
-    protected function filterResponse(Response $response, FileSource $fileSource, FileId $fileId)
-    {
-        return $response;
+        foreach($this->responseFilters as $filter) {
+            $filter->filterResponse($response, $fileSource, $fileId);
+        }
     }
 }

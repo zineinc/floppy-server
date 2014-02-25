@@ -38,7 +38,7 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
             $this->getMock('ZineInc\Storage\Server\FileHandler\FileHandler'),
         );
 
-        $this->requestHandler = new RequestHandler($this->storage, $this->fileSourceFactory, $this->fileHandlers);
+        $this->requestHandler = new RequestHandler($this->storage, $this->fileSourceFactory, $this->fileHandlers, $this->getMock('ZineInc\Storage\Server\RequestHandler\DownloadResponseFactory'));
     }
 
     /**

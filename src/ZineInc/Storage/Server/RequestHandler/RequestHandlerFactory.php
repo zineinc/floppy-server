@@ -6,6 +6,7 @@ namespace ZineInc\Storage\Server\RequestHandler;
 use ZineInc\Storage\Common\ChecksumCheckerImpl;
 use ZineInc\Storage\Common\FileHandler\FilePathMatcher;
 use ZineInc\Storage\Common\FileHandler\ImagePathMatcher;
+use ZineInc\Storage\Server\FileHandler\DispositionResponseFilter;
 use ZineInc\Storage\Server\FileHandler\FallbackFileHandler;
 use ZineInc\Storage\Server\FileHandler\ImageFileHandler;
 use ZineInc\Storage\Server\FileHandler\MaxSizeImageProcess;
@@ -89,9 +90,17 @@ class RequestHandlerFactory
             );
         };
         $container['fileHandlers.image'] = function ($container) {
-            return new ImageFileHandler($container['imagine'], $container['fileHandlers.image.pathMatcher'], $container['fileHandlers.image.beforeStoreImageProcess'], $container['fileHandlers.image.beforeSendImageProcess'], /*TODO*/
-                array());
+            return new ImageFileHandler(
+                $container['imagine'],
+                $container['fileHandlers.image.pathMatcher'],
+                $container['fileHandlers.image.beforeStoreImageProcess'],
+                $container['fileHandlers.image.beforeSendImageProcess'],
+                $container['fileHandlers.image.responseFilters'],
+                $container['fileHandlers.image.options']
+            );
         };
+        $container['fileHandlers.image.responseFilters'] = array();
+        $container['fileHandlers.image.options'] = array();
         $container['imagine'] = function () {
             return new \Imagine\Gd\Imagine();
         };
@@ -107,7 +116,12 @@ class RequestHandlerFactory
         $container['fileHandlers.image.maxWidth'] = 1920;
         $container['fileHandlers.image.maxHeight'] = 1200;
         $container['fileHandlers.file'] = function ($container) {
-            return new FallbackFileHandler($container['fileHandlers.file.pathMatcher'], $container['fileHandlers.file.mimeTypes'], $container['fileHandlers.file.extensions']);
+            return new FallbackFileHandler(
+                $container['fileHandlers.file.pathMatcher'],
+                $container['fileHandlers.file.mimeTypes'],
+                $container['fileHandlers.file.extensions'],
+                $container['fileHandlers.file.responseFilters']
+            );
         };
         $container['fileHandlers.file.pathMatcher'] = function ($container) {
             return new FilePathMatcher($container['checksumChecker']);
@@ -118,6 +132,9 @@ class RequestHandlerFactory
         $container['fileHandlers.file.extensions'] = function ($container) {
             return array();
         };
+        $container['fileHandlers.file.responseFilters'] = array(
+            new DispositionResponseFilter(),
+        );
     }
 
     /**
@@ -138,10 +155,18 @@ class RequestHandlerFactory
     private function requestHandlerDefinition($container)
     {
         $container['requestHandler'] = function ($container) {
-            return new RequestHandler($container['storage'], $container['requestHandler.fileSourceFactory'], $container['fileHandlers']);
+            return new RequestHandler(
+                $container['storage'],
+                $container['requestHandler.fileSourceFactory'],
+                $container['fileHandlers'],
+                $container['requestHandler.downloadResponseFactory']
+            );
         };
         $container['requestHandler.fileSourceFactory'] = function ($container) {
             return new FileSourceFactoryImpl();
+        };
+        $container['requestHandler.downloadResponseFactory'] = function($container) {
+            return new DownloadResponseFactoryImpl();
         };
         return $container;
     }

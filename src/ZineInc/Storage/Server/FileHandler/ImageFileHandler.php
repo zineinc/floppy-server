@@ -36,9 +36,9 @@ class ImageFileHandler extends AbstractFileHandler
         'supportedExtensions' => null,
     );
 
-    public function __construct(ImagineInterface $imagine, PathMatcher $variantMatcher, ImageProcess $beforeStoreImageProcess, ImageProcess $beforeSendImageProcess, array $options = array())
+    public function __construct(ImagineInterface $imagine, PathMatcher $variantMatcher, ImageProcess $beforeStoreImageProcess, ImageProcess $beforeSendImageProcess, array $responseFilters = array(), array $options = array())
     {
-        parent::__construct($variantMatcher);
+        parent::__construct($variantMatcher, $responseFilters);
 
         $this->options['supportedMimeTypes'] = self::$defaultSupportedMimeTypes;
         $this->options['supportedExtensions'] = self::$defaultSupportedExtensions;

@@ -26,13 +26,15 @@ class RequestHandler implements LoggerAwareInterface
     private $storage;
     private $fileSourceFactory;
     private $fileHandlers;
+    private $downloadResponseFactory;
 
-    public function __construct(Storage $storage, FileSourceFactory $fileSourceFactory, array $handlers)
+    public function __construct(Storage $storage, FileSourceFactory $fileSourceFactory, array $handlers, DownloadResponseFactory $downloadResponseFactory)
     {
         $this->storage = $storage;
         $this->fileSourceFactory = $fileSourceFactory;
         $this->fileHandlers = $handlers;
         $this->logger = new NullLogger();
+        $this->downloadResponseFactory = $downloadResponseFactory;
     }
 
     /**
@@ -121,7 +123,10 @@ class RequestHandler implements LoggerAwareInterface
                 }
             }
 
-            return $handler->createResponse($processedFileSource, $fileId);
+            $response = $this->downloadResponseFactory->createResponse($processedFileSource);
+            $handler->filterResponse($response, $processedFileSource, $fileId);
+
+            return $response;
         } catch (StorageError $e) {
             $this->logger->error($e);
             return $this->createErrorResponse($e, 500);
