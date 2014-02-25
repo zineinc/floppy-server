@@ -4,7 +4,7 @@ namespace ZineInc\Storage\Server\Stream;
 
 class StringInputStream implements InputStream
 {
-    private $bytes;
+    protected $bytes;
     private $closed = false;
 
     public function __construct($buffer)
@@ -21,6 +21,11 @@ class StringInputStream implements InputStream
     {
         $this->ensureOpened();
 
+        return $this->getBytes();
+    }
+
+    protected function getBytes()
+    {
         return $this->bytes;
     }
 
@@ -29,5 +34,10 @@ class StringInputStream implements InputStream
         if ($this->closed) {
             throw new IOException('Stream is closed');
         }
+    }
+
+    public function filepath()
+    {
+        return null;
     }
 }
