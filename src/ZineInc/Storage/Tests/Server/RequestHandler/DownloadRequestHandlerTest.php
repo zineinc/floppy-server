@@ -67,7 +67,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
         //then
 
         $this->verifyMockObjects();
-        $this->assertEquals($this->createResponse(), $actualResponse);
+        $this->assertResponseOk($actualResponse);
     }
 
     /**
@@ -99,7 +99,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
         //then
 
         $this->verifyMockObjects();
-        $this->assertEquals($this->createResponse(), $actualResponse);
+        $this->assertResponseOk($actualResponse);
     }
 
     /**
@@ -220,7 +220,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
         //then
 
         $this->verifyMockObjects();
-        $this->assertEquals($this->createResponse(), $actualResponse);
+        $this->assertResponseOk($actualResponse);
     }
 
     private function createResponse()
@@ -374,6 +374,14 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
             ->method('exists')
             ->with($fileId)
             ->will($this->returnValue(false));
+    }
+
+    /**
+     * @param $actualResponse
+     */
+    private function assertResponseOk($actualResponse)
+    {
+        $this->assertEquals($this->createResponse()->getContent(), $actualResponse->getContent());
     }
 }
 

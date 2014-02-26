@@ -16,9 +16,15 @@ use ZineInc\Storage\Server\Storage\Storage;
 use ZineInc\Storage\Server\Storage\StoreException;
 use ZineInc\Storage\Common\StorageError;
 use ZineInc\Storage\Common\StorageException;
+use ZineInc\Storage\Server\RequestHandler\Action\Action;
+use ZineInc\Storage\Server\RequestHandler\Action\DownloadAction;
+use ZineInc\Storage\Server\RequestHandler\Action\UploadAction;
 
 class RequestHandler implements LoggerAwareInterface
 {
+    const UPLOAD_ACTION = 'upload';
+    const DOWNLOAD_ACTION = 'download';
+
     /**
      * @var LoggerInterface
      */
@@ -28,6 +34,8 @@ class RequestHandler implements LoggerAwareInterface
     private $fileHandlers;
     private $downloadResponseFactory;
 
+    private $actions;
+
     public function __construct(Storage $storage, FileSourceFactory $fileSourceFactory, array $handlers, DownloadResponseFactory $downloadResponseFactory)
     {
         $this->storage = $storage;
@@ -35,6 +43,11 @@ class RequestHandler implements LoggerAwareInterface
         $this->fileHandlers = $handlers;
         $this->logger = new NullLogger();
         $this->downloadResponseFactory = $downloadResponseFactory;
+
+        $this->actions = array(
+            self::UPLOAD_ACTION => new UploadAction($storage, $fileSourceFactory, $handlers),
+            self::DOWNLOAD_ACTION => new DownloadAction($storage, $downloadResponseFactory, $handlers),
+        );
     }
 
     /**
@@ -42,31 +55,28 @@ class RequestHandler implements LoggerAwareInterface
      */
     public function handle(Request $request)
     {
-        if (rtrim($request->getPathInfo(), '/') === '/upload') {
-            return $this->handleUploadRequest($request);
+        $actionName = $this->resolveActionName($request);
+
+        if(!isset($this->actions[$actionName])) {
+            return new Response(404);
         } else {
-            return $this->handleDownloadRequest($request);
+            return $this->executeAction($this->actions[$actionName], $request, $actionName);
         }
     }
 
-    private function handleUploadRequest(Request $request)
+    private function resolveActionName(Request $request)
+    {
+        if (rtrim($request->getPathInfo(), '/') === '/upload') {
+            return self::UPLOAD_ACTION;
+        } else {
+            return self::DOWNLOAD_ACTION;
+        }
+    }
+
+    private function executeAction(Action $action, Request $request, $actionName)
     {
         try {
-            $fileSource = $this->fileSourceFactory->createFileSource($request);
-
-            $fileHandler = $this->findFileHandler($fileSource);
-
-            $fileSource = $fileHandler->beforeStoreProcess($fileSource);
-            $attrs = $fileHandler->getStoreAttributes($fileSource);
-
-            $id = $this->storage->store($fileSource);
-
-            $attrs['id'] = $id;
-
-            return new JsonResponse(array(
-                'code' => 0,
-                'attributes' => $attrs,
-            ));
+            return $action->execute($request);
         } catch (StorageError $e) {
             $this->logger->error($e);
             return $this->createErrorResponse($e, 500);
@@ -87,67 +97,6 @@ class RequestHandler implements LoggerAwareInterface
             'code' => $e->getCode(),
             'attributes' => null,
         ), $httpStatusCode);
-    }
-
-    /**
-     * @return FileHandler
-     */
-    private function findFileHandler(FileSource $fileSource)
-    {
-        foreach ($this->fileHandlers as $fileHandler) {
-            if ($fileHandler->supports($fileSource->fileType())) {
-                return $fileHandler;
-            }
-        }
-
-        throw new FileHandlerNotFoundException(sprintf('File type "%s" is unsupported', $fileSource->fileType()->mimeType()));
-    }
-
-    private function handleDownloadRequest(Request $request)
-    {
-        try {
-            $path = rtrim($request->getPathInfo(), '/').($request->getQueryString() ? '?'.$request->getQueryString() : '');
-            $handler = $this->findFileHandlerMatches($path);
-
-            $fileId = $handler->match($path);
-
-            if ($this->storage->exists($fileId)) {
-                $processedFileSource = $this->storage->getSource($fileId);
-            } else {
-                $fileSource = $this->storage->getSource($fileId->original());
-
-                $processedFileSource = $handler->beforeSendProcess($fileSource, $fileId);
-
-                if ($processedFileSource !== $fileSource) {
-                    $this->storage->store($processedFileSource, $fileId);
-                }
-            }
-
-            $response = $this->downloadResponseFactory->createResponse($processedFileSource);
-            $handler->filterResponse($response, $processedFileSource, $fileId);
-
-            return $response;
-        } catch (StorageError $e) {
-            $this->logger->error($e);
-            return $this->createErrorResponse($e, 500);
-        } catch (StorageException $e) {
-            $this->logger->warning($e);
-            return $this->createErrorResponse($e, $this->convertErrorCodeToHttpStatusCode($e->getCode()));
-        }
-    }
-
-    /**
-     * @return FileHandler
-     */
-    private function findFileHandlerMatches($path)
-    {
-        foreach ($this->fileHandlers as $handler) {
-            if ($handler->matches($path)) {
-                return $handler;
-            }
-        }
-
-        throw new FileHandlerNotFoundException('file not found', ErrorCodes::FILE_NOT_FOUND);
     }
 
     public function setLogger(LoggerInterface $logger)
