@@ -17,7 +17,7 @@ use ZineInc\Storage\Server\Stream\StringInputStream;
 
 class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
 {
-    const DOWNLOAD_URI = '/some-download-uri/some-file.jpg';
+    const DOWNLOAD_URI = '/some-download-uri/some-file.jpg?a=1';
     const SOME_ID = 'some-id';
 
     /**
@@ -210,7 +210,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
         $this->expectsProcessedFileExistsInStorage($fileId);
         $this->expectsSkipFileHandlerProcess($this->fileHandlers[0]);
         $this->expectsDontStoreFileVariant();
-        $this->expectsGetFileSourceFromStorage($fileId, $fileSource, basename(self::DOWNLOAD_URI));
+        $this->expectsGetFileSourceFromStorage($fileId, $fileSource);
         $this->expectsFileHandlerFilterResponse($this->fileHandlers[0], $fileId, $fileSource);
 
         //when
@@ -254,7 +254,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
      * @param $fileId
      * @param $fileSource
      */
-    private function expectsGetFileSourceFromStorage($fileId, $fileSource, $filename = null)
+    private function expectsGetFileSourceFromStorage($fileId, $fileSource)
     {
         $this->storage->expects($this->atLeastOnce())
             ->method('getSource')

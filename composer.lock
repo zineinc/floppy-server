@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "a56fd1352c0ef12d5f89c8512651286f",
+    "hash": "1a18d3dcad9ccf5d68040145b4525102",
     "packages": [
         {
             "name": "imagine/imagine",
@@ -246,7 +246,7 @@
         },
         {
             "name": "zineinc/storage-common",
-            "version": "0.0.1",
+            "version": "0.0.2",
             "source": {
                 "type": "git",
                 "url": "git@codebasehq.com:advisio/zineinc/storage-common.git",

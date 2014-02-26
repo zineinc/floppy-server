@@ -11,6 +11,6 @@ class DispositionResponseFilter implements ResponseFilter
 {
     public function filterResponse(Response $response, FileSource $fileSource, FileId $fileId)
     {
-        $response->headers->makeDisposition('attachment', $fileId->attributes()->get('name') . '.' . $fileSource->fileType()->prefferedExtension());
+        $response->headers->set('Content-Disposition', $response->headers->makeDisposition('attachment', $fileId->attributes()->get('name') . '.' . $fileSource->fileType()->prefferedExtension()));
     }
 }

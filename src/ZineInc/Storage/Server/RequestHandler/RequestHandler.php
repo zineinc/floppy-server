@@ -106,7 +106,7 @@ class RequestHandler implements LoggerAwareInterface
     private function handleDownloadRequest(Request $request)
     {
         try {
-            $path = rtrim($request->getPathInfo(), '/');
+            $path = rtrim($request->getPathInfo(), '/').($request->getQueryString() ? '?'.$request->getQueryString() : '');
             $handler = $this->findFileHandlerMatches($path);
 
             $fileId = $handler->match($path);
