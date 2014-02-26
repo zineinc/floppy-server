@@ -3,6 +3,7 @@
 
 namespace ZineInc\Storage\Server\RequestHandler;
 
+use Symfony\Component\HttpFoundation\Request;
 use ZineInc\Storage\Common\ChecksumCheckerImpl;
 use ZineInc\Storage\Common\FileHandler\FilePathMatcher;
 use ZineInc\Storage\Common\FileHandler\ImagePathMatcher;
@@ -12,6 +13,7 @@ use ZineInc\Storage\Server\FileHandler\ImageFileHandler;
 use ZineInc\Storage\Server\FileHandler\MaxSizeImageProcess;
 use ZineInc\Storage\Server\FileHandler\ResizeImageProcess;
 use ZineInc\Storage\Common\Storage\FilepathChoosingStrategyImpl;
+use ZineInc\Storage\Server\RequestHandler\Security\CallableFirewall;
 use ZineInc\Storage\Server\Storage\FilesystemStorage;
 use ZineInc\Storage\Server\Storage\IdFactoryImpl;
 
@@ -159,7 +161,8 @@ class RequestHandlerFactory
                 $container['storage'],
                 $container['requestHandler.fileSourceFactory'],
                 $container['fileHandlers'],
-                $container['requestHandler.downloadResponseFactory']
+                $container['requestHandler.downloadResponseFactory'],
+                $container['requestHandler.firewall']
             );
         };
         $container['requestHandler.fileSourceFactory'] = function ($container) {
@@ -168,6 +171,30 @@ class RequestHandlerFactory
         $container['requestHandler.downloadResponseFactory'] = function($container) {
             return new DownloadResponseFactoryImpl();
         };
+        $container['requestHandler.firewall'] = function($container) {
+            return new CallableFirewall(array(
+                RequestHandler::DOWNLOAD_ACTION => $container['requestHandler.firewall.download'],
+                RequestHandler::UPLOAD_ACTION => $container['requestHandler.firewall.upload'],
+                RequestHandler::DELETE_ACTION => $container['requestHandler.firewall.delete'],
+            ));
+        };
+        $container['requestHandler.firewall.download'] = function($container) {
+            return function(Request $request) {
+                //allow download
+            };
+        };
+        $container['requestHandler.firewall.upload'] = function($container) {
+            return function(Request $request) {
+                //allow upload
+            };
+        };
+        $container['requestHandler.firewall.delete'] = function($container) {
+            return function(Request $request) {
+                //disallow delete by default
+                throw new AccessDeniedException();
+            };
+        };
+
         return $container;
     }
 } 

@@ -10,6 +10,7 @@ use ZineInc\Storage\Server\RequestHandler\FileSourceNotFoundException;
 use ZineInc\Storage\Server\RequestHandler\RequestHandler;
 use ZineInc\Storage\Server\Storage\StoreException;
 use ZineInc\Storage\Server\Stream\StringInputStream;
+use ZineInc\Storage\Tests\Server\Stub\FirewallStub;
 
 class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
 {
@@ -38,7 +39,13 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
             $this->getMock('ZineInc\Storage\Server\FileHandler\FileHandler'),
         );
 
-        $this->requestHandler = new RequestHandler($this->storage, $this->fileSourceFactory, $this->fileHandlers, $this->getMock('ZineInc\Storage\Server\RequestHandler\DownloadResponseFactory'));
+        $this->requestHandler = new RequestHandler(
+            $this->storage,
+            $this->fileSourceFactory,
+            $this->fileHandlers,
+            $this->getMock('ZineInc\Storage\Server\RequestHandler\DownloadResponseFactory'),
+            new FirewallStub()
+        );
     }
 
     /**

@@ -14,6 +14,7 @@ use ZineInc\Storage\Server\RequestHandler\DownloadResponseFactory;
 use ZineInc\Storage\Server\RequestHandler\RequestHandler;
 use ZineInc\Storage\Server\Storage\FileSourceNotFoundException;
 use ZineInc\Storage\Server\Stream\StringInputStream;
+use ZineInc\Storage\Tests\Server\Stub\FirewallStub;
 
 class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
 {
@@ -40,7 +41,8 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
             $this->storage,
             $this->getMock('ZineInc\Storage\Server\RequestHandler\FileSourceFactory'),
             $this->fileHandlers,
-            new DownloadRequestHandlerTest_DownloadResponseFactory($this->createResponse())
+            new DownloadRequestHandlerTest_DownloadResponseFactory($this->createResponse()),
+            new FirewallStub()
         );
     }
 

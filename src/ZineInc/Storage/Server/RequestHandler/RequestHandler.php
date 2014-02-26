@@ -12,6 +12,7 @@ use ZineInc\Storage\Common\FileHandler\PathMatchingException;
 use ZineInc\Storage\Common\ErrorCodes;
 use ZineInc\Storage\Server\FileHandler\FileHandler;
 use ZineInc\Storage\Server\FileSource;
+use ZineInc\Storage\Server\RequestHandler\Security\Firewall;
 use ZineInc\Storage\Server\Storage\Storage;
 use ZineInc\Storage\Server\Storage\StoreException;
 use ZineInc\Storage\Common\StorageError;
@@ -24,6 +25,7 @@ class RequestHandler implements LoggerAwareInterface
 {
     const UPLOAD_ACTION = 'upload';
     const DOWNLOAD_ACTION = 'download';
+    const DELETE_ACTION = 'delete';
 
     /**
      * @var LoggerInterface
@@ -33,16 +35,18 @@ class RequestHandler implements LoggerAwareInterface
     private $fileSourceFactory;
     private $fileHandlers;
     private $downloadResponseFactory;
+    private $firewall;
 
     private $actions;
 
-    public function __construct(Storage $storage, FileSourceFactory $fileSourceFactory, array $handlers, DownloadResponseFactory $downloadResponseFactory)
+    public function __construct(Storage $storage, FileSourceFactory $fileSourceFactory, array $handlers, DownloadResponseFactory $downloadResponseFactory, Firewall $firewall)
     {
         $this->storage = $storage;
         $this->fileSourceFactory = $fileSourceFactory;
         $this->fileHandlers = $handlers;
         $this->logger = new NullLogger();
         $this->downloadResponseFactory = $downloadResponseFactory;
+        $this->firewall = $firewall;
 
         $this->actions = array(
             self::UPLOAD_ACTION => new UploadAction($storage, $fileSourceFactory, $handlers),
@@ -76,6 +80,8 @@ class RequestHandler implements LoggerAwareInterface
     private function executeAction(Action $action, Request $request, $actionName)
     {
         try {
+            $this->firewall->guard($request, $actionName);
+
             return $action->execute($request);
         } catch (StorageError $e) {
             $this->logger->error($e);
@@ -88,7 +94,12 @@ class RequestHandler implements LoggerAwareInterface
 
     private function convertErrorCodeToHttpStatusCode($errorCode)
     {
-        return $errorCode === ErrorCodes::FILE_NOT_FOUND ? 404 : 400;
+        $codesMap = array(
+            ErrorCodes::FILE_NOT_FOUND => 404,
+            ErrorCodes::ACCESS_DENIED => 401,
+        );
+
+        return isset($codesMap[$errorCode]) ? $codesMap[$errorCode] : 400;
     }
 
     private function createErrorResponse(StorageException $e, $httpStatusCode)
