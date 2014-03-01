@@ -10,8 +10,6 @@ use ZineInc\Storage\Common\FileType;
 
 abstract class AbstractFileHandler implements FileHandler
 {
-    const TYPE = 'f';
-
     private $pathMatcher;
     private $responseFilters;
 
@@ -65,11 +63,6 @@ abstract class AbstractFileHandler implements FileHandler
     protected abstract function supportedMimeTypes();
 
     protected abstract function supportedExtensions();
-
-    public function type()
-    {
-        return static::TYPE;
-    }
 
     public function filterResponse(Response $response, FileSource $fileSource, FileId $fileId)
     {

@@ -29,7 +29,8 @@ class UploadAction implements Action
     {
         $fileSource = $this->fileSourceFactory->createFileSource($request);
 
-        $fileHandler = $this->findFileHandler($fileSource);
+        $fileHandlerName = $this->findFileHandlerName($fileSource);
+        $fileHandler = $this->fileHandlers[$fileHandlerName];
 
         $fileSource = $fileHandler->beforeStoreProcess($fileSource);
         $attrs = $fileHandler->getStoreAttributes($fileSource);
@@ -37,6 +38,7 @@ class UploadAction implements Action
         $id = $this->storage->store($fileSource);
 
         $attrs['id'] = $id;
+        $attrs['type'] = $fileHandlerName;
 
         return new JsonResponse(array(
             'code' => 0,
@@ -47,11 +49,11 @@ class UploadAction implements Action
     /**
      * @return FileHandler
      */
-    private function findFileHandler(FileSource $fileSource)
+    private function findFileHandlerName(FileSource $fileSource)
     {
-        foreach ($this->fileHandlers as $fileHandler) {
+        foreach ($this->fileHandlers as $name => $fileHandler) {
             if ($fileHandler->supports($fileSource->fileType())) {
-                return $fileHandler;
+                return $name;
             }
         }
 

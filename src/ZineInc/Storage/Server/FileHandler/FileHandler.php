@@ -19,11 +19,6 @@ interface FileHandler extends PathMatcher, ResponseFilter
     public function supports(FileType $fileType);
 
     /**
-     * @return string Unique type code
-     */
-    public function type();
-
-    /**
      * @return \ZineInc\Storage\Common\AttributesBag Extra attributes for given file. This attributes should be associative array of primitives
      */
     public function getStoreAttributes(FileSource $file);

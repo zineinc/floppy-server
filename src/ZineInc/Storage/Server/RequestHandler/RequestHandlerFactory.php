@@ -87,8 +87,8 @@ class RequestHandlerFactory
     {
         $container['fileHandlers'] = function ($container) {
             return array(
-                $container['fileHandlers.image'],
-                $container['fileHandlers.file'],
+                'image' => $container['fileHandlers.image'],
+                'file' => $container['fileHandlers.file'],
             );
         };
         $container['fileHandlers.image'] = function ($container) {

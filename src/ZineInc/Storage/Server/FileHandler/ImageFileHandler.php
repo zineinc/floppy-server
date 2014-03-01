@@ -15,8 +15,6 @@ use ZineInc\Storage\Common\Stream\StringInputStream;
 
 class ImageFileHandler extends AbstractFileHandler
 {
-    const TYPE = 'i';
-
     private static $defaultSupportedMimeTypes = array(
         'image/png',
         'image/jpeg',

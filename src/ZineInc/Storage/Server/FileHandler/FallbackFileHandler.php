@@ -9,8 +9,6 @@ use ZineInc\Storage\Common\FileSource;
 
 class FallbackFileHandler extends AbstractFileHandler
 {
-    const TYPE = 'f';
-
     private $supportedMimeTypes;
     private $supportedExtensions;
 

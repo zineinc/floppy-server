@@ -18,7 +18,8 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
     const FILE_EXT = 'txt';
 
     const FILE_ID = 'abc';
-    const FILE_HANDLER_TYPE = 'f';
+    const FILE_HANDLER_TYPE1 = 'f';
+    const FILE_HANDLER_TYPE2 = 'f2';
 
     private static $attrs = array('a' => 'b');
 
@@ -35,8 +36,8 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
         $this->storage = $this->getMock('ZineInc\Storage\Server\Storage\Storage');
         $this->fileSourceFactory = $this->getMock('ZineInc\Storage\Server\RequestHandler\FileSourceFactory');
         $this->fileHandlers = array(
-            $this->getMock('ZineInc\Storage\Server\FileHandler\FileHandler'),
-            $this->getMock('ZineInc\Storage\Server\FileHandler\FileHandler'),
+            self::FILE_HANDLER_TYPE1 => $this->getMock('ZineInc\Storage\Server\FileHandler\FileHandler'),
+            self::FILE_HANDLER_TYPE2 => $this->getMock('ZineInc\Storage\Server\FileHandler\FileHandler'),
         );
 
         $this->requestHandler = new RequestHandler(
@@ -70,7 +71,7 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(200, $response->getStatusCode());
 
         $actualResponseData = json_decode($response->getContent(), true);
-        $expectedAttributes = self::$attrs + array('id' => self::FILE_ID);
+        $expectedAttributes = self::$attrs + array('id' => self::FILE_ID, 'type' => self::FILE_HANDLER_TYPE1);
 
         $this->assertTrue(isset($actualResponseData['attributes']));
         $this->assertEquals($expectedAttributes, $actualResponseData['attributes']);
@@ -87,8 +88,8 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
 
         $this->expectsFileSourceNotFound();
 
-        $this->expectsFileHandlerUnused($this->fileHandlers[0]);
-        $this->expectsFileHandlerUnused($this->fileHandlers[1]);
+        $this->expectsFileHandlerUnused($this->fileHandlers[self::FILE_HANDLER_TYPE1]);
+        $this->expectsFileHandlerUnused($this->fileHandlers[self::FILE_HANDLER_TYPE2]);
 
         $this->expectsNoStore();
 
@@ -115,8 +116,8 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
 
         $this->expectsCreateFileSource($request, $fileSource);
 
-        $this->expectsFileHandlerUnused($this->fileHandlers[0]);
-        $this->expectsFileHandlerUnused($this->fileHandlers[1]);
+        $this->expectsFileHandlerUnused($this->fileHandlers[self::FILE_HANDLER_TYPE1]);
+        $this->expectsFileHandlerUnused($this->fileHandlers[self::FILE_HANDLER_TYPE2]);
 
         $this->expectsNoStore();
 
@@ -136,8 +137,8 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
 
         $this->expectsCreateFileSource($request, $fileSource);
 
-        $this->expectsFileHandlerProcess($this->fileHandlers[0], $fileSource, self::$attrs, self::FILE_HANDLER_TYPE);
-        $this->expectsFileHandlerUnused($this->fileHandlers[1]);
+        $this->expectsFileHandlerProcess($this->fileHandlers[self::FILE_HANDLER_TYPE1], $fileSource, self::$attrs);
+        $this->expectsFileHandlerUnused($this->fileHandlers[self::FILE_HANDLER_TYPE2]);
 
         return $fileSource;
     }
@@ -196,7 +197,7 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue($fileSource));
     }
 
-    private function expectsFileHandlerProcess($fileHandler, FileSource $fileSource, array $attrs, $type)
+    private function expectsFileHandlerProcess($fileHandler, FileSource $fileSource, array $attrs)
     {
         $fileHandler->expects($this->once())
             ->method('beforeStoreProcess')
@@ -210,9 +211,6 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
             ->method('getStoreAttributes')
             ->with($fileSource)
             ->will($this->returnValue($attrs));
-        $fileHandler->expects($this->any())
-            ->method('type')
-            ->will($this->returnValue($type));
     }
 
     private function expectsFileHandlerUnused($fileHandler)
