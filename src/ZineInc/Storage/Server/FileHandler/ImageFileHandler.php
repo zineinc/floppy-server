@@ -10,8 +10,8 @@ use ZineInc\Storage\Common\FileHandler\PathMatcher;
 use ZineInc\Storage\Common\FileId;
 use ZineInc\Storage\Server\FileHandler\AbstractFileHandler;
 use ZineInc\Storage\Server\FileHandler\FileProcessException;
-use ZineInc\Storage\Server\FileSource;
-use ZineInc\Storage\Server\Stream\StringInputStream;
+use ZineInc\Storage\Common\FileSource;
+use ZineInc\Storage\Common\Stream\StringInputStream;
 
 class ImageFileHandler extends AbstractFileHandler
 {

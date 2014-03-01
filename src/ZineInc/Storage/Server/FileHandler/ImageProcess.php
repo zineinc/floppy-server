@@ -4,7 +4,7 @@ namespace ZineInc\Storage\Server\FileHandler;
 
 use Imagine\Image\ImagineInterface;
 use ZineInc\Storage\Common\AttributesBag;
-use ZineInc\Storage\Server\FileSource;
+use ZineInc\Storage\Common\FileSource;
 
 interface ImageProcess
 {

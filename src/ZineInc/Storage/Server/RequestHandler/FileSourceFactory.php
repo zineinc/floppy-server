@@ -3,12 +3,12 @@
 namespace ZineInc\Storage\Server\RequestHandler;
 
 use Symfony\Component\HttpFoundation\Request;
-use ZineInc\Storage\Server\FileSource;
+use ZineInc\Storage\Common\FileSource;
 
 interface FileSourceFactory
 {
     /**
-     * @return FileSource
+     * @return \ZineInc\Storage\Common\FileSource
      *
      * @throws FileSourceNotFoundException
      */

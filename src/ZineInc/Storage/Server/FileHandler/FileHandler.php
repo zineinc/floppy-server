@@ -6,13 +6,13 @@ use Symfony\Component\HttpFoundation\Response;
 use ZineInc\Storage\Common\AttributesBag;
 use ZineInc\Storage\Common\FileHandler\PathMatcher;
 use ZineInc\Storage\Common\FileId;
-use ZineInc\Storage\Server\FileSource;
-use ZineInc\Storage\Server\FileType;
+use ZineInc\Storage\Common\FileSource;
+use ZineInc\Storage\Common\FileType;
 
 interface FileHandler extends PathMatcher, ResponseFilter
 {
     /**
-     * @param FileSource $fileType
+     * @param \ZineInc\Storage\Common\FileSource $fileType
      *
      * @return boolean Does given $file is supported by this handler
      */
@@ -31,7 +31,7 @@ interface FileHandler extends PathMatcher, ResponseFilter
     /**
      * Additional file processing before persistent store file
      *
-     * @return FileSource
+     * @return \ZineInc\Storage\Common\FileSource
      */
     public function beforeStoreProcess(FileSource $file);
 

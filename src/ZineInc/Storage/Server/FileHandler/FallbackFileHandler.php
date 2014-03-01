@@ -5,7 +5,7 @@ namespace ZineInc\Storage\Server\FileHandler;
 use Symfony\Component\HttpFoundation\Response;
 use ZineInc\Storage\Common\FileHandler\PathMatcher;
 use ZineInc\Storage\Common\FileId;
-use ZineInc\Storage\Server\FileSource;
+use ZineInc\Storage\Common\FileSource;
 
 class FallbackFileHandler extends AbstractFileHandler
 {

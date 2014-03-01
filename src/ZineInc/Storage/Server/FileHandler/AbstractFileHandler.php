@@ -5,8 +5,8 @@ namespace ZineInc\Storage\Server\FileHandler;
 use Symfony\Component\HttpFoundation\Response;
 use ZineInc\Storage\Common\FileHandler\PathMatcher;
 use ZineInc\Storage\Common\FileId;
-use ZineInc\Storage\Server\FileSource;
-use ZineInc\Storage\Server\FileType;
+use ZineInc\Storage\Common\FileSource;
+use ZineInc\Storage\Common\FileType;
 
 abstract class AbstractFileHandler implements FileHandler
 {

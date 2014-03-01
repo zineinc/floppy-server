@@ -7,7 +7,7 @@ namespace ZineInc\Storage\Server\RequestHandler\Action;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use ZineInc\Storage\Server\FileHandler\FileHandler;
-use ZineInc\Storage\Server\FileSource;
+use ZineInc\Storage\Common\FileSource;
 use ZineInc\Storage\Server\RequestHandler\FileHandlerNotFoundException;
 use ZineInc\Storage\Server\RequestHandler\FileSourceFactory;
 use ZineInc\Storage\Server\Storage\Storage;

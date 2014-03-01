@@ -4,12 +4,12 @@ namespace ZineInc\Storage\Tests\Server\RequestHandler;
 
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\HttpFoundation\Request;
-use ZineInc\Storage\Server\FileSource;
-use ZineInc\Storage\Server\FileType;
+use ZineInc\Storage\Common\FileSource;
+use ZineInc\Storage\Common\FileType;
 use ZineInc\Storage\Server\RequestHandler\FileSourceNotFoundException;
 use ZineInc\Storage\Server\RequestHandler\RequestHandler;
 use ZineInc\Storage\Server\Storage\StoreException;
-use ZineInc\Storage\Server\Stream\StringInputStream;
+use ZineInc\Storage\Common\Stream\StringInputStream;
 use ZineInc\Storage\Tests\Server\Stub\FirewallStub;
 
 class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase

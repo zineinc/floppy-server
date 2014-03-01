@@ -5,12 +5,12 @@ namespace ZineInc\Storage\Tests\Server\Storage;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use ZineInc\Storage\Common\FileId;
-use ZineInc\Storage\Server\FileSource;
-use ZineInc\Storage\Server\FileType;
+use ZineInc\Storage\Common\FileSource;
+use ZineInc\Storage\Common\FileType;
 use ZineInc\Storage\Common\Storage\FilepathChoosingStrategy;
 use ZineInc\Storage\Server\Storage\FilesystemStorage;
 use ZineInc\Storage\Server\Storage\IdFactory;
-use ZineInc\Storage\Server\Stream\StringInputStream;
+use ZineInc\Storage\Common\Stream\StringInputStream;
 
 class FilesystemStorageTest extends PHPUnit_Framework_TestCase
 {

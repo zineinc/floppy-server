@@ -8,12 +8,12 @@ use Symfony\Component\HttpFoundation\Response;
 use ZineInc\Storage\Common\FileHandler\PathMatchingException;
 use ZineInc\Storage\Common\FileId;
 use ZineInc\Storage\Server\FileHandler\FileProcessException;
-use ZineInc\Storage\Server\FileSource;
-use ZineInc\Storage\Server\FileType;
+use ZineInc\Storage\Common\FileSource;
+use ZineInc\Storage\Common\FileType;
 use ZineInc\Storage\Server\RequestHandler\DownloadResponseFactory;
 use ZineInc\Storage\Server\RequestHandler\RequestHandler;
 use ZineInc\Storage\Server\Storage\FileSourceNotFoundException;
-use ZineInc\Storage\Server\Stream\StringInputStream;
+use ZineInc\Storage\Common\Stream\StringInputStream;
 use ZineInc\Storage\Tests\Server\Stub\FirewallStub;
 
 class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase

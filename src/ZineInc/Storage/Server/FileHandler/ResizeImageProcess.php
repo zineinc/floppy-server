@@ -7,8 +7,8 @@ use Imagine\Image\Color;
 use Imagine\Image\ImagineInterface;
 use Imagine\Image\Point;
 use ZineInc\Storage\Common\AttributesBag;
-use ZineInc\Storage\Server\FileSource;
-use ZineInc\Storage\Server\Stream\StringInputStream;
+use ZineInc\Storage\Common\FileSource;
+use ZineInc\Storage\Common\Stream\StringInputStream;
 
 class ResizeImageProcess implements ImageProcess
 {

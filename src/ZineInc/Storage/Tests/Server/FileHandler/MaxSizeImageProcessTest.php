@@ -8,9 +8,9 @@ use Imagine\Gd\Imagine;
 use Imagine\Image\Box;
 use ZineInc\Storage\Common\AttributesBag;
 use ZineInc\Storage\Server\FileHandler\MaxSizeImageProcess;
-use ZineInc\Storage\Server\FileSource;
-use ZineInc\Storage\Server\FileType;
-use ZineInc\Storage\Server\Stream\StringInputStream;
+use ZineInc\Storage\Common\FileSource;
+use ZineInc\Storage\Common\FileType;
+use ZineInc\Storage\Common\Stream\StringInputStream;
 
 class MaxSizeImageProcessTest extends \PHPUnit_Framework_TestCase
 {

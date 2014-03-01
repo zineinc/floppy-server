@@ -3,9 +3,9 @@
 namespace ZineInc\Storage\Server\RequestHandler;
 
 use Symfony\Component\HttpFoundation\Request;
-use ZineInc\Storage\Server\FileSource;
-use ZineInc\Storage\Server\FileType;
-use ZineInc\Storage\Server\Stream\StringInputStream;
+use ZineInc\Storage\Common\FileSource;
+use ZineInc\Storage\Common\FileType;
+use ZineInc\Storage\Common\Stream\StringInputStream;
 
 class FileSourceFactoryImpl implements FileSourceFactory
 {

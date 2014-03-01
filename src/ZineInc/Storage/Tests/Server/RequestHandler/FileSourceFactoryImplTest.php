@@ -5,7 +5,7 @@ namespace ZineInc\Storage\Tests\Server\RequestHandler;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
-use ZineInc\Storage\Server\FileType;
+use ZineInc\Storage\Common\FileType;
 use ZineInc\Storage\Server\RequestHandler\FileSourceFactoryImpl;
 
 class FileSourceFactoryImplTest extends PHPUnit_Framework_TestCase

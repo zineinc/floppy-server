@@ -2,7 +2,7 @@
 
 namespace ZineInc\Storage\Server\Storage;
 
-use ZineInc\Storage\Server\FileSource;
+use ZineInc\Storage\Common\FileSource;
 
 interface IdFactory
 {

@@ -9,9 +9,9 @@ use Imagine\Image\ImagineInterface;
 use Imagine\Image\Point;
 use ZineInc\Storage\Common\AttributesBag;
 use ZineInc\Storage\Server\FileHandler\ResizeImageProcess;
-use ZineInc\Storage\Server\FileSource;
-use ZineInc\Storage\Server\FileType;
-use ZineInc\Storage\Server\Stream\StringInputStream;
+use ZineInc\Storage\Common\FileSource;
+use ZineInc\Storage\Common\FileType;
+use ZineInc\Storage\Common\Stream\StringInputStream;
 
 class ResizeImageProcessTest extends \PHPUnit_Framework_TestCase
 {

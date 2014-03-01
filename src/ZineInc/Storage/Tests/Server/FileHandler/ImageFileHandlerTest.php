@@ -5,9 +5,9 @@ namespace ZineInc\Storage\Tests\Server\FileHandler;
 use Imagine\Gd\Imagine;
 use PHPUnit_Framework_TestCase;
 use ZineInc\Storage\Server\FileHandler\ImageFileHandler;
-use ZineInc\Storage\Server\FileSource;
-use ZineInc\Storage\Server\FileType;
-use ZineInc\Storage\Server\Stream\StringInputStream;
+use ZineInc\Storage\Common\FileSource;
+use ZineInc\Storage\Common\FileType;
+use ZineInc\Storage\Common\Stream\StringInputStream;
 
 class ImageFileHandlerTest extends PHPUnit_Framework_TestCase
 {

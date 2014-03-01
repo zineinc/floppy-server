@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use ZineInc\Storage\Common\FileHandler\PathMatchingException;
 use ZineInc\Storage\Common\ErrorCodes;
 use ZineInc\Storage\Server\FileHandler\FileHandler;
-use ZineInc\Storage\Server\FileSource;
+use ZineInc\Storage\Common\FileSource;
 use ZineInc\Storage\Server\RequestHandler\Security\Firewall;
 use ZineInc\Storage\Server\Storage\Storage;
 use ZineInc\Storage\Server\Storage\StoreException;
