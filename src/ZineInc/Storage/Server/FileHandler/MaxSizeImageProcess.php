@@ -45,7 +45,7 @@ class MaxSizeImageProcess implements ImageProcess
 
             return new FileSource(new StringInputStream($content), $fileSource->fileType());
         } catch (\Imagine\Exception\Exception $e) {
-            throw new FileProcessException('Image before store processing error', $e);
+            throw new FileProcessException('Image processing error', $e);
         }
     }
 }
