@@ -105,6 +105,7 @@ class RequestHandler implements LoggerAwareInterface
     private function createErrorResponse(StorageException $e, $httpStatusCode)
     {
         return new JsonResponse(array(
+            'message' => ErrorCodes::convertCodeToMessage($e->getCode()),
             'code' => $e->getCode(),
             'attributes' => null,
         ), $httpStatusCode);
