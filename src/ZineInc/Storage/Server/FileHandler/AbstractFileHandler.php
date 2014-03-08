@@ -47,10 +47,10 @@ abstract class AbstractFileHandler implements FileHandler
             'mime-type' => $file->fileType()->mimeType(),
             'extension' => $file->fileType()->prefferedExtension(),
             'size' => strlen($content),
-        ) + $this->doGetStoreAttributes($file, $content);
+        ) + $this->doGetStoreAttributes($file);
     }
 
-    protected function doGetStoreAttributes(FileSource $file, $content)
+    protected function doGetStoreAttributes(FileSource $file)
     {
         return array();
     }

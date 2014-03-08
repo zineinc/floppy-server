@@ -8,6 +8,7 @@ use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use ZineInc\Storage\Common\ChecksumChecker;
 use ZineInc\Storage\Common\FileHandler\PathMatchingException;
 use ZineInc\Storage\Common\ErrorCodes;
 use ZineInc\Storage\Server\FileHandler\FileHandler;
@@ -39,7 +40,7 @@ class RequestHandler implements LoggerAwareInterface
 
     private $actions;
 
-    public function __construct(Storage $storage, FileSourceFactory $fileSourceFactory, array $handlers, DownloadResponseFactory $downloadResponseFactory, Firewall $firewall)
+    public function __construct(Storage $storage, FileSourceFactory $fileSourceFactory, array $handlers, DownloadResponseFactory $downloadResponseFactory, Firewall $firewall, ChecksumChecker $checksumChecker)
     {
         $this->storage = $storage;
         $this->fileSourceFactory = $fileSourceFactory;
@@ -49,7 +50,7 @@ class RequestHandler implements LoggerAwareInterface
         $this->firewall = $firewall;
 
         $this->actions = array(
-            self::UPLOAD_ACTION => new UploadAction($storage, $fileSourceFactory, $handlers),
+            self::UPLOAD_ACTION => new UploadAction($storage, $fileSourceFactory, $handlers, $checksumChecker),
             self::DOWNLOAD_ACTION => new DownloadAction($storage, $downloadResponseFactory, $handlers),
         );
     }

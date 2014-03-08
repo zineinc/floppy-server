@@ -14,6 +14,7 @@ use ZineInc\Storage\Server\RequestHandler\DownloadResponseFactory;
 use ZineInc\Storage\Server\RequestHandler\RequestHandler;
 use ZineInc\Storage\Server\Storage\FileSourceNotFoundException;
 use ZineInc\Storage\Common\Stream\StringInputStream;
+use ZineInc\Storage\Tests\Common\Stub\ChecksumChecker;
 use ZineInc\Storage\Tests\Server\Stub\FirewallStub;
 
 class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
@@ -27,9 +28,12 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
     private $requestHandler;
     private $fileHandlers;
     private $storage;
+    private $sampleReponse;
 
     protected function setUp()
     {
+        $this->sampleReponse = new Response('some-content');
+
         $this->storage = $this->getMock('ZineInc\Storage\Server\Storage\Storage');
         $this->fileHandlers = array(
             $this->getMock('ZineInc\Storage\Server\FileHandler\FileHandler'),
@@ -41,8 +45,9 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
             $this->storage,
             $this->getMock('ZineInc\Storage\Server\RequestHandler\FileSourceFactory'),
             $this->fileHandlers,
-            new DownloadRequestHandlerTest_DownloadResponseFactory($this->createResponse()),
-            new FirewallStub()
+            new DownloadRequestHandlerTest_DownloadResponseFactory($this->getSampleResponse()),
+            new FirewallStub(),
+            new ChecksumChecker('abc')
         );
     }
 
@@ -225,9 +230,9 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertResponseOk($actualResponse);
     }
 
-    private function createResponse()
+    private function getSampleResponse()
     {
-        return new Response('some-content');
+        return $this->sampleReponse;
     }
 
     private function createProcessedFileId()
@@ -312,7 +317,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
     {
         $handler->expects($this->any())
             ->method('filterResponse')
-            ->with($this->createResponse(), $fileSource, $fileId);
+            ->with($this->getSampleResponse(), $fileSource, $fileId);
     }
 
     private function expectsFileHandlerErrorProcess($handler)
@@ -383,7 +388,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
      */
     private function assertResponseOk($actualResponse)
     {
-        $this->assertEquals($this->createResponse()->getContent(), $actualResponse->getContent());
+        $this->assertEquals($this->getSampleResponse()->getContent(), $actualResponse->getContent());
     }
 }
 

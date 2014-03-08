@@ -71,10 +71,10 @@ class ImageFileHandler extends AbstractFileHandler
         return $this->beforeStoreImageProcess->process($this->imagine, $file, new AttributesBag());
     }
 
-    protected function doGetStoreAttributes(FileSource $file, $content)
+    protected function doGetStoreAttributes(FileSource $file)
     {
         try {
-            $image = $this->imagine->load($content);
+            $image = $this->imagine->load($file->content());
             $size = $image->getSize();
 
             return array(

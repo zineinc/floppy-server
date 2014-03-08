@@ -10,10 +10,13 @@ use ZineInc\Storage\Server\RequestHandler\FileSourceNotFoundException;
 use ZineInc\Storage\Server\RequestHandler\RequestHandler;
 use ZineInc\Storage\Server\Storage\StoreException;
 use ZineInc\Storage\Common\Stream\StringInputStream;
+use ZineInc\Storage\Tests\Common\Stub\ChecksumChecker;
 use ZineInc\Storage\Tests\Server\Stub\FirewallStub;
 
 class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
 {
+    const VALID_CHECKSUM = 'valid-checksum';
+
     const FILE_MIME_TYPE = 'text/plain';
     const FILE_EXT = 'txt';
 
@@ -30,6 +33,7 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
     private $fileHandlers;
     private $fileSourceFactory;
     private $storage;
+    private $checksumChecker;
 
     protected function setUp()
     {
@@ -39,13 +43,15 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
             self::FILE_HANDLER_TYPE1 => $this->getMock('ZineInc\Storage\Server\FileHandler\FileHandler'),
             self::FILE_HANDLER_TYPE2 => $this->getMock('ZineInc\Storage\Server\FileHandler\FileHandler'),
         );
+        $this->checksumChecker = $this->getMock('ZineInc\Storage\Common\ChecksumChecker');
 
         $this->requestHandler = new RequestHandler(
             $this->storage,
             $this->fileSourceFactory,
             $this->fileHandlers,
             $this->getMock('ZineInc\Storage\Server\RequestHandler\DownloadResponseFactory'),
-            new FirewallStub()
+            new FirewallStub(),
+            $this->checksumChecker
         );
     }
 
@@ -57,9 +63,11 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
         //given
 
         $request = $this->createUploadRequest();
+        $expectedAttributes = self::$attrs + array('id' => self::FILE_ID, 'type' => self::FILE_HANDLER_TYPE1);
 
         $fileSource = $this->expectsCreateFileSourceAndFindFileHandler($request);
         $this->expectsStore($fileSource, self::FILE_ID);
+        $this->expectsMakeChecksum($expectedAttributes);
 
         //when
 
@@ -71,10 +79,17 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(200, $response->getStatusCode());
 
         $actualResponseData = json_decode($response->getContent(), true);
-        $expectedAttributes = self::$attrs + array('id' => self::FILE_ID, 'type' => self::FILE_HANDLER_TYPE1);
 
         $this->assertTrue(isset($actualResponseData['attributes']));
-        $this->assertEquals($expectedAttributes, $actualResponseData['attributes']);
+        $this->assertEquals($expectedAttributes + array('checksum' => self::VALID_CHECKSUM), $actualResponseData['attributes']);
+    }
+
+    private function expectsMakeChecksum($data)
+    {
+        $this->checksumChecker->expects($this->atLeastOnce())
+            ->method('generateChecksum')
+            ->with($data)
+            ->will($this->returnValue(self::VALID_CHECKSUM));
     }
 
     /**

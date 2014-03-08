@@ -6,6 +6,7 @@ namespace ZineInc\Storage\Server\RequestHandler\Action;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use ZineInc\Storage\Common\ChecksumChecker;
 use ZineInc\Storage\Server\FileHandler\FileHandler;
 use ZineInc\Storage\Common\FileSource;
 use ZineInc\Storage\Server\RequestHandler\FileHandlerNotFoundException;
@@ -17,12 +18,14 @@ class UploadAction implements Action
     private $fileSourceFactory;
     private $storage;
     private $fileHandlers;
+    private $checksumChecker;
 
-    public function __construct(Storage $storage, FileSourceFactory $fileSourceFactory, array $fileHandlers)
+    public function __construct(Storage $storage, FileSourceFactory $fileSourceFactory, array $fileHandlers, ChecksumChecker $checksumChecker)
     {
         $this->fileHandlers = $fileHandlers;
         $this->fileSourceFactory = $fileSourceFactory;
         $this->storage = $storage;
+        $this->checksumChecker = $checksumChecker;
     }
 
     public function execute(Request $request)
@@ -42,7 +45,7 @@ class UploadAction implements Action
 
         return new JsonResponse(array(
             'code' => 0,
-            'attributes' => $attrs,
+            'attributes' => $attrs + array('checksum' => $this->checksumChecker->generateChecksum($attrs)),
         ));
     }
 
