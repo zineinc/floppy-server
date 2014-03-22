@@ -60,6 +60,10 @@ class RequestHandler implements LoggerAwareInterface
      */
     public function handle(Request $request)
     {
+        if($request->isMethod('options')) {
+            return new Response();
+        }
+
         $actionName = $this->resolveActionName($request);
 
         if(!isset($this->actions[$actionName])) {
