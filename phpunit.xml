@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit bootstrap="phpunit-bootstrap.php">
     <testsuites>
-        <testsuite name="zineinc/storage-server">
-            <directory>src/ZineInc/Storage/Tests</directory>
+        <testsuite name="floppy/server">
+            <directory>src/Floppy/Tests</directory>
         </testsuite>
     </testsuites>
 </phpunit>
