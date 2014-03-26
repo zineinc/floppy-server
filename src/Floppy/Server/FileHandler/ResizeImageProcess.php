@@ -55,7 +55,7 @@ class ResizeImageProcess implements ImageProcess
                 $image->resize($newSize);
 
                 if ($requestedSize != $newSize) {
-                    $destImage = $imagine->create($requestedSize, $requestedColor > 'ffffff' ? null : new Color($requestedColor));
+                    $destImage = $imagine->create($requestedSize, $requestedColor === null || $requestedColor > 'ffffff' ? null : new Color($requestedColor));
                     $x = ($requestedSize->getWidth() - $newSize->getWidth()) / 2;
                     $y = ($requestedSize->getHeight() - $newSize->getHeight()) / 2;
                     $destImage->paste($image, new Point($x, $y));
