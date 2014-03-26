@@ -16,12 +16,16 @@ class FilesystemStorage implements Storage
     private $idFactory;
     private $filepathChoosingStrategy;
     private $filesystem;
+    private $dirChmod;
+    private $fileChmod;
 
-    public function __construct($storageDir, FilepathChoosingStrategy $filepathChoosingStrategy, IdFactory $idFactory)
+    public function __construct($storageDir, FilepathChoosingStrategy $filepathChoosingStrategy, IdFactory $idFactory, $dirChmod = 0755, $fileChmod = 0644)
     {
         $this->storageDir = rtrim((string)$storageDir, '/');
         $this->filepathChoosingStrategy = $filepathChoosingStrategy;
         $this->idFactory = $idFactory;
+        $this->dirChmod = $dirChmod;
+        $this->fileChmod = $fileChmod;
     }
 
     /**
@@ -76,7 +80,8 @@ class FilesystemStorage implements Storage
         $fullFilepath = $this->storageDir . '/' . $filepath;
 
         try {
-            $this->getFilesystem()->dumpFile($fullFilepath, $fileSource->content());
+            $this->getFilesystem()->mkdir(dirname($fullFilepath), $this->dirChmod);
+            $this->getFilesystem()->dumpFile($fullFilepath, $fileSource->content(), $this->fileChmod);
         } catch (IOException $e) {
             throw new StoreException('Error while file storing', $e);
         }

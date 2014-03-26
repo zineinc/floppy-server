@@ -70,7 +70,13 @@ class RequestHandlerFactory
     private function storageDefinitions(\Pimple $container)
     {
         $container['storage'] = function ($container) {
-            return new FilesystemStorage($container['storage.dir'], $container['storage.filepathChoosingStrategy'], $container['storage.idFactory']);
+            return new FilesystemStorage(
+                $container['storage.dir'],
+                $container['storage.filepathChoosingStrategy'],
+                $container['storage.idFactory'],
+                $container['storage.dirChmod'],
+                $container['storage.fileChmod']
+            );
         };
         $container['storage.filepathChoosingStrategy'] = function ($container) {
             return new FilepathChoosingStrategyImpl();
@@ -78,6 +84,8 @@ class RequestHandlerFactory
         $container['storage.idFactory'] = function ($container) {
             return new IdFactoryImpl();
         };
+        $container['storage.fileChmod'] = 0644;
+        $container['storage.dirChmod'] = 0755;
     }
 
     /**
