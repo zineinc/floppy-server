@@ -106,16 +106,20 @@ class RequestHandlerFactory
                 $container['fileHandlers.image.beforeStoreImageProcess'],
                 $container['fileHandlers.image.beforeSendImageProcess'],
                 $container['fileHandlers.image.responseFilters'],
-                $container['fileHandlers.image.options']
+                array(
+                    'supportedMimeTypes' => $container['fileHandlers.image.mimeTypes'],
+                    'supportedExtensions' => $container['fileHandlers.image.extensions']
+                )
             );
         };
         $container['fileHandlers.image.responseFilters'] = array();
-        $container['fileHandlers.image.options'] = array();
+        $container['fileHandlers.image.mimeTypes'] = ImageFileHandler::getDefaultSupportedMimeTypes();
+        $container['fileHandlers.image.extensions'] = ImageFileHandler::getDefaultSupportedExtensions();
         $container['imagine'] = function () {
             return new \Imagine\Gd\Imagine();
         };
         $container['fileHandlers.image.pathMatcher'] = function ($container) {
-            return new ImagePathMatcher($container['checksumChecker']);
+            return new ImagePathMatcher($container['checksumChecker'], $container['fileHandlers.image.extensions']);
         };
         $container['fileHandlers.image.beforeSendImageProcess'] = function ($container) {
             return new ResizeImageProcess();
@@ -134,7 +138,7 @@ class RequestHandlerFactory
             );
         };
         $container['fileHandlers.file.pathMatcher'] = function ($container) {
-            return new FilePathMatcher($container['checksumChecker']);
+            return new FilePathMatcher($container['checksumChecker'], $container['fileHandlers.file.extensions']);
         };
         $container['fileHandlers.file.mimeTypes'] = function ($container) {
             return array();

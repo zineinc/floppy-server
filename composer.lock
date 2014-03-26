@@ -3,15 +3,15 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "c0e7d07a9b4c6907b34a97cb56cdcb75",
+    "hash": "ab68bc41ebe386953e8622cb23139e80",
     "packages": [
         {
             "name": "floppy/common",
-            "version": "0.0.5",
+            "version": "0.0.6",
             "source": {
                 "type": "git",
                 "url": "git@codebasehq.com:advisio/zineinc/storage-common.git",
-                "reference": "rebranding"
+                "reference": "master"
             },
             "type": "library",
             "autoload": {

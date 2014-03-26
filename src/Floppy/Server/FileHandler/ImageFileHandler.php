@@ -95,4 +95,14 @@ class ImageFileHandler extends AbstractFileHandler
     {
         return $this->options['supportedExtensions'];
     }
+
+    public static function getDefaultSupportedExtensions()
+    {
+        return self::$defaultSupportedExtensions;
+    }
+
+    public static function getDefaultSupportedMimeTypes()
+    {
+        return self::$defaultSupportedMimeTypes;
+    }
 }
