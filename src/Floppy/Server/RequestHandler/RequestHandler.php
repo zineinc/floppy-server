@@ -2,6 +2,7 @@
 
 namespace Floppy\Server\RequestHandler;
 
+use Floppy\Server\RequestHandler\Action\CorsEtcAction;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -27,6 +28,7 @@ class RequestHandler implements LoggerAwareInterface
     const UPLOAD_ACTION = 'upload';
     const DOWNLOAD_ACTION = 'download';
     const DELETE_ACTION = 'delete';
+    const CORS_ETC_ACTION = 'cors_etc';
 
     /**
      * @var LoggerInterface
@@ -40,7 +42,7 @@ class RequestHandler implements LoggerAwareInterface
 
     private $actions;
 
-    public function __construct(Storage $storage, FileSourceFactory $fileSourceFactory, array $handlers, DownloadResponseFactory $downloadResponseFactory, Firewall $firewall, ChecksumChecker $checksumChecker)
+    public function __construct(Storage $storage, FileSourceFactory $fileSourceFactory, array $handlers, DownloadResponseFactory $downloadResponseFactory, Firewall $firewall, ChecksumChecker $checksumChecker, array $allowedOriginHosts = array())
     {
         $this->storage = $storage;
         $this->fileSourceFactory = $fileSourceFactory;
@@ -52,6 +54,7 @@ class RequestHandler implements LoggerAwareInterface
         $this->actions = array(
             self::UPLOAD_ACTION => new UploadAction($storage, $fileSourceFactory, $handlers, $checksumChecker),
             self::DOWNLOAD_ACTION => new DownloadAction($storage, $downloadResponseFactory, $handlers),
+            self::CORS_ETC_ACTION => new CorsEtcAction($allowedOriginHosts),
         );
     }
 
@@ -77,6 +80,8 @@ class RequestHandler implements LoggerAwareInterface
     {
         if (rtrim($request->getPathInfo(), '/') === '/upload') {
             return self::UPLOAD_ACTION;
+        } elseif($request->isMethod('options') || in_array($request->getPathInfo(), array('/crossdomain.xml', '/clientaccesspolicy.xml'))) {
+            return self::CORS_ETC_ACTION;
         } else {
             return self::DOWNLOAD_ACTION;
         }

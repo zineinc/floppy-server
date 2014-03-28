@@ -175,9 +175,11 @@ class RequestHandlerFactory
                 $container['fileHandlers'],
                 $container['requestHandler.downloadResponseFactory'],
                 $container['requestHandler.firewall'],
-                $container['checksumChecker']
+                $container['checksumChecker'],
+                $container['requestHandler.allowedOriginHosts']
             );
         };
+        $container['requestHandler.allowedOriginHosts'] = array();
         $container['requestHandler.fileSourceFactory'] = function ($container) {
             return new FileSourceFactoryImpl();
         };
