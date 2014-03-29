@@ -12,6 +12,7 @@ use Floppy\Common\FileSource;
 use Floppy\Server\RequestHandler\FileHandlerNotFoundException;
 use Floppy\Server\RequestHandler\FileSourceFactory;
 use Floppy\Server\Storage\Storage;
+use Floppy\Server\RequestHandler\Security;
 
 class UploadAction implements Action
 {
@@ -19,18 +20,21 @@ class UploadAction implements Action
     private $storage;
     private $fileHandlers;
     private $checksumChecker;
+    private $securityRule;
 
-    public function __construct(Storage $storage, FileSourceFactory $fileSourceFactory, array $fileHandlers, ChecksumChecker $checksumChecker)
+    public function __construct(Storage $storage, FileSourceFactory $fileSourceFactory, array $fileHandlers, ChecksumChecker $checksumChecker, Security\Rule $securityRule = null)
     {
         $this->fileHandlers = $fileHandlers;
         $this->fileSourceFactory = $fileSourceFactory;
         $this->storage = $storage;
         $this->checksumChecker = $checksumChecker;
+        $this->securityRule = $securityRule ?: new Security\NullRule();
     }
 
     public function execute(Request $request)
     {
         $fileSource = $this->fileSourceFactory->createFileSource($request);
+        $this->securityRule->checkFileSource($request, $fileSource);
 
         $fileHandlerName = $this->findFileHandlerName($fileSource);
         $fileHandler = $this->fileHandlers[$fileHandlerName];

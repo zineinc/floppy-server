@@ -4,11 +4,13 @@
 namespace Floppy\Server\RequestHandler\Security;
 
 
+use Floppy\Common\FileId;
+use Floppy\Common\FileSource;
 use Symfony\Component\HttpFoundation\Request;
 use Floppy\Common\ChecksumChecker;
 use Floppy\Server\RequestHandler\AccessDeniedException;
 
-class PolicyGuardRule
+class PolicyRule implements Rule
 {
     private $checksumChecker;
 
@@ -17,7 +19,7 @@ class PolicyGuardRule
         $this->checksumChecker = $checksumChecker;
     }
 
-    public function __invoke(Request $request)
+    public function checkFileSource(Request $request, FileSource $fileSource)
     {
         $policy = $request->request->get('policy');
         $signature = $request->request->get('signature');
@@ -35,5 +37,10 @@ class PolicyGuardRule
         if(!empty($decodedPolicy['expiration']) && $decodedPolicy['expiration'] < time()) {
             throw new AccessDeniedException('Policy is expired');
         }
+    }
+
+    public function checkFileId(Request $request, FileId $fileId)
+    {
+
     }
 }

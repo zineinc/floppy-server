@@ -11,18 +11,21 @@ use Floppy\Server\RequestHandler\Action\Action;
 use Floppy\Server\RequestHandler\DownloadResponseFactory;
 use Floppy\Server\RequestHandler\FileHandlerNotFoundException;
 use Floppy\Server\Storage\Storage;
+use Floppy\Server\RequestHandler\Security;
 
 class DownloadAction implements Action
 {
     private $fileHandlers;
     private $storage;
     private $downloadResponseFactory;
+    private $securityRule;
 
-    function __construct(Storage $storage, DownloadResponseFactory $downloadResponseFactory, array $fileHandlers)
+    function __construct(Storage $storage, DownloadResponseFactory $downloadResponseFactory, array $fileHandlers, Security\Rule $securityRule = null)
     {
         $this->downloadResponseFactory = $downloadResponseFactory;
         $this->fileHandlers = $fileHandlers;
         $this->storage = $storage;
+        $this->securityRule = $securityRule ?: new Security\NullRule();
     }
 
     public function execute(Request $request)
@@ -31,6 +34,8 @@ class DownloadAction implements Action
         $handler = $this->findFileHandlerMatches($path);
 
         $fileId = $handler->match($path);
+
+        $this->securityRule->checkFileId($request, $fileId);
 
         if ($this->storage->exists($fileId)) {
             $processedFileSource = $this->storage->getSource($fileId);

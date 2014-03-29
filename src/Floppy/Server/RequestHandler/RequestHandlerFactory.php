@@ -6,6 +6,7 @@ namespace Floppy\Server\RequestHandler;
 use Floppy\Server\RequestHandler\Action\CorsEtcAction;
 use Floppy\Server\RequestHandler\Action\DownloadAction;
 use Floppy\Server\RequestHandler\Action\UploadAction;
+use Floppy\Server\RequestHandler\Security\NullRule;
 use Symfony\Component\HttpFoundation\Request;
 use Floppy\Common\ChecksumCheckerImpl;
 use Floppy\Common\FileHandler\FilePathMatcher;
@@ -178,14 +179,7 @@ class RequestHandlerFactory
             );
         };
         $container['actionResolver'] = function($container){
-            $resolver = new ActionResolverImpl(
-                $container['storage'],
-                $container['requestHandler.fileSourceFactory'],
-                $container['fileHandlers'],
-                $container['requestHandler.downloadResponseFactory'],
-                $container['checksumChecker'],
-                $container['requestHandler.allowedOriginHosts']
-            );
+            $resolver = new ActionResolverImpl();
 
             $resolver->register($container['action.upload'], function(Request $request){
                 return rtrim($request->getPathInfo(), '/') === '/upload';
@@ -199,13 +193,17 @@ class RequestHandlerFactory
         };
 
         $container['action.upload'] = function($container){
-            return new UploadAction($container['storage'], $container['action.upload.fileSourceFactory'], $container['fileHandlers'], $container['checksumChecker']);
+            return new UploadAction($container['storage'], $container['action.upload.fileSourceFactory'], $container['fileHandlers'], $container['checksumChecker'], $container['action.upload.securityRule']);
         };
         $container['action.cors'] = function($container){
             return new CorsEtcAction($container['action.cors.allowedOriginHosts']);
         };
         $container['action.download'] = function($container){
-            return new DownloadAction($container['storage'], $container['action.download.responseFactory'], $container['fileHandlers']);
+            return new DownloadAction($container['storage'], $container['action.download.responseFactory'], $container['fileHandlers'], $container['action.download.securityRule']);
+        };
+
+        $container['action.download.securityRule'] = $container['action.upload.securityRule'] = function($container){
+            return new NullRule();
         };
 
         $container['action.cors.allowedOriginHosts'] = array();

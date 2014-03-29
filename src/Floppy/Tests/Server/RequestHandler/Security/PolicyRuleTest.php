@@ -4,12 +4,14 @@
 namespace Floppy\Tests\Server\RequestHandler\Security;
 
 
+use Floppy\Common\FileSource;
 use Symfony\Component\HttpFoundation\Request;
-use Floppy\Server\RequestHandler\Security\PolicyGuardRule;
+use Floppy\Server\RequestHandler\Security\PolicyRule;
 use Floppy\Tests\Common\Stub\ChecksumChecker;
 use Floppy\Tests\Server\RequestHandler\Security\ZineInc;
+use Floppy\Common\Stream\StringInputStream;
 
-class PolicyGuardRuleTest extends \PHPUnit_Framework_TestCase
+class PolicyRuleTest extends \PHPUnit_Framework_TestCase
 {
     const VALID_SIGNATURE = 'valid-signature';
     const INVALID_SIGNATURE = 'invalid-signature';
@@ -18,7 +20,7 @@ class PolicyGuardRuleTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->rule = new \Floppy\Server\RequestHandler\Security\PolicyGuardRule(new ChecksumChecker(self::VALID_SIGNATURE));
+        $this->rule = new \Floppy\Server\RequestHandler\Security\PolicyRule(new ChecksumChecker(self::VALID_SIGNATURE));
     }
 
     /**
@@ -33,7 +35,7 @@ class PolicyGuardRuleTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $this->rule->__invoke($request);
+        $this->invokeRule($request);
     }
 
     /**
@@ -48,7 +50,7 @@ class PolicyGuardRuleTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $this->rule->__invoke($request);
+        $this->invokeRule($request);
     }
 
     /**
@@ -62,7 +64,7 @@ class PolicyGuardRuleTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $this->rule->__invoke($request);
+        $this->invokeRule($request);
     }
 
     private function createRequest($signature, $policy)
@@ -86,6 +88,14 @@ class PolicyGuardRuleTest extends \PHPUnit_Framework_TestCase
         return base64_encode(json_encode(array(
             'expiration' => time() - 5,
         )));
+    }
+
+    /**
+     * @param $request
+     */
+    protected function invokeRule($request)
+    {
+        $this->rule->checkFileSource($request, new FileSource(new StringInputStream('')));
     }
 }
  
