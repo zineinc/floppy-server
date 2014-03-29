@@ -1,38 +1,35 @@
 <?php
 
-namespace Floppy\Tests\Server\RequestHandler;
 
-use PHPUnit_Framework_TestCase;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+namespace Floppy\Tests\Server\RequestHandler\Action;
+
+
 use Floppy\Common\FileHandler\PathMatchingException;
 use Floppy\Common\FileId;
-use Floppy\Server\FileHandler\FileProcessException;
 use Floppy\Common\FileSource;
 use Floppy\Common\FileType;
-use Floppy\Server\RequestHandler\DownloadResponseFactory;
-use Floppy\Server\RequestHandler\RequestHandler;
-use Floppy\Server\Storage\FileSourceNotFoundException;
 use Floppy\Common\Stream\StringInputStream;
-use Floppy\Tests\Common\Stub\ChecksumChecker;
-use Floppy\Tests\Server\Stub\FirewallStub;
+use Floppy\Server\FileHandler\FileProcessException;
+use Floppy\Server\RequestHandler\Action\DownloadAction;
+use Floppy\Server\RequestHandler\DownloadResponseFactory;
+use Floppy\Server\RequestHandler\FileSourceNotFoundException;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
+class DownloadActionTest extends \PHPUnit_Framework_TestCase
 {
     const DOWNLOAD_URI = '/some-download-uri/some-file.jpg?a=1';
     const SOME_ID = 'some-id';
 
-    /**
-     * @var RequestHandler
-     */
-    private $requestHandler;
+    private $sampleResponse;
     private $fileHandlers;
     private $storage;
-    private $sampleReponse;
+
+    private $action;
 
     protected function setUp()
     {
-        $this->sampleReponse = new Response('some-content');
+        $this->sampleResponse = new Response('some-content');
 
         $this->storage = $this->getMock('Floppy\Server\Storage\Storage');
         $this->fileHandlers = array(
@@ -40,15 +37,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
             $this->getMock('Floppy\Server\FileHandler\FileHandler'),
         );
 
-
-        $this->requestHandler = new RequestHandler(
-            $this->storage,
-            $this->getMock('Floppy\Server\RequestHandler\FileSourceFactory'),
-            $this->fileHandlers,
-            new DownloadRequestHandlerTest_DownloadResponseFactory($this->getSampleResponse()),
-            new FirewallStub(),
-            new ChecksumChecker('abc')
-        );
+        $this->action = new DownloadAction($this->storage, new DownloadActionTest_DownloadResponseFactory($this->getSampleResponse()), $this->fileHandlers);
     }
 
     /**
@@ -69,7 +58,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
 
         //when
 
-        $actualResponse = $this->requestHandler->handle($this->createDownloadRequest());
+        $actualResponse = $this->action->execute($this->createDownloadRequest());
 
         //then
 
@@ -77,10 +66,11 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertResponseOk($actualResponse);
     }
 
+
     /**
      * @test
      */
-    public function fileHandlerFound_fileExists_processSuccesAndFileSourceChanges_storeFileVariant_returnOkResponse()
+    public function fileHandlerFound_fileExists_processSuccessAndFileSourceChanges_storeFileVariant_returnOkResponse()
     {
         //given
 
@@ -101,7 +91,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
 
         //when
 
-        $actualResponse = $this->requestHandler->handle($this->createDownloadRequest());
+        $actualResponse = $this->action->execute($this->createDownloadRequest());
 
         //then
 
@@ -109,10 +99,12 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertResponseOk($actualResponse);
     }
 
+
     /**
      * @test
+     * @expectedException Floppy\Server\FileHandler\FileProcessException
      */
-    public function fileHandlerFound_fileExists_processFailed_returnBadResponse()
+    public function fileHandlerFound_fileExists_processFailed_throwEx()
     {
         //given
 
@@ -128,19 +120,14 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
 
         //when
 
-        $actualResponse = $this->requestHandler->handle($this->createDownloadRequest());
-
-        //then
-
-        $this->verifyMockObjects();
-        $this->assertNotNull($actualResponse);
-        $this->assertGreaterThanOrEqual(500, $actualResponse->getStatusCode());
+        $this->action->execute($this->createDownloadRequest());
     }
 
     /**
      * @test
+     * @expectedException Floppy\Server\RequestHandler\FileSourceNotFoundException
      */
-    public function fileHandlerFound_fileNotExist_returnBadResponse()
+    public function fileHandlerFound_fileNotExist_throwEx()
     {
         //given
 
@@ -150,19 +137,14 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
 
         //when
 
-        $actualResponse = $this->requestHandler->handle($this->createDownloadRequest());
-
-        //then
-
-        $this->verifyMockObjects();
-        $this->assertNotNull($actualResponse);
-        $this->assertGreaterThanOrEqual(400, $actualResponse->getStatusCode());
+        $this->action->execute($this->createDownloadRequest());
     }
 
     /**
      * @test
+     * @expectedException Floppy\Server\RequestHandler\FileHandlerNotFoundException
      */
-    public function fileHandlerNotFound_returnBadResponse()
+    public function fileHandlerNotFound_throwEx()
     {
         //given
 
@@ -171,19 +153,14 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
 
         //when
 
-        $actualResponse = $this->requestHandler->handle($this->createDownloadRequest());
-
-        //then
-
-        $this->verifyMockObjects();
-        $this->assertNotNull($actualResponse);
-        $this->assertGreaterThanOrEqual(400, $actualResponse->getStatusCode());
+        $this->action->execute($this->createDownloadRequest());
     }
 
     /**
      * @test
+     * @expectedException Floppy\Common\FileHandler\PathMatchingException
      */
-    public function fileHandlerFound_fileHandlerMatchError_returnBadResponse()
+    public function fileHandlerFound_fileHandlerMatchError_throwEx()
     {
         //given
 
@@ -194,13 +171,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
 
         //when
 
-        $actualResponse = $this->requestHandler->handle($this->createDownloadRequest());
-
-        //then
-
-        $this->verifyMockObjects();
-        $this->assertNotNull($actualResponse);
-        $this->assertGreaterThanOrEqual(400, $actualResponse->getStatusCode());
+        $this->action->execute($this->createDownloadRequest());
     }
 
     /**
@@ -222,7 +193,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
 
         //when
 
-        $actualResponse = $this->requestHandler->handle($this->createDownloadRequest());
+        $actualResponse = $this->action->execute($this->createDownloadRequest());
 
         //then
 
@@ -232,7 +203,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
 
     private function getSampleResponse()
     {
-        return $this->sampleReponse;
+        return $this->sampleResponse;
     }
 
     private function createProcessedFileId()
@@ -392,7 +363,7 @@ class DownloadRequestHandlerTest extends PHPUnit_Framework_TestCase
     }
 }
 
-class DownloadRequestHandlerTest_DownloadResponseFactory implements DownloadResponseFactory
+class DownloadActionTest_DownloadResponseFactory implements DownloadResponseFactory
 {
     private $response;
 

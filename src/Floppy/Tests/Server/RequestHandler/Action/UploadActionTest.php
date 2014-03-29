@@ -1,19 +1,18 @@
 <?php
 
-namespace Floppy\Tests\Server\RequestHandler;
 
-use PHPUnit_Framework_TestCase;
-use Symfony\Component\HttpFoundation\Request;
+namespace Floppy\Tests\Server\RequestHandler\Action;
+
+
 use Floppy\Common\FileSource;
 use Floppy\Common\FileType;
-use Floppy\Server\RequestHandler\FileSourceNotFoundException;
-use Floppy\Server\RequestHandler\RequestHandler;
-use Floppy\Server\Storage\StoreException;
 use Floppy\Common\Stream\StringInputStream;
-use Floppy\Tests\Common\Stub\ChecksumChecker;
-use Floppy\Tests\Server\Stub\FirewallStub;
+use Floppy\Server\RequestHandler\Action\UploadAction;
+use Floppy\Server\RequestHandler\FileSourceNotFoundException;
+use Floppy\Server\Storage\StoreException;
+use Symfony\Component\HttpFoundation\Request;
 
-class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
+class UploadActionTest extends \PHPUnit_Framework_TestCase
 {
     const VALID_CHECKSUM = 'valid-checksum';
 
@@ -26,14 +25,12 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
 
     private static $attrs = array('a' => 'b');
 
-    /**
-     * @var RequestHandler
-     */
-    private $requestHandler;
     private $fileHandlers;
     private $fileSourceFactory;
     private $storage;
     private $checksumChecker;
+
+    private $action;
 
     protected function setUp()
     {
@@ -45,14 +42,7 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
         );
         $this->checksumChecker = $this->getMock('Floppy\Common\ChecksumChecker');
 
-        $this->requestHandler = new RequestHandler(
-            $this->storage,
-            $this->fileSourceFactory,
-            $this->fileHandlers,
-            $this->getMock('Floppy\Server\RequestHandler\DownloadResponseFactory'),
-            new FirewallStub(),
-            $this->checksumChecker
-        );
+        $this->action = new UploadAction($this->storage, $this->fileSourceFactory, $this->fileHandlers, $this->checksumChecker);
     }
 
     /**
@@ -71,7 +61,7 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
 
         //when
 
-        $response = $this->requestHandler->handle($request);
+        $response = $this->action->execute($request);
 
         //then
 
@@ -84,18 +74,12 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expectedAttributes + array('checksum' => self::VALID_CHECKSUM), $actualResponseData['attributes']);
     }
 
-    private function expectsMakeChecksum($data)
-    {
-        $this->checksumChecker->expects($this->atLeastOnce())
-            ->method('generateChecksum')
-            ->with($data)
-            ->will($this->returnValue(self::VALID_CHECKSUM));
-    }
 
     /**
      * @test
+     * @expectedException Floppy\Server\RequestHandler\FileSourceNotFoundException
      */
-    public function fileSourceNotFound_400response()
+    public function fileSourceNotFound_throwEx()
     {
         //given
 
@@ -110,18 +94,14 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
 
         //when
 
-        $response = $this->requestHandler->handle($request);
-
-        //then
-
-        $this->verifyMockObjects();
-        $this->assertGreaterThanOrEqual(400, $response->getStatusCode());
+        $this->action->execute($request);
     }
 
     /**
      * @test
+     * @expectedException Floppy\Server\RequestHandler\FileHandlerNotFoundException
      */
-    public function fileHandlerNotFound_400response()
+    public function fileHandlerNotFound_throwEx()
     {
         //given
 
@@ -138,12 +118,33 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
 
         //when
 
-        $response = $this->requestHandler->handle($request);
+        $this->action->execute($request);
+    }
 
-        //then
+    /**
+     * @test
+     * @expectedException Floppy\Server\Storage\StoreException
+     */
+    public function storeEx_throwEx()
+    {
+        //given
 
-        $this->verifyMockObjects();
-        $this->assertGreaterThanOrEqual(400, $response->getStatusCode());
+        $request = $this->createUploadRequest();
+
+        $this->expectsCreateFileSourceAndFindFileHandler($request);
+        $this->expectsStoreException();
+
+        //when
+
+        $this->action->execute($request);
+    }
+
+    private function expectsMakeChecksum($data)
+    {
+        $this->checksumChecker->expects($this->atLeastOnce())
+            ->method('generateChecksum')
+            ->with($data)
+            ->will($this->returnValue(self::VALID_CHECKSUM));
     }
 
     private function expectsCreateFileSourceAndFindFileHandler(Request $request)
@@ -158,27 +159,6 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
         return $fileSource;
     }
 
-    /**
-     * @test
-     */
-    public function storeEx_500response()
-    {
-        //given
-
-        $request = $this->createUploadRequest();
-
-        $this->expectsCreateFileSourceAndFindFileHandler($request);
-        $this->expectsStoreException();
-
-        //when
-
-        $response = $this->requestHandler->handle($request);
-
-        //then
-
-        $this->verifyMockObjects();
-        $this->assertGreaterThanOrEqual(500, $response->getStatusCode());
-    }
 
     private function expectsFileSourceNotFound()
     {
@@ -255,3 +235,4 @@ class UploadRequestHandlerTest extends PHPUnit_Framework_TestCase
             ->method('store');
     }
 }
+ 
