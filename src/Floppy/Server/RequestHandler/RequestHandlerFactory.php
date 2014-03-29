@@ -3,6 +3,9 @@
 
 namespace Floppy\Server\RequestHandler;
 
+use Floppy\Server\RequestHandler\Action\CorsEtcAction;
+use Floppy\Server\RequestHandler\Action\DownloadAction;
+use Floppy\Server\RequestHandler\Action\UploadAction;
 use Symfony\Component\HttpFoundation\Request;
 use Floppy\Common\ChecksumCheckerImpl;
 use Floppy\Common\FileHandler\FilePathMatcher;
@@ -170,27 +173,52 @@ class RequestHandlerFactory
     {
         $container['requestHandler'] = function ($container) {
             return new RequestHandler(
+                $container['actionResolver'],
+                $container['requestHandler.firewall']
+            );
+        };
+        $container['actionResolver'] = function($container){
+            $resolver = new ActionResolverImpl(
                 $container['storage'],
                 $container['requestHandler.fileSourceFactory'],
                 $container['fileHandlers'],
                 $container['requestHandler.downloadResponseFactory'],
-                $container['requestHandler.firewall'],
                 $container['checksumChecker'],
                 $container['requestHandler.allowedOriginHosts']
             );
+
+            $resolver->register($container['action.upload'], function(Request $request){
+                return rtrim($request->getPathInfo(), '/') === '/upload';
+            })->register($container['action.cors'], function(Request $request){
+                return $request->isMethod('options') || in_array($request->getPathInfo(), array('/crossdomain.xml', '/clientaccesspolicy.xml'));
+            })->register($container['action.download'], function(Request $request){
+                return true;
+            });
+
+            return $resolver;
         };
-        $container['requestHandler.allowedOriginHosts'] = array();
-        $container['requestHandler.fileSourceFactory'] = function ($container) {
+
+        $container['action.upload'] = function($container){
+            return new UploadAction($container['storage'], $container['action.upload.fileSourceFactory'], $container['fileHandlers'], $container['checksumChecker']);
+        };
+        $container['action.cors'] = function($container){
+            return new CorsEtcAction($container['action.cors.allowedOriginHosts']);
+        };
+        $container['action.download'] = function($container){
+            return new DownloadAction($container['storage'], $container['action.download.responseFactory'], $container['fileHandlers']);
+        };
+
+        $container['action.cors.allowedOriginHosts'] = array();
+        $container['action.upload.fileSourceFactory'] = function ($container) {
             return new FileSourceFactoryImpl();
         };
-        $container['requestHandler.downloadResponseFactory'] = function($container) {
+        $container['action.download.responseFactory'] = function($container) {
             return new DownloadResponseFactoryImpl();
         };
         $container['requestHandler.firewall'] = function($container) {
             return new CallableFirewall(array(
-                RequestHandler::DOWNLOAD_ACTION => $container['requestHandler.firewall.download'],
-                RequestHandler::UPLOAD_ACTION => $container['requestHandler.firewall.upload'],
-                RequestHandler::DELETE_ACTION => $container['requestHandler.firewall.delete'],
+                DownloadAction::name() => $container['requestHandler.firewall.download'],
+                UploadAction::name() => $container['requestHandler.firewall.upload'],
             ));
         };
         $container['requestHandler.firewall.download'] = function($container) {
@@ -201,12 +229,6 @@ class RequestHandlerFactory
         $container['requestHandler.firewall.upload'] = function($container) {
             return function(Request $request) {
                 //allow upload
-            };
-        };
-        $container['requestHandler.firewall.delete'] = function($container) {
-            return function(Request $request) {
-                //disallow delete by default
-                throw new AccessDeniedException();
             };
         };
 

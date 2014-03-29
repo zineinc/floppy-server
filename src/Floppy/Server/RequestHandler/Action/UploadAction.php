@@ -62,4 +62,12 @@ class UploadAction implements Action
 
         throw new FileHandlerNotFoundException(sprintf('File type "%s" is unsupported', $fileSource->fileType()->mimeType()));
     }
+
+    /**
+     * @return string
+     */
+    public static function name()
+    {
+        return 'upload';
+    }
 }

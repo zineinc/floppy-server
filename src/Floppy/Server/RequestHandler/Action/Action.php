@@ -14,4 +14,9 @@ interface Action
      * @return Response
      */
     public function execute(Request $request);
+
+    /**
+     * @return string
+     */
+    public static function name();
 } 

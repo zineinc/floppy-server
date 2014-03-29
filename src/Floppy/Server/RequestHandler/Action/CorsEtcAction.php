@@ -118,4 +118,12 @@ XML;
         $response->setContent($content);
         $response->headers->set('Content-Type', 'text/xml');
     }
+
+    /**
+     * @return string
+     */
+    public static function name()
+    {
+        return 'cors_etc';
+    }
 }

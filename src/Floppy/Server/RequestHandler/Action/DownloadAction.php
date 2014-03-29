@@ -64,4 +64,12 @@ class DownloadAction implements Action
 
         throw new FileHandlerNotFoundException('file not found', ErrorCodes::FILE_NOT_FOUND);
     }
+
+    /**
+     * @return string
+     */
+    public static function name()
+    {
+        return 'download';
+    }
 }

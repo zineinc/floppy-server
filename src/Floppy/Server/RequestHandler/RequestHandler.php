@@ -25,37 +25,19 @@ use Floppy\Server\RequestHandler\Action\UploadAction;
 
 class RequestHandler implements LoggerAwareInterface
 {
-    const UPLOAD_ACTION = 'upload';
-    const DOWNLOAD_ACTION = 'download';
-    const DELETE_ACTION = 'delete';
-    const CORS_ETC_ACTION = 'cors_etc';
-
     /**
      * @var LoggerInterface
      */
     private $logger;
-    private $storage;
-    private $fileSourceFactory;
-    private $fileHandlers;
-    private $downloadResponseFactory;
     private $firewall;
+    private $actionResolver;
 
-    private $actions;
-
-    public function __construct(Storage $storage, FileSourceFactory $fileSourceFactory, array $handlers, DownloadResponseFactory $downloadResponseFactory, Firewall $firewall, ChecksumChecker $checksumChecker, array $allowedOriginHosts = array())
+    public function __construct(ActionResolver $actionResolver, Firewall $firewall)
     {
-        $this->storage = $storage;
-        $this->fileSourceFactory = $fileSourceFactory;
-        $this->fileHandlers = $handlers;
         $this->logger = new NullLogger();
-        $this->downloadResponseFactory = $downloadResponseFactory;
         $this->firewall = $firewall;
 
-        $this->actions = array(
-            self::UPLOAD_ACTION => new UploadAction($storage, $fileSourceFactory, $handlers, $checksumChecker),
-            self::DOWNLOAD_ACTION => new DownloadAction($storage, $downloadResponseFactory, $handlers),
-            self::CORS_ETC_ACTION => new CorsEtcAction($allowedOriginHosts),
-        );
+        $this->actionResolver = $actionResolver;
     }
 
     /**
@@ -63,34 +45,15 @@ class RequestHandler implements LoggerAwareInterface
      */
     public function handle(Request $request)
     {
-        if($request->isMethod('options')) {
-            return new Response();
-        }
+        $action = $this->actionResolver->resolveAction($request);
 
-        $actionName = $this->resolveActionName($request);
-
-        if(!isset($this->actions[$actionName])) {
-            return new Response(404);
-        } else {
-            return $this->executeAction($this->actions[$actionName], $request, $actionName);
-        }
+        return $this->executeAction($action, $request);
     }
 
-    private function resolveActionName(Request $request)
-    {
-        if (rtrim($request->getPathInfo(), '/') === '/upload') {
-            return self::UPLOAD_ACTION;
-        } elseif($request->isMethod('options') || in_array($request->getPathInfo(), array('/crossdomain.xml', '/clientaccesspolicy.xml'))) {
-            return self::CORS_ETC_ACTION;
-        } else {
-            return self::DOWNLOAD_ACTION;
-        }
-    }
-
-    private function executeAction(Action $action, Request $request, $actionName)
+    private function executeAction(Action $action, Request $request)
     {
         try {
-            $this->firewall->guard($request, $actionName);
+            $this->firewall->guard($request, $action->name());
 
             return $action->execute($request);
         } catch (StorageError $e) {
