@@ -187,10 +187,10 @@ class RequestHandlerFactory
                 $container['requestHandler.allowedOriginHosts']
             );
 
-            $resolver->register($container['action.upload'], function(Request $request){
-                return rtrim($request->getPathInfo(), '/') === '/upload';
-            })->register($container['action.cors'], function(Request $request){
+            $resolver->register($container['action.cors'], function(Request $request){
                 return $request->isMethod('options') || in_array($request->getPathInfo(), array('/crossdomain.xml', '/clientaccesspolicy.xml'));
+            })->register($container['action.upload'], function(Request $request){
+                return rtrim($request->getPathInfo(), '/') === '/upload';
             })->register($container['action.download'], function(Request $request){
                 return true;
             });
