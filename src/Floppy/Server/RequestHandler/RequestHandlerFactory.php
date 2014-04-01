@@ -174,7 +174,8 @@ class RequestHandlerFactory
         $container['requestHandler'] = function ($container) {
             return new RequestHandler(
                 $container['actionResolver'],
-                $container['requestHandler.firewall']
+                $container['requestHandler.firewall'],
+                $container['requestHandler.corsFilter']
             );
         };
         $container['actionResolver'] = function($container){
@@ -230,6 +231,9 @@ class RequestHandlerFactory
             return function(Request $request) {
                 //allow upload
             };
+        };
+        $container['requestHandler.corsFilter'] = function($container){
+            return new CorsResponseFilter($container['action.cors.allowedOriginHosts']);
         };
 
         return $container;

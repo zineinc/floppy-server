@@ -31,11 +31,13 @@ class RequestHandler implements LoggerAwareInterface
     private $logger;
     private $firewall;
     private $actionResolver;
+    private $responseFilter;
 
-    public function __construct(ActionResolver $actionResolver, Firewall $firewall)
+    public function __construct(ActionResolver $actionResolver, Firewall $firewall, ResponseFilter $responseFilter = null)
     {
         $this->logger = new NullLogger();
         $this->firewall = $firewall;
+        $this->responseFilter = $responseFilter ?: new NullResponseFilter();
 
         $this->actionResolver = $actionResolver;
     }
@@ -55,7 +57,9 @@ class RequestHandler implements LoggerAwareInterface
         try {
             $this->firewall->guard($request, $action->name());
 
-            return $action->execute($request);
+            $response = $action->execute($request);
+
+            return $this->responseFilter->filterResponse($request, $response);
         } catch (StorageError $e) {
             $this->logger->error($e);
             return $this->createErrorResponse($e, 500);

@@ -3,10 +3,12 @@
 namespace Floppy\Tests\Server\RequestHandler\Action;
 
 use Floppy\Server\RequestHandler\Action\CorsEtcAction;
+use Floppy\Server\RequestHandler\CorsResponseFilter;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Tests\RequestMatcherTest;
 
-class CorsEtcActionTest extends \PHPUnit_Framework_TestCase
+class CorsResponseFilterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test
@@ -16,30 +18,22 @@ class CorsEtcActionTest extends \PHPUnit_Framework_TestCase
     {
         //given
 
-        $action = new CorsEtcAction($allowedHosts);
+        $action = new CorsResponseFilter($allowedHosts);
 
         //when
 
-        $response = $action->execute($this->givenCorsRequest($origin));
+
+        $response = $action->filterResponse($this->givenCorsRequest($origin), new Response());
 
         //then
 
-        if($expectedSuccess)
-        {
-            $this->assertEquals(200, $response->getStatusCode());
-            $this->assertEquals($origin, $response->headers->get('Access-Control-Allow-Origin'));
-        }
-        else
-        {
-            $this->assertEquals(404, $response->getStatusCode());
-        }
+        $this->assertEquals($expectedSuccess ? $origin : null, $response->headers->get('Access-Control-Allow-Origin'));
     }
 
     private function givenCorsRequest($origin)
     {
         $request = new Request();
         $request->headers->set('Origin', $origin);
-        $request->setMethod('OPTIONS');
 
         return $request;
     }
