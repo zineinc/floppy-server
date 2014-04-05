@@ -19,7 +19,7 @@ class PolicyRule implements Rule
         $this->checksumChecker = $checksumChecker;
     }
 
-    public function checkFileSource(Request $request, FileSource $fileSource)
+    public function checkRule(Request $request, $object = null)
     {
         $policy = $request->request->get('policy');
         $signature = $request->request->get('signature');
@@ -37,10 +37,5 @@ class PolicyRule implements Rule
         if(!empty($decodedPolicy['expiration']) && $decodedPolicy['expiration'] < time()) {
             throw new AccessDeniedException('Policy is expired');
         }
-    }
-
-    public function checkFileId(Request $request, FileId $fileId)
-    {
-
     }
 }

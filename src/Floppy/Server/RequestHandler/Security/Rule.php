@@ -10,6 +10,5 @@ use Symfony\Component\HttpFoundation\Request;
 
 interface Rule
 {
-    public function checkFileSource(Request $request, FileSource $fileSource);
-    public function checkFileId(Request $request, FileId $fileId);
+    public function checkRule(Request $request, $object = null);
 } 

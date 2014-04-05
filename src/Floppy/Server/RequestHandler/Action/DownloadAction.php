@@ -35,7 +35,7 @@ class DownloadAction implements Action
 
         $fileId = $handler->match($path);
 
-        $this->securityRule->checkFileId($request, $fileId);
+        $this->securityRule->checkRule($request, $fileId);
 
         if ($this->storage->exists($fileId)) {
             $processedFileSource = $this->storage->getSource($fileId);

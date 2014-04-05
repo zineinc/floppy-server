@@ -93,9 +93,9 @@ class PolicyRuleTest extends \PHPUnit_Framework_TestCase
     /**
      * @param $request
      */
-    protected function invokeRule($request)
+    protected function invokeRule($request, $object = null)
     {
-        $this->rule->checkFileSource($request, new FileSource(new StringInputStream('')));
+        $this->rule->checkRule($request, $object);
     }
 }
  

@@ -34,7 +34,7 @@ class UploadAction implements Action
     public function execute(Request $request)
     {
         $fileSource = $this->fileSourceFactory->createFileSource($request);
-        $this->securityRule->checkFileSource($request, $fileSource);
+        $this->securityRule->checkRule($request, $fileSource);
 
         $fileHandlerName = $this->findFileHandlerName($fileSource);
         $fileHandler = $this->fileHandlers[$fileHandlerName];
