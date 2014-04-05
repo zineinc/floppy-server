@@ -99,7 +99,7 @@ class UploadActionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Floppy\Server\RequestHandler\FileHandlerNotFoundException
+     * @expectedException Floppy\Server\FileHandler\FileHandlerNotFoundException
      */
     public function fileHandlerNotFound_throwEx()
     {

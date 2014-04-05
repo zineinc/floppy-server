@@ -4,6 +4,7 @@
 namespace Floppy\Server\RequestHandler\Action;
 
 
+use Floppy\Server\FileHandler\FileHandlerProvider;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Floppy\Common\ChecksumChecker;
@@ -18,17 +19,17 @@ class UploadAction implements Action
 {
     private $fileSourceFactory;
     private $storage;
-    private $fileHandlers;
+    private $fileHandlerProvider;
     private $checksumChecker;
     private $securityRule;
 
     public function __construct(Storage $storage, FileSourceFactory $fileSourceFactory, array $fileHandlers, ChecksumChecker $checksumChecker, Security\Rule $securityRule = null)
     {
-        $this->fileHandlers = $fileHandlers;
         $this->fileSourceFactory = $fileSourceFactory;
         $this->storage = $storage;
         $this->checksumChecker = $checksumChecker;
         $this->securityRule = $securityRule ?: new Security\NullRule();
+        $this->fileHandlerProvider = new FileHandlerProvider($fileHandlers);
     }
 
     public function execute(Request $request)
@@ -36,8 +37,8 @@ class UploadAction implements Action
         $fileSource = $this->fileSourceFactory->createFileSource($request);
         $this->securityRule->checkRule($request, $fileSource);
 
-        $fileHandlerName = $this->findFileHandlerName($fileSource);
-        $fileHandler = $this->fileHandlers[$fileHandlerName];
+        $fileHandlerName = $this->fileHandlerProvider->findFileHandlerName($fileSource);
+        $fileHandler = $this->fileHandlerProvider->getFileHandler($fileHandlerName);
 
         $fileSource = $fileHandler->beforeStoreProcess($fileSource);
         $attrs = $fileHandler->getStoreAttributes($fileSource);
@@ -51,20 +52,6 @@ class UploadAction implements Action
             'code' => 0,
             'attributes' => $attrs + array('checksum' => $this->checksumChecker->generateChecksum($attrs)),
         ));
-    }
-
-    /**
-     * @return FileHandler
-     */
-    private function findFileHandlerName(FileSource $fileSource)
-    {
-        foreach ($this->fileHandlers as $name => $fileHandler) {
-            if ($fileHandler->supports($fileSource->fileType())) {
-                return $name;
-            }
-        }
-
-        throw new FileHandlerNotFoundException(sprintf('File type "%s" is unsupported', $fileSource->fileType()->mimeType()));
     }
 
     /**

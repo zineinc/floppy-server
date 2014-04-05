@@ -4,6 +4,7 @@
 namespace Floppy\Server\RequestHandler\Action;
 
 
+use Floppy\Server\FileHandler\FileHandlerProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Floppy\Common\ErrorCodes;
 use Floppy\Server\FileHandler\FileHandler;
@@ -15,7 +16,7 @@ use Floppy\Server\RequestHandler\Security;
 
 class DownloadAction implements Action
 {
-    private $fileHandlers;
+    private $fileHandlerProvider;
     private $storage;
     private $downloadResponseFactory;
     private $securityRule;
@@ -23,7 +24,7 @@ class DownloadAction implements Action
     function __construct(Storage $storage, DownloadResponseFactory $downloadResponseFactory, array $fileHandlers, Security\Rule $securityRule = null)
     {
         $this->downloadResponseFactory = $downloadResponseFactory;
-        $this->fileHandlers = $fileHandlers;
+        $this->fileHandlerProvider = new FileHandlerProvider($fileHandlers);
         $this->storage = $storage;
         $this->securityRule = $securityRule ?: new Security\NullRule();
     }
@@ -31,7 +32,8 @@ class DownloadAction implements Action
     public function execute(Request $request)
     {
         $path = rtrim($request->getPathInfo(), '/').($request->getQueryString() ? '?'.$request->getQueryString() : '');
-        $handler = $this->findFileHandlerMatches($path);
+        $handlerName = $this->fileHandlerProvider->findFileHandlerNameMatches($path);
+        $handler = $this->fileHandlerProvider->getFileHandler($handlerName);
 
         $fileId = $handler->match($path);
 
@@ -53,21 +55,6 @@ class DownloadAction implements Action
         $handler->filterResponse($response, $processedFileSource, $fileId);
 
         return $response;
-    }
-
-
-    /**
-     * @return FileHandler
-     */
-    private function findFileHandlerMatches($path)
-    {
-        foreach ($this->fileHandlers as $handler) {
-            if ($handler->matches($path)) {
-                return $handler;
-            }
-        }
-
-        throw new FileHandlerNotFoundException('file not found', ErrorCodes::FILE_NOT_FOUND);
     }
 
     /**
