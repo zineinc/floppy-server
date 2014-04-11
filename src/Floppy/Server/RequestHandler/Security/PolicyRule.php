@@ -28,6 +28,7 @@ class PolicyRule implements Rule
         $policy = $this->retrievePolicy($request);
         $this->checkExpiration($policy);
         $this->checkFileType($policy, $object);
+        $this->checkFileId($policy, $object);
     }
 
     protected function retrievePolicy(Request $request)
@@ -64,6 +65,14 @@ class PolicyRule implements Rule
             if(!in_array($fileHandlerName, $fileTypes)) {
                 throw new BadRequestException(sprintf('Invalid file type, given "%s", allowed %s', $fileHandlerName, implode(', ', $fileTypes)));
             }
+        }
+    }
+
+    protected function checkFileId($policy, $object)
+    {
+        if($object instanceof FileId && (empty($policy['id']) || $policy['id'] !== $object->id())) {
+            $id = isset($policy['id']) ? $policy['id'] : '(empty)';
+            throw new AccessDeniedException(sprintf('Wrong policy id, expected "%s", "%s" given', $object->id(), $id));
         }
     }
 }
