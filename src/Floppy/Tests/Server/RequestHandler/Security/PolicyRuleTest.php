@@ -71,16 +71,25 @@ class PolicyRuleTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @dataProvider booleanProvider
      */
-    public function givenValidSignatureAndPolicy_ok()
+    public function givenValidSignatureAndPolicy_ok($policyInPostVariables)
     {
         //given
 
-        $request = $this->createRequest(self::VALID_SIGNATURE, $this->createValidPolicy());
+        $request = $this->createRequest(self::VALID_SIGNATURE, $this->createValidPolicy(), $policyInPostVariables);
 
         //when
 
         $this->invokeRule($request);
+    }
+
+    public function booleanProvider()
+    {
+        return array(
+            array(true),
+            array(false),
+        );
     }
 
     /**
@@ -126,11 +135,12 @@ class PolicyRuleTest extends \PHPUnit_Framework_TestCase
         $this->invokeRule($request, $this->createFileSource(self::VALID_FILE_EXT));
     }
 
-    private function createRequest($signature, $policy)
+    private function createRequest($signature, $policy, $policyInPostVariables = true)
     {
         $request = new Request();
-        $request->request->set('signature', $signature);
-        $request->request->set('policy', $policy);
+        $bag = $policyInPostVariables ? $request->request : $request->query;
+        $bag->set('signature', $signature);
+        $bag->set('policy', $policy);
 
         return $request;
     }

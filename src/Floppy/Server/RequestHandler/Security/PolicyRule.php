@@ -33,8 +33,8 @@ class PolicyRule implements Rule
 
     protected function retrievePolicy(Request $request)
     {
-        $policy = $request->request->get('policy');
-        $signature = $request->request->get('signature');
+        $policy = $request->get('policy');
+        $signature = $request->get('signature');
 
         if (!$policy || !$signature || !$this->checksumChecker->isChecksumValid($signature, $policy)) {
             throw new AccessDeniedException();
