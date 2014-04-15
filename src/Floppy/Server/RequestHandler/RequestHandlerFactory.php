@@ -17,7 +17,7 @@ use Floppy\Server\FileHandler\ImageFileHandler;
 use Floppy\Server\FileHandler\MaxSizeImageProcess;
 use Floppy\Server\FileHandler\ResizeImageProcess;
 use Floppy\Common\Storage\FilepathChoosingStrategyImpl;
-use Floppy\Server\RequestHandler\Security\CallableFirewall;
+use Floppy\Server\RequestHandler\Security\CallbackFirewall;
 use Floppy\Server\Storage\FilesystemStorage;
 use Floppy\Server\Storage\IdFactoryImpl;
 
@@ -215,7 +215,7 @@ class RequestHandlerFactory
             return new DownloadResponseFactoryImpl();
         };
         $container['requestHandler.firewall'] = function($container) {
-            return new CallableFirewall(array(
+            return new CallbackFirewall(array(
                 DownloadAction::name() => $container['requestHandler.firewall.download'],
                 UploadAction::name() => $container['requestHandler.firewall.upload'],
             ));
