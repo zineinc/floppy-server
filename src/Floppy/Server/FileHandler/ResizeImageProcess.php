@@ -14,6 +14,10 @@ class ResizeImageProcess implements ImageProcess
 {
     public function process(ImagineInterface $imagine, FileSource $fileSource, AttributesBag $attrs)
     {
+        if(count($attrs->all()) === 0) {
+            return $fileSource;
+        }
+
         try {
             $image = $imagine->load($fileSource->content());
 

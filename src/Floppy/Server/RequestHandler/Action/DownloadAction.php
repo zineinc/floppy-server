@@ -21,7 +21,7 @@ class DownloadAction implements Action
     private $downloadResponseFactory;
     private $securityRule;
 
-    function __construct(Storage $storage, DownloadResponseFactory $downloadResponseFactory, array $fileHandlers, Security\Rule $securityRule = null)
+    public function __construct(Storage $storage, DownloadResponseFactory $downloadResponseFactory, array $fileHandlers, Security\Rule $securityRule = null)
     {
         $this->downloadResponseFactory = $downloadResponseFactory;
         $this->fileHandlerProvider = new FileHandlerProvider($fileHandlers);

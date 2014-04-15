@@ -85,12 +85,31 @@ class ResizeImageProcessTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function croppedMission_requestSizeGreaterThanOriginal_doesntProcessImageAndReturnOriginal()
+    public function croppedMissing_requestSizeGreaterThanOriginal_doesntProcessImageAndReturnOriginal()
     {
         //given
 
         $fileSource = $this->createImageFileSource(__DIR__ . '/../../Resources/100x80-black.png');
         $attrs = new AttributesBag(array('width' => 500, 'height' => 500, 'crop' => false, 'cropBackgroundColor' => self::CROP_COLOR));
+
+        //when
+
+        $actualFileSource = $this->process->process($this->imagine, $fileSource, $attrs);
+
+        //then
+
+        $this->assertEquals($fileSource, $actualFileSource);
+    }
+
+    /**
+     * @test
+     */
+    public function emptyAttributes_doesntProcessImageAndReturnOriginal()
+    {
+        //given
+
+        $fileSource = $this->createImageFileSource(__DIR__ . '/../../Resources/100x80-black.png');
+        $attrs = new AttributesBag();
 
         //when
 
