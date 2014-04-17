@@ -3,10 +3,6 @@
 
 namespace Floppy\Server\RequestHandler\Exception;
 
-
-use Floppy\Server\RequestHandler\Exception\ExceptionHandler;
-use Floppy\Server\RequestHandler\Exception\ExceptionModel;
-
 class MapExceptionHandler implements ExceptionHandler
 {
     protected $map = array();
@@ -28,5 +24,7 @@ class MapExceptionHandler implements ExceptionHandler
                 return new ExceptionModel($code, $message);
             }
         }
+
+        return new ExceptionModel(500, 'unknown');
     }
 }

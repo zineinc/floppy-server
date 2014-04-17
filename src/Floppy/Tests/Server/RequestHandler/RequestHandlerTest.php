@@ -3,8 +3,6 @@
 
 namespace Floppy\Tests\Server\RequestHandler;
 
-
-use Floppy\Common\ErrorCodes;
 use Floppy\Common\Exception\StorageError;
 use Floppy\Common\Exception\StorageException;
 use Floppy\Server\RequestHandler\Action\Action;

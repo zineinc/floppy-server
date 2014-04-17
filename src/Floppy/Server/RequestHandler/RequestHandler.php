@@ -14,7 +14,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Floppy\Common\ChecksumChecker;
 use Floppy\Common\FileHandler\PathMatchingException;
-use Floppy\Common\ErrorCodes;
 use Floppy\Server\FileHandler\FileHandler;
 use Floppy\Common\FileSource;
 use Floppy\Server\RequestHandler\Security\Firewall;

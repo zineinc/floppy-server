@@ -6,7 +6,6 @@ namespace Floppy\Server\RequestHandler\Action;
 
 use Floppy\Server\FileHandler\FileHandlerProvider;
 use Symfony\Component\HttpFoundation\Request;
-use Floppy\Common\ErrorCodes;
 use Floppy\Server\FileHandler\FileHandler;
 use Floppy\Server\RequestHandler\Action\Action;
 use Floppy\Server\RequestHandler\DownloadResponseFactory;

@@ -3,8 +3,6 @@
 
 namespace Floppy\Server\FileHandler;
 
-
-use Floppy\Common\ErrorCodes;
 use Floppy\Common\FileSource;
 use Floppy\Server\FileHandler\Exception\FileHandlerNotFoundException;
 use Floppy\Server\FileHandler\Exception\MatchingFileHandlerNotFoundException;
@@ -34,7 +32,7 @@ class FileHandlerProvider
             }
         }
 
-        throw new MatchingFileHandlerNotFoundException('file not found', ErrorCodes::FILE_NOT_FOUND);
+        throw new MatchingFileHandlerNotFoundException('file not found');
     }
 
     /**

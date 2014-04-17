@@ -55,7 +55,7 @@ class FilesystemStorage implements Storage
             $file = new File($fullFilepath, true);
             return FileSource::fromFile($file);
         } catch (FileNotFoundException $e) {
-            throw new FileSourceNotFoundException($e->getMessage(), $e);
+            throw new FileSourceNotFoundException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -85,7 +85,7 @@ class FilesystemStorage implements Storage
             $this->getFilesystem()->mkdir(dirname($fullFilepath), $this->dirChmod);
             $this->getFilesystem()->dumpFile($fullFilepath, $fileSource->content(), $this->fileChmod);
         } catch (IOException $e) {
-            throw new StoreException('Error while file storing', $e);
+            throw new StoreException('Error while file storing', $e->getCode(), $e);
         }
 
         return $fileId->id();
@@ -99,7 +99,7 @@ class FilesystemStorage implements Storage
     private function ensureValidFilepath($filepath)
     {
         if ($filepath !== null && strpos($filepath, '..') !== false) {
-            throw new StoreException(sprintf('Invalid filepath: %s', $filepath));
+            throw new StoreException(sprintf('Invalid filepath: %s', 0, $filepath));
         }
     }
 
