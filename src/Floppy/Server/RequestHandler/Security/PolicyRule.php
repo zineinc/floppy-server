@@ -7,10 +7,10 @@ namespace Floppy\Server\RequestHandler\Security;
 use Floppy\Common\FileId;
 use Floppy\Common\FileSource;
 use Floppy\Server\FileHandler\FileHandlerProvider;
-use Floppy\Server\RequestHandler\BadRequestException;
+use Floppy\Server\RequestHandler\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Floppy\Common\ChecksumChecker;
-use Floppy\Server\RequestHandler\AccessDeniedException;
+use Floppy\Server\RequestHandler\Exception\AccessDeniedException;
 
 class PolicyRule implements Rule
 {

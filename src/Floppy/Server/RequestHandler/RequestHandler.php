@@ -3,6 +3,9 @@
 namespace Floppy\Server\RequestHandler;
 
 use Floppy\Server\RequestHandler\Action\CorsEtcAction;
+use Floppy\Server\RequestHandler\Exception\DefaultMapExceptionHandler;
+use Floppy\Server\RequestHandler\Exception\ExceptionHandler;
+use Floppy\Server\RequestHandler\Exception\ExceptionModel;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -16,9 +19,8 @@ use Floppy\Server\FileHandler\FileHandler;
 use Floppy\Common\FileSource;
 use Floppy\Server\RequestHandler\Security\Firewall;
 use Floppy\Server\Storage\Storage;
-use Floppy\Server\Storage\StoreException;
-use Floppy\Common\StorageError;
-use Floppy\Common\StorageException;
+use Floppy\Common\Exception\StorageError;
+use Floppy\Common\Exception\StorageException;
 use Floppy\Server\RequestHandler\Action\Action;
 use Floppy\Server\RequestHandler\Action\DownloadAction;
 use Floppy\Server\RequestHandler\Action\UploadAction;
@@ -32,12 +34,14 @@ class RequestHandler implements LoggerAwareInterface
     private $firewall;
     private $actionResolver;
     private $responseFilter;
+    private $exceptionHandler;
 
-    public function __construct(ActionResolver $actionResolver, Firewall $firewall, ResponseFilter $responseFilter = null)
+    public function __construct(ActionResolver $actionResolver, Firewall $firewall, ResponseFilter $responseFilter = null, ExceptionHandler $exceptionHandler = null)
     {
         $this->logger = new NullLogger();
         $this->firewall = $firewall;
         $this->responseFilter = $responseFilter ?: new NullResponseFilter();
+        $this->exceptionHandler = $exceptionHandler ?: new DefaultMapExceptionHandler();
 
         $this->actionResolver = $actionResolver;
     }
@@ -60,32 +64,23 @@ class RequestHandler implements LoggerAwareInterface
             $response = $action->execute($request);
 
             return $this->responseFilter->filterResponse($request, $response);
-        } catch (StorageError $e) {
-            $this->logger->error($e);
-            return $this->createErrorResponse($e, 500);
-        } catch (StorageException $e) {
-            $this->logger->warning($e);
-            return $this->createErrorResponse($e, $this->convertErrorCodeToHttpStatusCode($e->getCode()));
+        } catch (\Exception $e) {
+            $exceptionModel = $this->exceptionHandler->handleException($e);
+            if($exceptionModel->httpStatusCode() >= 500) {
+                $this->logger->error($e);
+            } else {
+                $this->logger->warning($e);
+            }
+            return $this->createErrorResponse($exceptionModel);
         }
     }
 
-    private function convertErrorCodeToHttpStatusCode($errorCode)
-    {
-        $codesMap = array(
-            ErrorCodes::FILE_NOT_FOUND => 404,
-            ErrorCodes::ACCESS_DENIED => 401,
-        );
-
-        return isset($codesMap[$errorCode]) ? $codesMap[$errorCode] : 400;
-    }
-
-    private function createErrorResponse(StorageException $e, $httpStatusCode)
+    private function createErrorResponse(ExceptionModel $exceptionModel)
     {
         return new JsonResponse(array(
-            'message' => ErrorCodes::convertCodeToMessage($e->getCode()),
-            'code' => $e->getCode(),
+            'message' => $exceptionModel->message(),
             'attributes' => null,
-        ), $httpStatusCode);
+        ), $exceptionModel->httpStatusCode());
     }
 
     public function setLogger(LoggerInterface $logger)

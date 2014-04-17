@@ -9,7 +9,7 @@ use Floppy\Common\AttributesBag;
 use Floppy\Common\FileHandler\PathMatcher;
 use Floppy\Common\FileId;
 use Floppy\Server\FileHandler\AbstractFileHandler;
-use Floppy\Server\FileHandler\FileProcessException;
+use Floppy\Server\FileHandler\Exception\FileProcessException;
 use Floppy\Common\FileSource;
 use Floppy\Common\Stream\StringInputStream;
 

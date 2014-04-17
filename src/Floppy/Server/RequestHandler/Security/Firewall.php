@@ -5,7 +5,7 @@ namespace Floppy\Server\RequestHandler\Security;
 
 
 use Symfony\Component\HttpFoundation\Request;
-use Floppy\Server\RequestHandler\AccessDeniedException;
+use Floppy\Server\RequestHandler\Exception\AccessDeniedException;
 
 interface Firewall
 {

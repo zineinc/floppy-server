@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Floppy\Server\RequestHandler\Action;
+namespace Floppy\Server\RequestHandler\Action\Exception;
 
 
 use Exception;

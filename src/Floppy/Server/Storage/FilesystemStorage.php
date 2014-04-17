@@ -2,6 +2,8 @@
 
 namespace Floppy\Server\Storage;
 
+use Floppy\Server\Storage\Exception\FileSourceNotFoundException;
+use Floppy\Server\Storage\Exception\StoreException;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;

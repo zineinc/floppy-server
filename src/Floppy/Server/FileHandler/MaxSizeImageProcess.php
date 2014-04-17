@@ -4,6 +4,7 @@
 namespace Floppy\Server\FileHandler;
 
 
+use Floppy\Server\FileHandler\Exception\FileProcessException;
 use Imagine\Image\Box;
 use Imagine\Image\ImagineInterface;
 use Floppy\Common\AttributesBag;

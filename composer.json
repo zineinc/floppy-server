@@ -23,7 +23,7 @@
             "type": "package",
             "package": {
                 "name": "floppy/common",
-                "version": "0.0.8",
+                "version": "0.0.9",
                 "source": {
                     "url": "git@codebasehq.com:advisio/zineinc/storage-common.git",
                     "type": "git",

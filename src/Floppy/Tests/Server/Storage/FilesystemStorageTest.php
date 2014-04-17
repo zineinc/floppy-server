@@ -80,7 +80,7 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Floppy\Server\Storage\StoreException
+     * @expectedException Floppy\Server\Storage\Exception\StoreException
      */
     public function store_givenFilepathIsNotSubdirectoryOfStorageRoot_throwEx()
     {
@@ -96,7 +96,7 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Floppy\Server\Storage\StoreException
+     * @expectedException Floppy\Server\Storage\Exception\StoreException
      */
     public function filesystemExceptionOnStore_wrapEx()
     {
@@ -157,7 +157,7 @@ class FilesystemStorageTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Floppy\Server\Storage\FileSourceNotFoundException
+     * @expectedException Floppy\Server\Storage\Exception\FileSourceNotFoundException
      */
     public function getSource_fileDoesntExist_throwEx()
     {

@@ -2,6 +2,7 @@
 
 namespace Floppy\Server\FileHandler;
 
+use Floppy\Server\FileHandler\Exception\FileProcessException;
 use Imagine\Image\Box;
 use Imagine\Image\Color;
 use Imagine\Image\ImagineInterface;

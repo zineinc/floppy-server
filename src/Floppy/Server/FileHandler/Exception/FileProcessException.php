@@ -1,10 +1,10 @@
 <?php
 
-namespace Floppy\Server\FileHandler;
+namespace Floppy\Server\FileHandler\Exception;
 
 use Exception;
 use Floppy\Common\ErrorCodes;
-use Floppy\Common\StorageError;
+use Floppy\Common\Exception\StorageError;
 
 class FileProcessException extends Exception implements StorageError
 {

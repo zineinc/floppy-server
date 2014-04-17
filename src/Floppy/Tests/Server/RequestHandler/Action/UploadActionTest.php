@@ -8,8 +8,8 @@ use Floppy\Common\FileSource;
 use Floppy\Common\FileType;
 use Floppy\Common\Stream\StringInputStream;
 use Floppy\Server\RequestHandler\Action\UploadAction;
-use Floppy\Server\RequestHandler\FileSourceNotFoundException;
-use Floppy\Server\Storage\StoreException;
+use Floppy\Server\RequestHandler\Exception\FileSourceNotFoundException;
+use Floppy\Server\Storage\Exception\StoreException;
 use Symfony\Component\HttpFoundation\Request;
 
 class UploadActionTest extends \PHPUnit_Framework_TestCase
@@ -77,7 +77,7 @@ class UploadActionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Floppy\Server\RequestHandler\FileSourceNotFoundException
+     * @expectedException Floppy\Server\RequestHandler\Exception\FileSourceNotFoundException
      */
     public function fileSourceNotFound_throwEx()
     {
@@ -99,7 +99,7 @@ class UploadActionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Floppy\Server\FileHandler\FileHandlerNotFoundException
+     * @expectedException Floppy\Server\FileHandler\Exception\FileHandlerNotFoundException
      */
     public function fileHandlerNotFound_throwEx()
     {
@@ -123,7 +123,7 @@ class UploadActionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Floppy\Server\Storage\StoreException
+     * @expectedException Floppy\Server\Storage\Exception\StoreException
      */
     public function storeEx_throwEx()
     {

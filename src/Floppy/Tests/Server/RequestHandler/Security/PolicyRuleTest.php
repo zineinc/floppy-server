@@ -41,7 +41,7 @@ class PolicyRuleTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Floppy\Server\RequestHandler\AccessDeniedException
+     * @expectedException Floppy\Server\RequestHandler\Exception\AccessDeniedException
      */
     public function givenInvalidSignature_throwEx()
     {
@@ -56,7 +56,7 @@ class PolicyRuleTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Floppy\Server\RequestHandler\AccessDeniedException
+     * @expectedException Floppy\Server\RequestHandler\Exception\AccessDeniedException
      */
     public function givenPolicyExpired_throwEx()
     {
@@ -94,7 +94,7 @@ class PolicyRuleTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \Floppy\Server\RequestHandler\BadRequestException
+     * @expectedException \Floppy\Server\RequestHandler\Exception\BadRequestException
      */
     public function givenFileTypeThatIsMissingInPolicy_throwEx()
     {

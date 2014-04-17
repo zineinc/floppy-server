@@ -6,6 +6,7 @@ namespace Floppy\Server\RequestHandler;
 use Floppy\Server\RequestHandler\Action\CorsEtcAction;
 use Floppy\Server\RequestHandler\Action\DownloadAction;
 use Floppy\Server\RequestHandler\Action\UploadAction;
+use Floppy\Server\RequestHandler\Exception\DefaultMapExceptionHandler;
 use Floppy\Server\RequestHandler\Security\NullRule;
 use Symfony\Component\HttpFoundation\Request;
 use Floppy\Common\ChecksumCheckerImpl;
@@ -176,8 +177,12 @@ class RequestHandlerFactory
             return new RequestHandler(
                 $container['actionResolver'],
                 $container['requestHandler.firewall'],
-                $container['requestHandler.corsFilter']
+                $container['requestHandler.corsFilter'],
+                $container['requestHandler.exceptionHandler']
             );
+        };
+        $container['requestHandler.exceptionHandler'] = function($container){
+            return new DefaultMapExceptionHandler();
         };
         $container['actionResolver'] = function($container){
             $resolver = new ActionResolverImpl();

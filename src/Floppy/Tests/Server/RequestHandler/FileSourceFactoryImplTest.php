@@ -47,7 +47,7 @@ class FileSourceFactoryImplTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Floppy\Server\RequestHandler\FileSourceNotFoundException
+     * @expectedException Floppy\Server\RequestHandler\Exception\FileSourceNotFoundException
      */
     public function fileDoesntExist_throwFileSourceNotFoundEx()
     {

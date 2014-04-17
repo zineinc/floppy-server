@@ -1,11 +1,12 @@
 <?php
 
 
-namespace Floppy\Server\RequestHandler;
+namespace Floppy\Server\RequestHandler\Exception;
 
 
+use Exception;
 use Floppy\Common\ErrorCodes;
-use Floppy\Common\StorageException;
+use Floppy\Common\Exception\StorageException;
 
 class BadRequestException extends \Exception implements StorageException
 {

@@ -4,15 +4,15 @@
 namespace Floppy\Tests\Server\RequestHandler\Action;
 
 
-use Floppy\Common\FileHandler\PathMatchingException;
+use Floppy\Common\FileHandler\Exception\PathMatchingException;
 use Floppy\Common\FileId;
 use Floppy\Common\FileSource;
 use Floppy\Common\FileType;
 use Floppy\Common\Stream\StringInputStream;
-use Floppy\Server\FileHandler\FileProcessException;
+use Floppy\Server\FileHandler\Exception\FileProcessException;
 use Floppy\Server\RequestHandler\Action\DownloadAction;
 use Floppy\Server\RequestHandler\DownloadResponseFactory;
-use Floppy\Server\RequestHandler\FileSourceNotFoundException;
+use Floppy\Server\RequestHandler\Exception\FileSourceNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -102,7 +102,7 @@ class DownloadActionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Floppy\Server\FileHandler\FileProcessException
+     * @expectedException \Floppy\Server\FileHandler\Exception\FileProcessException
      */
     public function fileHandlerFound_fileExists_processFailed_throwEx()
     {
@@ -125,7 +125,7 @@ class DownloadActionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Floppy\Server\RequestHandler\FileSourceNotFoundException
+     * @expectedException \Floppy\Server\RequestHandler\Exception\FileSourceNotFoundException
      */
     public function fileHandlerFound_fileNotExist_throwEx()
     {
@@ -142,7 +142,7 @@ class DownloadActionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Floppy\Server\FileHandler\FileHandlerNotFoundException
+     * @expectedException \Floppy\Server\FileHandler\Exception\FileHandlerNotFoundException
      */
     public function fileHandlerNotFound_throwEx()
     {
@@ -158,7 +158,7 @@ class DownloadActionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Floppy\Common\FileHandler\PathMatchingException
+     * @expectedException \Floppy\Common\FileHandler\Exception\PathMatchingException
      */
     public function fileHandlerFound_fileHandlerMatchError_throwEx()
     {

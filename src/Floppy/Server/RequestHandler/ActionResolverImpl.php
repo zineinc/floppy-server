@@ -6,7 +6,7 @@ namespace Floppy\Server\RequestHandler;
 
 use Floppy\Common\ChecksumChecker;
 use Floppy\Server\RequestHandler\Action\Action;
-use Floppy\Server\RequestHandler\Action\ActionNotFoundException;
+use Floppy\Server\RequestHandler\Action\Exception\ActionNotFoundException;
 use Floppy\Server\RequestHandler\Action\CorsEtcAction;
 use Floppy\Server\RequestHandler\Action\DownloadAction;
 use Floppy\Server\RequestHandler\Action\UploadAction;

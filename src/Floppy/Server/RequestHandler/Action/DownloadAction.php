@@ -10,7 +10,7 @@ use Floppy\Common\ErrorCodes;
 use Floppy\Server\FileHandler\FileHandler;
 use Floppy\Server\RequestHandler\Action\Action;
 use Floppy\Server\RequestHandler\DownloadResponseFactory;
-use Floppy\Server\RequestHandler\FileHandlerNotFoundException;
+use Floppy\Server\RequestHandler\Exception\FileHandlerNotFoundException;
 use Floppy\Server\Storage\Storage;
 use Floppy\Server\RequestHandler\Security;
 

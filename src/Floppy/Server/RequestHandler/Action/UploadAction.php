@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Floppy\Common\ChecksumChecker;
 use Floppy\Server\FileHandler\FileHandler;
 use Floppy\Common\FileSource;
-use Floppy\Server\RequestHandler\FileHandlerNotFoundException;
+use Floppy\Server\RequestHandler\Exception\FileHandlerNotFoundException;
 use Floppy\Server\RequestHandler\FileSourceFactory;
 use Floppy\Server\Storage\Storage;
 use Floppy\Server\RequestHandler\Security;

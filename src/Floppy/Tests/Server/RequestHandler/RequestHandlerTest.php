@@ -5,8 +5,8 @@ namespace Floppy\Tests\Server\RequestHandler;
 
 
 use Floppy\Common\ErrorCodes;
-use Floppy\Common\StorageError;
-use Floppy\Common\StorageException;
+use Floppy\Common\Exception\StorageError;
+use Floppy\Common\Exception\StorageException;
 use Floppy\Server\RequestHandler\Action\Action;
 use Floppy\Server\RequestHandler\ActionResolver;
 use Floppy\Server\RequestHandler\RequestHandler;
@@ -47,13 +47,7 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array(
-                new RequestHandlerTest_StorageException(null, ErrorCodes::ACCESS_DENIED), 401
-            ),
-            array(
-                new RequestHandlerTest_StorageException(null, ErrorCodes::FILE_NOT_FOUND), 404
-            ),
-            array(
-                new RequestHandlerTest_StorageException(null, ErrorCodes::INVALID_CHECKSUM), 400
+                new RequestHandlerTest_StorageException(), 400
             ),
             array(
                 new RequestHandlerTest_StorageError(), 500

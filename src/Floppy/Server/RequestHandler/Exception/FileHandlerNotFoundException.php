@@ -1,10 +1,10 @@
 <?php
 
-namespace Floppy\Server\FileHandler;
+namespace Floppy\Server\RequestHandler\Exception;
 
 use Exception;
 use Floppy\Common\ErrorCodes;
-use Floppy\Common\StorageException;
+use Floppy\Common\Exception\StorageException;
 
 class FileHandlerNotFoundException extends Exception implements StorageException
 {

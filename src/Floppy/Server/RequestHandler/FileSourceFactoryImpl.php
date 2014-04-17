@@ -2,6 +2,7 @@
 
 namespace Floppy\Server\RequestHandler;
 
+use Floppy\Server\RequestHandler\Exception\FileSourceNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Floppy\Common\FileSource;
 use Floppy\Common\FileType;
