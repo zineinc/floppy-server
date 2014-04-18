@@ -7,7 +7,7 @@ namespace Floppy\Server\RequestHandler\Security;
 use Floppy\Common\FileId;
 use Floppy\Common\FileSource;
 use Floppy\Server\FileHandler\FileHandlerProvider;
-use Floppy\Server\RequestHandler\Exception\BadRequestException;
+use Floppy\Server\RequestHandler\Exception\ValidationException;
 use Symfony\Component\HttpFoundation\Request;
 use Floppy\Common\ChecksumChecker;
 use Floppy\Server\RequestHandler\Exception\AccessDeniedException;
@@ -63,7 +63,7 @@ class PolicyRule implements Rule
             $fileTypes = (array) $policy['file_types'];
 
             if(!in_array($fileHandlerName, $fileTypes)) {
-                throw new BadRequestException(sprintf('Invalid file type, given "%s", allowed %s', $fileHandlerName, implode(', ', $fileTypes)));
+                throw new ValidationException('Invalid file type, given "%current_file_type%", allowed %allowed_file_types%', array('%current_file_type%' => $fileHandlerName, '%allowed_file_types%' => implode(', ', $fileTypes)));
             }
         }
     }

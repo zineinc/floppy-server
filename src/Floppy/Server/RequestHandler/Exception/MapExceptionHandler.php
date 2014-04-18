@@ -20,8 +20,13 @@ class MapExceptionHandler implements ExceptionHandler
     {
         foreach($this->map as $class => $data) {
             list($code, $message) = $data;
+            $messageParameters = array();
             if($e instanceof $class) {
-                return new ExceptionModel($code, $message);
+                if($e instanceof MessageTemplateException) {
+                    $message = $e->getMessageTemplate();
+                    $messageParameters = $e->getMessageTemplateParameters();
+                }
+                return new ExceptionModel($code, $message, $messageParameters);
             }
         }
 

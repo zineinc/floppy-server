@@ -94,7 +94,7 @@ class PolicyRuleTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \Floppy\Server\RequestHandler\Exception\BadRequestException
+     * @expectedException \Floppy\Server\RequestHandler\Exception\ValidationException
      */
     public function givenFileTypeThatIsMissingInPolicy_throwEx()
     {

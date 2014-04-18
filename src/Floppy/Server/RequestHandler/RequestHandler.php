@@ -78,6 +78,7 @@ class RequestHandler implements LoggerAwareInterface
     {
         return new JsonResponse(array(
             'message' => $exceptionModel->message(),
+            'messageParameters' => $exceptionModel->messageParameters(),
             'attributes' => null,
         ), $exceptionModel->httpStatusCode());
     }
