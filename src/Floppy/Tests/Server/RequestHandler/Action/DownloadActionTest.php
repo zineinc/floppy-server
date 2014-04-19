@@ -12,7 +12,10 @@ use Floppy\Common\Stream\StringInputStream;
 use Floppy\Server\FileHandler\Exception\FileProcessException;
 use Floppy\Server\RequestHandler\Action\DownloadAction;
 use Floppy\Server\RequestHandler\DownloadResponseFactory;
+use Floppy\Server\RequestHandler\Event\DownloadEvent;
+use Floppy\Server\RequestHandler\Event\Events;
 use Floppy\Server\RequestHandler\Exception\FileSourceNotFoundException;
+use Floppy\Tests\Server\Stub\EventDispatcherStub;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -25,6 +28,11 @@ class DownloadActionTest extends \PHPUnit_Framework_TestCase
     private $fileHandlers;
     private $storage;
 
+    /**
+     * @var EventDispatcherStub
+     */
+    private $eventDispatcher;
+
     private $action;
 
     protected function setUp()
@@ -36,8 +44,9 @@ class DownloadActionTest extends \PHPUnit_Framework_TestCase
             $this->getMock('Floppy\Server\FileHandler\FileHandler'),
             $this->getMock('Floppy\Server\FileHandler\FileHandler'),
         );
+        $this->eventDispatcher = new EventDispatcherStub();
 
-        $this->action = new DownloadAction($this->storage, new DownloadActionTest_DownloadResponseFactory($this->getSampleResponse()), $this->fileHandlers);
+        $this->action = new DownloadAction($this->storage, new DownloadActionTest_DownloadResponseFactory($this->getSampleResponse()), $this->fileHandlers, $this->eventDispatcher);
     }
 
     /**
@@ -199,6 +208,34 @@ class DownloadActionTest extends \PHPUnit_Framework_TestCase
 
         $this->verifyMockObjects();
         $this->assertResponseOk($actualResponse);
+    }
+
+    /**
+     * @test
+     */
+    public function fileHandlerFound_preProcessingEventCreatedResponse_skipProcessing_returnCreatedResponse()
+    {
+        //given
+
+        $fileId = $this->createProcessedFileId();
+        $this->expectsFileHandlerMatchesAndMatch($this->fileHandlers[0], $fileId);
+        $this->expectsSkipFileHandlerProcess($this->fileHandlers[0]);
+
+        $expectedResponse = new Response('some content');
+
+        $this->eventDispatcher->setDispatchCallback(function($eventName, DownloadEvent $event) use($expectedResponse){
+            if($eventName === Events::PRE_DOWNLOAD_FILE_PROCESSING) {
+                $event->setResponse($expectedResponse);
+            }
+        });
+
+        //when
+
+        $actualResponse = $this->action->execute($this->createDownloadRequest());
+
+        //then
+
+        $this->assertEquals($expectedResponse, $actualResponse);
     }
 
     private function getSampleResponse()

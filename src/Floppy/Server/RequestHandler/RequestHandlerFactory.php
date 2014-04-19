@@ -9,6 +9,7 @@ use Floppy\Server\RequestHandler\Action\DownloadAction;
 use Floppy\Server\RequestHandler\Action\UploadAction;
 use Floppy\Server\RequestHandler\Exception\DefaultMapExceptionHandler;
 use Floppy\Server\RequestHandler\Security\NullRule;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Floppy\Common\ChecksumCheckerImpl;
 use Floppy\Common\FileHandler\FilePathMatcher;
@@ -187,6 +188,9 @@ class RequestHandlerFactory
      */
     private function requestHandlerDefinition($container)
     {
+        $container['eventDispatcher'] = function($container){
+            return new EventDispatcher();
+        };
         $container['requestHandler'] = function ($container) {
             return new RequestHandler(
                 $container['actionResolver'],
@@ -219,7 +223,13 @@ class RequestHandlerFactory
             return new CorsEtcAction($container['action.cors.allowedOriginHosts']);
         };
         $container['action.download'] = function($container){
-            return new DownloadAction($container['storage'], $container['action.download.responseFactory'], $container['fileHandlers'], $container['action.download.securityRule']);
+            return new DownloadAction(
+                $container['storage'],
+                $container['action.download.responseFactory'],
+                $container['fileHandlers'],
+                $container['eventDispatcher'],
+                $container['action.download.securityRule']
+            );
         };
 
         $container['action.download.securityRule'] = $container['action.upload.securityRule'] = function($container){
