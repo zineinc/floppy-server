@@ -3,6 +3,7 @@
 
 namespace Floppy\Server\RequestHandler;
 
+use Floppy\Server\FileHandler\CacheResponseFilter;
 use Floppy\Server\RequestHandler\Action\CorsEtcAction;
 use Floppy\Server\RequestHandler\Action\DownloadAction;
 use Floppy\Server\RequestHandler\Action\UploadAction;
@@ -117,7 +118,20 @@ class RequestHandlerFactory
                 )
             );
         };
-        $container['fileHandlers.image.responseFilters'] = array();
+        $container['fileHandlers.image.responseFilters'] = function($container){
+            return array(
+                $container['fileHandlers.image.responseFilters.cache'],
+            );
+        };
+        $container['fileHandlers.image.responseFilters.cache'] = function($container){
+            return new CacheResponseFilter(
+                $container['fileHandlers.image.responseFilters.cache.maxAge'],
+                $container['fileHandlers.image.responseFilters.cache.useEtag']
+            );
+        };
+        $container['fileHandlers.image.responseFilters.cache.maxAge'] = 60*60*24;
+        $container['fileHandlers.image.responseFilters.cache.useEtag'] = true;
+
         $container['fileHandlers.image.mimeTypes'] = ImageFileHandler::getDefaultSupportedMimeTypes();
         $container['fileHandlers.image.extensions'] = ImageFileHandler::getDefaultSupportedExtensions();
         $container['imagine'] = function () {
