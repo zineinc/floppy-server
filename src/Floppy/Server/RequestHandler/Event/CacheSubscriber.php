@@ -85,7 +85,11 @@ class CacheSubscriber implements ETagGenerator, EventSubscriberInterface
             $response->setCache($cache);
         } else {
             $expires = new \DateTime();
-            $expires->add(\DateInterval::createFromDateString($this->expires));
+            if(is_string($this->expires)) {
+                $expires->add(\DateInterval::createFromDateString($this->expires));
+            } else {
+                $expires->setTimestamp($expires->getTimestamp() + $this->expires);
+            }
             $response->setCache(array(
                 'public' => true
             ));

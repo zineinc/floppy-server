@@ -273,21 +273,22 @@ class RequestHandlerFactory
     /**
      * @param $container
      */
-    private function cacheDefinition($container)
+    private function cacheDefinition(\Pimple $container)
     {
         $container['eventDispatcher.cacheSubscriber'] = function ($container) {
-            $subscriber = new CacheSubscriber(
+            return new CacheSubscriber(
                 $container['cache.fileHandlerNames'],
                 $container['cache.strategy'],
                 $container['cache.expires'],
                 $container['cache.maxAge']
             );
-
-            $eventDispatcher = $container['eventDispatcher'];
-            $eventDispatcher->addSubscriber($subscriber);
-
-            return $subscriber;
         };
+
+        $container->extend('eventDispatcher', function($eventDispatcher, $container){
+            $eventDispatcher->addSubscriber($container['eventDispatcher.cacheSubscriber']);
+
+            return $eventDispatcher;
+        });
 
         $container['cache.fileHandlerNames'] = function ($container) {
             return array(
