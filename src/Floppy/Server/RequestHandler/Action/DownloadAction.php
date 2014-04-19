@@ -54,6 +54,7 @@ class DownloadAction implements Action
         $processedFileSource = $this->getProcessedFileSource($fileId, $handler);
 
         $response = $this->downloadResponseFactory->createResponse($processedFileSource);
+        $handler->filterResponse($response, $processedFileSource, $fileId);
 
         return $this->dispatchPostProcessingEvent($request, $response, $fileId, $handlerName, $processedFileSource);
     }
