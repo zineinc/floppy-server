@@ -7,6 +7,7 @@ use Floppy\Server\FileHandler\CacheResponseFilter;
 use Floppy\Server\RequestHandler\Action\CorsEtcAction;
 use Floppy\Server\RequestHandler\Action\DownloadAction;
 use Floppy\Server\RequestHandler\Action\UploadAction;
+use Floppy\Server\RequestHandler\Event\CacheSubscriber;
 use Floppy\Server\RequestHandler\Exception\DefaultMapExceptionHandler;
 use Floppy\Server\RequestHandler\Security\NullRule;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -63,6 +64,7 @@ class RequestHandlerFactory
         $this->checksumCheckerDefinition($container);
         $this->requestHandlerDefinition($container);
         $this->fileHandlersDefinition($container);
+        $this->cacheDefinition($container);
 
         foreach ($options as $name => $value) {
             $container[$name] = $value;
@@ -100,10 +102,12 @@ class RequestHandlerFactory
      */
     private function fileHandlersDefinition($container)
     {
+        $container['fileHandlers.image.name'] = 'image';
+        $container['fileHandlers.file.name'] = 'file';
         $container['fileHandlers'] = function ($container) {
             return array(
-                'image' => $container['fileHandlers.image'],
-                'file' => $container['fileHandlers.file'],
+                $container['fileHandlers.image.name'] => $container['fileHandlers.image'],
+                $container['fileHandlers.file.name'] => $container['fileHandlers.file'],
             );
         };
         $container['fileHandlers.image'] = function ($container) {
@@ -264,5 +268,34 @@ class RequestHandlerFactory
         };
 
         return $container;
+    }
+
+    /**
+     * @param $container
+     */
+    private function cacheDefinition($container)
+    {
+        $container['eventDispatcher.cacheSubscriber'] = function ($container) {
+            $subscriber = new CacheSubscriber(
+                $container['cache.fileHandlerNames'],
+                $container['cache.strategy'],
+                $container['cache.expires'],
+                $container['cache.maxAge']
+            );
+
+            $eventDispatcher = $container['eventDispatcher'];
+            $eventDispatcher->addSubscriber($subscriber);
+
+            return $subscriber;
+        };
+
+        $container['cache.fileHandlerNames'] = function ($container) {
+            return array(
+                $container['fileHandlers.image.name']
+            );
+        };
+        $container['cache.strategy'] = CacheSubscriber::STRATEGY_EXPIRES;
+        $container['cache.expires'] = 60 * 60 * 24 * 365; //365 days
+        $container['cache.maxAge'] = 60 * 60 * 24 * 2; //2 days
     }
 } 
