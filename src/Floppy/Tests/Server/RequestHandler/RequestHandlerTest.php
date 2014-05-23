@@ -80,12 +80,53 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     * @dataProvider booleanProvider
+     */
+    public function alwaysFilterResponse($exception)
+    {
+        //given
+
+        $action = $this->getMock('Floppy\Server\RequestHandler\Action\Action');
+        $responseFilter = $this->getMock('Floppy\Server\RequestHandler\ResponseFilter');
+
+        $requestHandler = $this->createRequestHandler($action, $responseFilter);
+
+        $action->expects($this->once())
+            ->method('execute')
+            ->will($exception ? $this->throwException(new \Exception()) : $this->returnValue(new Response()));
+
+        $filteredResponse = new Response('content doesn\'t matter');
+
+        $responseFilter->expects($this->once())
+            ->method('filterResponse')
+            ->will($this->returnValue($filteredResponse));
+
+        //when
+
+        $response = $requestHandler->handle(new Request());
+
+        //then
+
+        $this->verifyMockObjects();
+        $this->assertEquals($filteredResponse, $response);
+    }
+
+    public function booleanProvider()
+    {
+        return array(
+            array(true),
+            array(false),
+        );
+    }
+
+    /**
      * @param $action
      * @return RequestHandler
      */
-    protected function createRequestHandler($action)
+    protected function createRequestHandler($action, $responseFilter = null)
     {
-        $requestHandler = new RequestHandler(new RequestHandlerTest_ActionResolver($action), new FirewallStub());
+        $requestHandler = new RequestHandler(new RequestHandlerTest_ActionResolver($action), new FirewallStub(), $responseFilter);
         return $requestHandler;
     }
 }

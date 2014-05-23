@@ -52,7 +52,9 @@ class RequestHandler implements LoggerAwareInterface
     {
         $action = $this->actionResolver->resolveAction($request);
 
-        return $this->executeAction($action, $request);
+        $response = $this->executeAction($action, $request);
+
+        return $this->responseFilter->filterResponse($request, $response);
     }
 
     private function executeAction(Action $action, Request $request)
@@ -60,9 +62,7 @@ class RequestHandler implements LoggerAwareInterface
         try {
             $this->firewall->guard($request, $action->name());
 
-            $response = $action->execute($request);
-
-            return $this->responseFilter->filterResponse($request, $response);
+            return $action->execute($request);
         } catch (\Exception $e) {
             $exceptionModel = $this->exceptionHandler->handleException($e);
             if($exceptionModel->httpStatusCode() >= 500) {
