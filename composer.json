@@ -21,19 +21,9 @@
     },
     "repositories": [
         {
-            "type": "package",
-            "package": {
-                "name": "floppy/common",
-                "version": "0.0.9",
-                "source": {
-                    "url": "git@codebasehq.com:advisio/zineinc/storage-common.git",
-                    "type": "git",
-                    "reference": "master"
-                },
-                "autoload": {
-                    "psr-0": { "Floppy\\": "src/" }
-                }
-            }
+            "type": "composer",
+            "url": "http://packages.julita.zineinc.pl"
         }
-    ]
+    ],
+    "minimum-stability": "dev"
 }
