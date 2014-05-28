@@ -3,6 +3,8 @@
 
 namespace Floppy\Server\RequestHandler;
 
+use Floppy\Common\Storage\PrefixedFilepathChoosingStrategy;
+use Floppy\Common\StringUtils;
 use Floppy\Server\FileHandler\CacheResponseFilter;
 use Floppy\Server\RequestHandler\Action\CorsEtcAction;
 use Floppy\Server\RequestHandler\Action\DownloadAction;
@@ -25,6 +27,7 @@ use Floppy\Server\RequestHandler\Security\CallbackFirewall;
 use Floppy\Server\Storage\FilesystemStorage;
 use Floppy\Server\Storage\IdFactoryImpl;
 
+//TODO: obsługa prefixu + upload matchuje się gdy url kończy się na /upload
 class RequestHandlerFactory
 {
 
@@ -88,8 +91,9 @@ class RequestHandlerFactory
             );
         };
         $container['storage.filepathChoosingStrategy'] = function ($container) {
-            return new FilepathChoosingStrategyImpl();
+            return new PrefixedFilepathChoosingStrategy(new FilepathChoosingStrategyImpl(), $container['storage.prefix']);
         };
+        $container['storage.prefix'] = '';
         $container['storage.idFactory'] = function ($container) {
             return new IdFactoryImpl();
         };
@@ -212,7 +216,7 @@ class RequestHandlerFactory
             $resolver->register($container['action.cors'], function(Request $request){
                 return $request->isMethod('options') || in_array($request->getPathInfo(), array('/crossdomain.xml', '/clientaccesspolicy.xml'));
             })->register($container['action.upload'], function(Request $request){
-                return rtrim($request->getPathInfo(), '/') === '/upload';
+                return StringUtils::endsWith(rtrim($request->getPathInfo(), '/'), '/upload');
             })->register($container['action.download'], function(Request $request){
                 return true;
             });

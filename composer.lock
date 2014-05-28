@@ -1,9 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
     ],
-    "hash": "2806888838be16c4070b215efdeb1d79",
+    "hash": "67675fd3321a01ef2673fac2bc422eb0",
     "packages": [
         {
             "name": "floppy/common",
@@ -11,7 +12,7 @@
             "source": {
                 "type": "git",
                 "url": "git@codebasehq.com:advisio/zineinc/storage-common.git",
-                "reference": "1da5c65d45c048ed2a27a1803cdadb71d4b9d9ee"
+                "reference": "5e4e68a8c3414b49d150301d97320799e5220e08"
             },
             "require": {
                 "jbroadway/urlify": ">=1.0.0,<1.1.0"
@@ -31,7 +32,7 @@
                     "email": "piotr.sliwa@zineinc.com"
                 }
             ],
-            "time": "2014-05-01 19:13:03"
+            "time": "2014-05-28 21:05:33"
         },
         {
             "name": "imagine/imagine",
@@ -87,16 +88,16 @@
         },
         {
             "name": "jbroadway/urlify",
-            "version": "dev-master",
+            "version": "1.0.3-stable",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jbroadway/urlify.git",
-                "reference": "367c8350361a16b3e5d641838202062d41555eea"
+                "reference": "c9ada9d3873d11f72fa772aecd6896efad11ee67"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jbroadway/urlify/zipball/367c8350361a16b3e5d641838202062d41555eea",
-                "reference": "367c8350361a16b3e5d641838202062d41555eea",
+                "url": "https://api.github.com/repos/jbroadway/urlify/zipball/c9ada9d3873d11f72fa772aecd6896efad11ee67",
+                "reference": "c9ada9d3873d11f72fa772aecd6896efad11ee67",
                 "shasum": ""
             },
             "require": {
@@ -138,7 +139,7 @@
                 "url",
                 "urlify"
             ],
-            "time": "2014-04-22 19:36:19"
+            "time": "2014-03-17 16:14:04"
         },
         {
             "name": "pimple/pimple",
@@ -228,7 +229,7 @@
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "2.4.x-dev",
+            "version": "v2.4.5",
             "target-dir": "Symfony/Component/EventDispatcher",
             "source": {
                 "type": "git",
@@ -284,7 +285,7 @@
         },
         {
             "name": "symfony/filesystem",
-            "version": "2.4.x-dev",
+            "version": "v2.4.5",
             "target-dir": "Symfony/Component/Filesystem",
             "source": {
                 "type": "git",
@@ -333,7 +334,7 @@
         },
         {
             "name": "symfony/http-foundation",
-            "version": "2.4.x-dev",
+            "version": "v2.4.5",
             "target-dir": "Symfony/Component/HttpFoundation",
             "source": {
                 "type": "git",
@@ -393,10 +394,10 @@
     "aliases": [
 
     ],
-    "minimum-stability": "dev",
-    "stability-flags": [
-
-    ],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "floppy/common": 20
+    },
     "platform": [
 
     ],
