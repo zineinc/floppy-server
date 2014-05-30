@@ -101,6 +101,27 @@ class ResizeImageProcessTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($fileSource, $actualFileSource);
     }
 
+	/**
+	 * @test
+	 */
+	public function croppedMissingAndCropBackgroundMissing_oneRequestedDimensionGreaterThanOriginal_resizeToSmalerDimensionAndFitRatio()
+	{
+		//given
+
+		$fileSource = $this->createImageFileSource(__DIR__ . '/../../Resources/100x80-black.png');
+		$attrs = new AttributesBag(array('width' => 500, 'height' => 40, 'crop' => false, 'cropBackgroundColor' => null));
+
+		//when
+
+		$actualFileSource = $this->process->process($this->imagine, $fileSource, $attrs);
+
+		//then
+
+		$image = $this->imagine->load($actualFileSource->content());
+
+		$this->assertEquals(new Box(50, 40), $image->getSize());
+	}
+
     /**
      * @test
      */

@@ -57,6 +57,17 @@ class ResizeImageProcess implements ImageProcess
                 $newSize = $ratio > $requestedRatio ? new Box($requestedWidth, $requestedWidth / $ratio)
                     : new Box($requestedHeight * $ratio, $requestedHeight);
 
+				//when crop color is null, then image shouldn't be enlarged when requested size exceeds original
+				if($requestedColor === null) {
+					if($requestedSize->getWidth() > $newSize->getWidth()) {
+						$requestedSize = new Box($newSize->getWidth(), $requestedSize->getHeight());
+					}
+
+					if($requestedSize->getHeight() > $newSize->getHeight()) {
+						$requestedSize = new Box($requestedSize->getWidth(), $newSize->getHeight());
+					}
+				}
+
                 $image->resize($newSize);
 
                 if ($requestedSize != $newSize) {
@@ -71,7 +82,7 @@ class ResizeImageProcess implements ImageProcess
 
             return new FileSource(new StringInputStream($image->get($fileSource->fileType()->prefferedExtension())), $fileSource->fileType());
         } catch (\Imagine\Exception\Exception $e) {
-            throw new FileProcessException('Image processing error', $e);
+            throw new FileProcessException('Image processing error', 0, $e);
         }
     }
 }
