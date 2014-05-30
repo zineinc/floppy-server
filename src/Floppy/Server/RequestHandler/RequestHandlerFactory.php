@@ -150,11 +150,16 @@ class RequestHandlerFactory
             return new ImagePathMatcher($container['checksumChecker'], $container['fileHandlers.image.extensions']);
         };
         $container['fileHandlers.image.beforeSendImageProcess'] = function ($container) {
-            return new ResizeImageProcess();
+            return new ResizeImageProcess($container['fileHandlers.image.quality']);
         };
         $container['fileHandlers.image.beforeStoreImageProcess'] = function($container) {
-            return new MaxSizeImageProcess($container['fileHandlers.image.maxWidth'], $container['fileHandlers.image.maxHeight']);
+            return new MaxSizeImageProcess(
+				$container['fileHandlers.image.maxWidth'],
+				$container['fileHandlers.image.maxHeight'],
+				$container['fileHandlers.image.quality']
+			);
         };
+		$container['fileHandlers.image.quality'] = 95;
         $container['fileHandlers.image.maxWidth'] = 1920;
         $container['fileHandlers.image.maxHeight'] = 1200;
         $container['fileHandlers.file'] = function ($container) {

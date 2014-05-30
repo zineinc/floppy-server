@@ -15,11 +15,13 @@ class MaxSizeImageProcess implements ImageProcess
 {
     private $maxWidth;
     private $maxHeight;
+	private $quality;
 
-    function __construct($maxWidth, $maxHeight)
+    function __construct($maxWidth, $maxHeight, $quality = 95)
     {
         $this->maxHeight = (int) $maxHeight;
         $this->maxWidth = (int) $maxWidth;
+		$this->quality = (int) $quality;
     }
 
     public function process(ImagineInterface $imagine, FileSource $fileSource, AttributesBag $attrs)
@@ -41,7 +43,7 @@ class MaxSizeImageProcess implements ImageProcess
 
             $image->resize($newSize);
 
-            $content = $image->get($fileSource->fileType()->prefferedExtension());
+            $content = $image->get($fileSource->fileType()->prefferedExtension(), array('quality' => $this->quality));
             $fileSource->discard();
 
             return new FileSource(new StringInputStream($content), $fileSource->fileType());

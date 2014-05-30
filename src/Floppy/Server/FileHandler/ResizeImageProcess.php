@@ -13,7 +13,15 @@ use Floppy\Common\Stream\StringInputStream;
 
 class ResizeImageProcess implements ImageProcess
 {
-    public function process(ImagineInterface $imagine, FileSource $fileSource, AttributesBag $attrs)
+	private $quality;
+
+	public function __construct($quality = 95)
+	{
+		$this->quality = (int) $quality;
+	}
+
+
+	public function process(ImagineInterface $imagine, FileSource $fileSource, AttributesBag $attrs)
     {
         if(count($attrs->all()) === 0) {
             return $fileSource;
@@ -80,7 +88,12 @@ class ResizeImageProcess implements ImageProcess
                 }
             }
 
-            return new FileSource(new StringInputStream($image->get($fileSource->fileType()->prefferedExtension())), $fileSource->fileType());
+            return new FileSource(
+				new StringInputStream(
+					$image->get($fileSource->fileType()->prefferedExtension(), array('quality' => $this->quality))
+				),
+				$fileSource->fileType()
+			);
         } catch (\Imagine\Exception\Exception $e) {
             throw new FileProcessException('Image processing error', 0, $e);
         }
