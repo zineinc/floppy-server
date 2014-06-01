@@ -45,7 +45,7 @@ abstract class AbstractFileHandler implements FileHandler
 
         return array(
             'mime-type' => $file->fileType()->mimeType(),
-            'extension' => $file->fileType()->prefferedExtension(),
+            'extension' => $file->fileType()->extension(),
             'size' => strlen($content),
         ) + $this->doGetStoreAttributes($file);
     }
@@ -57,7 +57,7 @@ abstract class AbstractFileHandler implements FileHandler
 
     public function supports(FileType $fileType)
     {
-        return in_array($fileType->mimeType(), $this->supportedMimeTypes()) && in_array($fileType->prefferedExtension(), $this->supportedExtensions());
+        return in_array($fileType->mimeType(), $this->supportedMimeTypes()) && in_array($fileType->extension(), $this->supportedExtensions());
     }
 
     protected abstract function supportedMimeTypes();

@@ -43,7 +43,7 @@ class MaxSizeImageProcess implements ImageProcess
 
             $image->resize($newSize);
 
-            $content = $image->get($fileSource->fileType()->prefferedExtension(), array('quality' => $this->quality));
+            $content = $image->get($fileSource->fileType()->extension(), array('quality' => $this->quality));
             $fileSource->discard();
 
             return new FileSource(new StringInputStream($content), $fileSource->fileType());

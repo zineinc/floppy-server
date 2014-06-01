@@ -90,7 +90,7 @@ class ResizeImageProcess implements ImageProcess
 
             return new FileSource(
 				new StringInputStream(
-					$image->get($fileSource->fileType()->prefferedExtension(), array('quality' => $this->quality))
+					$image->get($fileSource->fileType()->extension(), array('quality' => $this->quality))
 				),
 				$fileSource->fileType()
 			);

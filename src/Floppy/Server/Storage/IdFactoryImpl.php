@@ -19,6 +19,6 @@ class IdFactoryImpl implements IdFactory
     {
         $content = $fileSource->content();
 
-        return hash($this->alg, $content.$this->salt) . '.' . $fileSource->fileType()->prefferedExtension();
+        return hash($this->alg, $content.$this->salt) . '.' . $fileSource->fileType()->extension();
     }
 }

@@ -193,7 +193,7 @@ class PolicyRuleTest_FileHandler implements FileHandler
 
     public function supports(FileType $fileType)
     {
-        return $fileType->prefferedExtension() === $this->validExtension;
+        return $fileType->extension() === $this->validExtension;
     }
 
     public function getStoreAttributes(FileSource $file)
