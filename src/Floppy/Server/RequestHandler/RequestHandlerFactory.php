@@ -3,6 +3,7 @@
 
 namespace Floppy\Server\RequestHandler;
 
+use Floppy\Common\FileHandler\Base64PathMatcher;
 use Floppy\Common\Storage\PrefixedFilepathChoosingStrategy;
 use Floppy\Common\StringUtils;
 use Floppy\Server\FileHandler\CacheResponseFilter;
@@ -15,8 +16,6 @@ use Floppy\Server\RequestHandler\Security\NullRule;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Floppy\Common\ChecksumCheckerImpl;
-use Floppy\Common\FileHandler\FilePathMatcher;
-use Floppy\Common\FileHandler\ImagePathMatcher;
 use Floppy\Server\FileHandler\DispositionResponseFilter;
 use Floppy\Server\FileHandler\FallbackFileHandler;
 use Floppy\Server\FileHandler\ImageFileHandler;
@@ -149,7 +148,7 @@ class RequestHandlerFactory
             return new \Imagine\Gd\Imagine();
         };
         $container['fileHandlers.image.pathMatcher'] = function ($container) {
-            return new ImagePathMatcher($container['checksumChecker'], $container['fileHandlers.image.extensions']);
+            return new Base64PathMatcher($container['checksumChecker'], $container['fileHandlers.image.extensions']);
         };
         $container['fileHandlers.image.beforeSendImageProcess'] = function ($container) {
             return new ResizeImageProcess($container['fileHandlers.image.quality']);
@@ -173,7 +172,7 @@ class RequestHandlerFactory
             );
         };
         $container['fileHandlers.file.pathMatcher'] = function ($container) {
-            return new FilePathMatcher($container['checksumChecker'], $container['fileHandlers.file.extensions']);
+            return new Base64PathMatcher($container['checksumChecker'], $container['fileHandlers.file.extensions']);
         };
         $container['fileHandlers.file.mimeTypes'] = function ($container) {
             return array();
