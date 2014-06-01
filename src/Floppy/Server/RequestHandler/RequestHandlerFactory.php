@@ -27,7 +27,6 @@ use Floppy\Server\RequestHandler\Security\CallbackFirewall;
 use Floppy\Server\Storage\FilesystemStorage;
 use Floppy\Server\Storage\IdFactoryImpl;
 
-//TODO: obsługa prefixu + upload matchuje się gdy url kończy się na /upload
 class RequestHandlerFactory
 {
 
@@ -95,10 +94,13 @@ class RequestHandlerFactory
         };
         $container['storage.prefix'] = '';
         $container['storage.idFactory'] = function ($container) {
-            return new IdFactoryImpl();
+            return new IdFactoryImpl($container['storage.idFactory.salt']);
         };
         $container['storage.fileChmod'] = 0644;
         $container['storage.dirChmod'] = 0755;
+        $container['storage.idFactory.salt'] = function($container){
+            return $container['secretKey'];
+        };
     }
 
     /**
