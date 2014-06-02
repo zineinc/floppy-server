@@ -9,6 +9,7 @@ use Floppy\Server\RequestHandler\Exception\ExceptionModel;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,7 +36,7 @@ class RequestHandler implements LoggerAwareInterface
     private $responseFilter;
     private $exceptionHandler;
 
-    public function __construct(ActionResolver $actionResolver, Firewall $firewall, ResponseFilter $responseFilter = null, ExceptionHandler $exceptionHandler = null)
+    public function __construct(ActionResolver $actionResolver, Firewall $firewall, EventDispatcherInterface $eventDispatcher, ResponseFilter $responseFilter = null, ExceptionHandler $exceptionHandler = null)
     {
         $this->logger = new NullLogger();
         $this->firewall = $firewall;

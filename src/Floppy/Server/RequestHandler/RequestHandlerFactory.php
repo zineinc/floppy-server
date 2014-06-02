@@ -209,6 +209,7 @@ class RequestHandlerFactory
             return new RequestHandler(
                 $container['actionResolver'],
                 $container['requestHandler.firewall'],
+                $container['eventDispatcher'],
                 $container['requestHandler.corsFilter'],
                 $container['requestHandler.exceptionHandler']
             );

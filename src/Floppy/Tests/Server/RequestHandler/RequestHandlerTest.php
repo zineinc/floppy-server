@@ -9,6 +9,7 @@ use Floppy\Server\RequestHandler\Action\Action;
 use Floppy\Server\RequestHandler\ActionResolver;
 use Floppy\Server\RequestHandler\RequestHandler;
 use Floppy\Tests\Server\Stub\FirewallStub;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -126,7 +127,12 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected function createRequestHandler($action, $responseFilter = null)
     {
-        $requestHandler = new RequestHandler(new RequestHandlerTest_ActionResolver($action), new FirewallStub(), $responseFilter);
+        $requestHandler = new RequestHandler(
+            new RequestHandlerTest_ActionResolver($action),
+            new FirewallStub(),
+            new EventDispatcher(),
+            $responseFilter
+        );
         return $requestHandler;
     }
 }
