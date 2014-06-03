@@ -3,6 +3,8 @@
 namespace Floppy\Server\RequestHandler;
 
 use Floppy\Server\RequestHandler\Action\CorsEtcAction;
+use Floppy\Server\RequestHandler\Event\Events;
+use Floppy\Server\RequestHandler\Event\HttpEvent;
 use Floppy\Server\RequestHandler\Exception\DefaultMapExceptionHandler;
 use Floppy\Server\RequestHandler\Exception\ExceptionHandler;
 use Floppy\Server\RequestHandler\Exception\ExceptionModel;
@@ -33,17 +35,17 @@ class RequestHandler implements LoggerAwareInterface
     private $logger;
     private $firewall;
     private $actionResolver;
-    private $responseFilter;
     private $exceptionHandler;
+    private $eventDispatcher;
 
-    public function __construct(ActionResolver $actionResolver, Firewall $firewall, EventDispatcherInterface $eventDispatcher, ResponseFilter $responseFilter = null, ExceptionHandler $exceptionHandler = null)
+    public function __construct(ActionResolver $actionResolver, Firewall $firewall, EventDispatcherInterface $eventDispatcher, ExceptionHandler $exceptionHandler = null)
     {
         $this->logger = new NullLogger();
         $this->firewall = $firewall;
-        $this->responseFilter = $responseFilter ?: new NullResponseFilter();
         $this->exceptionHandler = $exceptionHandler ?: new DefaultMapExceptionHandler();
 
         $this->actionResolver = $actionResolver;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -51,11 +53,30 @@ class RequestHandler implements LoggerAwareInterface
      */
     public function handle(Request $request)
     {
+        if($response = $this->triggerRequestEvent($request)) {
+            return $response;
+        }
+
         $action = $this->actionResolver->resolveAction($request);
 
         $response = $this->executeAction($action, $request);
 
-        return $this->responseFilter->filterResponse($request, $response);
+        $this->triggerResponseEvent($request, $response);
+
+        return $response;
+    }
+
+    private function triggerRequestEvent(Request $request)
+    {
+        $event = new HttpEvent($request);
+        $this->eventDispatcher->dispatch(Events::HTTP_REQUEST, $event);
+
+        return $event->getResponse();
+    }
+
+    private function triggerResponseEvent(Request $request, Response $response)
+    {
+        $this->eventDispatcher->dispatch(Events::HTTP_RESPONSE, new HttpEvent($request, $response));
     }
 
     private function executeAction(Action $action, Request $request)

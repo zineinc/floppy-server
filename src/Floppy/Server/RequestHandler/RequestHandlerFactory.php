@@ -11,6 +11,7 @@ use Floppy\Server\RequestHandler\Action\CorsEtcAction;
 use Floppy\Server\RequestHandler\Action\DownloadAction;
 use Floppy\Server\RequestHandler\Action\UploadAction;
 use Floppy\Server\RequestHandler\Event\CacheSubscriber;
+use Floppy\Server\RequestHandler\Event\CorsSubscriber;
 use Floppy\Server\RequestHandler\Exception\DefaultMapExceptionHandler;
 use Floppy\Server\RequestHandler\Security\NullRule;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -66,6 +67,7 @@ class RequestHandlerFactory
         $this->requestHandlerDefinition($container);
         $this->fileHandlersDefinition($container);
         $this->cacheDefinition($container);
+        $this->corsDefinition($container);
 
         foreach ($options as $name => $value) {
             $container[$name] = $value;
@@ -210,7 +212,6 @@ class RequestHandlerFactory
                 $container['actionResolver'],
                 $container['requestHandler.firewall'],
                 $container['eventDispatcher'],
-                $container['requestHandler.corsFilter'],
                 $container['requestHandler.exceptionHandler']
             );
         };
@@ -220,9 +221,7 @@ class RequestHandlerFactory
         $container['actionResolver'] = function($container){
             $resolver = new ActionResolverImpl();
 
-            $resolver->register($container['action.cors'], function(Request $request){
-                return $request->isMethod('options') || in_array($request->getPathInfo(), array('/crossdomain.xml', '/clientaccesspolicy.xml'));
-            })->register($container['action.upload'], function(Request $request){
+            $resolver->register($container['action.upload'], function(Request $request){
                 return StringUtils::endsWith(rtrim($request->getPathInfo(), '/'), '/upload');
             })->register($container['action.download'], function(Request $request){
                 return true;
@@ -233,9 +232,6 @@ class RequestHandlerFactory
 
         $container['action.upload'] = function($container){
             return new UploadAction($container['storage'], $container['action.upload.fileSourceFactory'], $container['fileHandlers'], $container['checksumChecker'], $container['action.upload.securityRule']);
-        };
-        $container['action.cors'] = function($container){
-            return new CorsEtcAction($container['action.cors.allowedOriginHosts']);
         };
         $container['action.download'] = function($container){
             return new DownloadAction(
@@ -251,7 +247,6 @@ class RequestHandlerFactory
             return new NullRule();
         };
 
-        $container['action.cors.allowedOriginHosts'] = array();
         $container['action.upload.fileSourceFactory'] = function ($container) {
             return new FileSourceFactoryImpl();
         };
@@ -273,9 +268,6 @@ class RequestHandlerFactory
             return function(Request $request) {
                 //allow upload
             };
-        };
-        $container['requestHandler.corsFilter'] = function($container){
-            return new CorsResponseFilter($container['action.cors.allowedOriginHosts']);
         };
 
         return $container;
@@ -309,5 +301,26 @@ class RequestHandlerFactory
         $container['cache.strategy'] = CacheSubscriber::STRATEGY_EXPIRES;
         $container['cache.expires'] = 60 * 60 * 24 * 365; //365 days
         $container['cache.maxAge'] = 60 * 60 * 24 * 2; //2 days
+    }
+
+    public function corsDefinition(\Pimple $container)
+    {
+        $container['eventDispatcher.corsSubscriber'] = function ($container) {
+            return new CorsSubscriber($container['cors.allowedOriginHosts'], $container['cors.options']);
+        };
+
+        $container['action.cors.allowedOriginHosts'] = function ($container) {
+            return array();
+        };
+        $container['cors.allowedOriginHosts'] = function($container){
+            return $container['action.cors.allowedOriginHosts'];
+        };
+        $container['cors.options'] = array();
+
+        $container->extend('eventDispatcher', function($eventDispatcher, $container){
+            $eventDispatcher->addSubscriber($container['eventDispatcher.corsSubscriber']);
+
+            return $eventDispatcher;
+        });
     }
 } 

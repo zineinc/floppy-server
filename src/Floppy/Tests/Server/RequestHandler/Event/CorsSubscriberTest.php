@@ -11,11 +11,14 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CorsSubscriberTest extends \PHPUnit_Framework_TestCase
 {
+    const SUPPORTED_METHOD = 'GET';
+    const UNSUPPORTED_METHOD = 'POST';
+
     /**
      * @test
-     * @dataProvider corsOptionsRequestSuccessProvider
+     * @dataProvider preflightRequestSuccessProvider
      */
-    public function corsOptionsRequestSuccess($allowedHosts, $origin)
+    public function preflightRequestSuccess($allowedHosts, $origin)
     {
         //given
 
@@ -35,7 +38,7 @@ class CorsSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($origin, $response->headers->get('Access-Control-Allow-Origin'));
     }
 
-    public function corsOptionsRequestSuccessProvider()
+    public function preflightRequestSuccessProvider()
     {
         return array(
             array(
@@ -63,7 +66,7 @@ class CorsSubscriberTest extends \PHPUnit_Framework_TestCase
      * @test
      * @dataProvider corsRequestFailureProvider
      */
-    public function corsOptionsRequestFailure($allowedHosts, $origin)
+    public function preflightRequestFailure($allowedHosts, $origin)
     {
         //given
 
@@ -100,6 +103,30 @@ class CorsSubscriberTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     */
+    public function preflightRequestFailure_notAllowedMethod()
+    {
+        //given
+
+        $host = 'http://example.com';
+        $subscriber = new CorsSubscriber(array($host), array('allowedMethods' => array(self::SUPPORTED_METHOD)));
+        $event = $this->createHttpOptionsEvent($host, self::UNSUPPORTED_METHOD);
+
+        //when
+
+        $subscriber->onRequest($event);
+        
+        //then
+
+
+        $response = $event->getResponse();
+
+        $this->assertNotNull($response);
+        $this->assertEquals(405, $response->getStatusCode());
+    }
+
+    /**
+     * @test
      * @dataProvider corsRequestFailureProvider
      */
     public function corsNotOptionsRequestFailure($allowedHosts, $origin)
@@ -123,7 +150,7 @@ class CorsSubscriberTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @dataProvider corsOptionsRequestSuccessProvider
+     * @dataProvider preflightRequestSuccessProvider
      */
     public function corsResponseOriginMatches($allowedHosts, $origin)
     {
@@ -169,10 +196,11 @@ class CorsSubscriberTest extends \PHPUnit_Framework_TestCase
      * @param $origin
      * @return HttpEvent
      */
-    private function createHttpOptionsEvent($origin)
+    private function createHttpOptionsEvent($origin, $requestMethod = self::SUPPORTED_METHOD)
     {
         $event = $this->createHttpEvent($origin);
         $event->getRequest()->setMethod('Options');
+        $event->getRequest()->headers->set('Access-Control-Request-Method', $requestMethod);
         return $event;
     }
 

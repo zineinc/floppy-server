@@ -7,16 +7,16 @@ use Floppy\Common\Exception\StorageError;
 use Floppy\Common\Exception\StorageException;
 use Floppy\Server\RequestHandler\Action\Action;
 use Floppy\Server\RequestHandler\ActionResolver;
+use Floppy\Server\RequestHandler\Event\Events;
 use Floppy\Server\RequestHandler\RequestHandler;
 use Floppy\Tests\Server\Stub\FirewallStub;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class RequestHandlerTest extends \PHPUnit_Framework_TestCase
 {
-    private $requestHandler;
-
     /**
      * @test
      * @dataProvider dataProvider
@@ -84,33 +84,42 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
      * @test
      * @dataProvider booleanProvider
      */
-    public function alwaysFilterResponse($exception)
+    public function alwaysTriggerRequestAndResponseEvent($exception)
     {
         //given
 
         $action = $this->getMock('Floppy\Server\RequestHandler\Action\Action');
-        $responseFilter = $this->getMock('Floppy\Server\RequestHandler\ResponseFilter');
 
-        $requestHandler = $this->createRequestHandler($action, $responseFilter);
+        $subscriber = $this->getMockBuilder('\stdClass')
+            ->setMethods(array('onRequest', 'onResponse'))
+            ->getMock();
+        $eventDispatcher = new EventDispatcher();
+        $eventDispatcher->addListener(Events::HTTP_REQUEST, array($subscriber, 'onRequest'));
+        $eventDispatcher->addListener(Events::HTTP_REQUEST, array($subscriber, 'onResponse'));
+
+        $requestHandler = $this->createRequestHandler($action, $eventDispatcher);
+
+        $response = new Response();
 
         $action->expects($this->once())
             ->method('execute')
-            ->will($exception ? $this->throwException(new \Exception()) : $this->returnValue(new Response()));
+            ->will($exception ? $this->throwException(new \Exception()) : $this->returnValue($response));
 
-        $filteredResponse = new Response('content doesn\'t matter');
-
-        $responseFilter->expects($this->once())
-            ->method('filterResponse')
-            ->will($this->returnValue($filteredResponse));
+        $subscriber->expects($this->once())
+            ->id('onRequest')
+            ->method('onRequest');
+        $subscriber->expects($this->once())
+            ->after('onRequest')
+            ->method('onResponse');
 
         //when
 
-        $response = $requestHandler->handle(new Request());
+        $actualResponse = $requestHandler->handle(new Request());
 
         //then
 
         $this->verifyMockObjects();
-        $this->assertEquals($filteredResponse, $response);
+        $this->assertEquals($exception ? 500 : 200, $actualResponse->getStatusCode());
     }
 
     public function booleanProvider()
@@ -125,13 +134,12 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
      * @param $action
      * @return RequestHandler
      */
-    protected function createRequestHandler($action, $responseFilter = null)
+    protected function createRequestHandler($action, EventDispatcherInterface $eventDispatcher = null)
     {
         $requestHandler = new RequestHandler(
             new RequestHandlerTest_ActionResolver($action),
             new FirewallStub(),
-            new EventDispatcher(),
-            $responseFilter
+            $eventDispatcher ?: new EventDispatcher()
         );
         return $requestHandler;
     }

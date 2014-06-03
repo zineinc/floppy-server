@@ -11,10 +11,28 @@ use Symfony\Component\HttpFoundation\Response;
 class CorsSubscriber implements EventSubscriberInterface
 {
     private $hosts;
+    private $options = array(
+        'allowedMethods' => array('GET', 'POST'),
+        'maxAge' => 0,
+        'allowedHeaders' => array(),
+        'allowCredentials' => false,
+        'exposedHeaders' => array(),
+    );
 
-    public function __construct(array $hosts)
+    public function __construct(array $hosts, array $options = array())
     {
         $this->hosts = $hosts;
+
+        if($extraOptions = array_diff_key($options, $this->options)) {
+            throw new \InvalidArgumentException(sprintf('Invalid options provided: %s, supported options: %s',
+                implode(', ', array_keys($extraOptions)), implode(', ', array_keys($this->options))));
+        }
+
+        $this->options = array_merge($this->options, $options);
+
+        $this->options['allowedMethods'] = array_map(function($value){
+            return strtoupper($value);
+        }, $this->options['allowedMethods']);
     }
 
 
@@ -75,10 +93,10 @@ class CorsSubscriber implements EventSubscriberInterface
         $origin = $request->headers->get('Origin');
 
         if ($request->isMethod('Options')) {
-            return new Response('', 200, array(
-                'Access-Control-Allow-Origin' => $this->getAllowedOrigin($origin),
-                'Access-Control-Allow-Methods' => 'POST, GET, OPTIONS',
-            ));
+            $headers = $this->getCorsHeaders($origin, true);
+            $requestMethod = strtoupper($request->headers->get('Access-Control-Request-Method'));
+
+            return new Response('', in_array($requestMethod, $this->options['allowedMethods']) ? 200 : 405, $headers);
         } else if ($origin !== null) {
             if (!$this->isSupportedHost($origin)) {
                 return new Response('', 403, array(
@@ -145,20 +163,42 @@ XML;
         $origin = $request->headers->get('Origin');
 
         if($origin !== null) {
-            $event->getResponse()->headers->add(array(
-                'Access-Control-Allow-Origin' => $this->getAllowedOrigin($origin),
-                'Access-Control-Allow-Methods' => 'POST, GET, OPTIONS',
-            ));
+            $event->getResponse()->headers->add($this->getCorsHeaders($origin, false));
         }
     }
 
-    /**
-     * @param $origin
-     * @return string
-     */
     private function getAllowedOrigin($origin)
     {
         $allowedOrigin = $this->isSupportedHost($origin) ? $origin : 'null';
         return $allowedOrigin;
+    }
+
+    private function getCorsHeaders($origin, $preflightRequest = false)
+    {
+        $headers = array(
+            'Access-Control-Allow-Origin' => $this->getAllowedOrigin($origin),
+        );
+
+        if($preflightRequest && $this->options['allowedMethods']) {
+            $headers['Access-Control-Allow-Methods'] = implode(', ', $this->options['allowedMethods']);
+        }
+
+        if($preflightRequest && $this->options['allowedHeaders']) {
+            $headers['Access-Control-Allow-Headers'] = $this->options['allowedHeaders'];
+        }
+
+        if($this->options['allowCredentials']) {
+            $headers['Access-Control-Allow-Credentials'] = 'true';
+        }
+
+        if(!$preflightRequest && $this->options['exposedHeaders']) {
+            $headers['Access-Control-Expose-Headers'] = implode(', ', $this->options['exposedHeaders']);
+        }
+
+        if($preflightRequest && $this->options['maxAge']) {
+            $headers['Access-Control-Max-Age'] = $this->options['maxAge'];
+        }
+
+        return $headers;
     }
 }
