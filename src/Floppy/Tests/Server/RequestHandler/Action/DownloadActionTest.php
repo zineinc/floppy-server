@@ -15,7 +15,9 @@ use Floppy\Server\RequestHandler\DownloadResponseFactory;
 use Floppy\Server\RequestHandler\Event\DownloadEvent;
 use Floppy\Server\RequestHandler\Event\Events;
 use Floppy\Server\RequestHandler\Exception\FileSourceNotFoundException;
+use Floppy\Server\RequestHandler\Security\Rule;
 use Floppy\Tests\Server\Stub\EventDispatcherStub;
+use Floppy\Tests\Server\Stub\SecurityRuleStub;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -33,8 +35,6 @@ class DownloadActionTest extends \PHPUnit_Framework_TestCase
      */
     private $eventDispatcher;
 
-    private $action;
-
     protected function setUp()
     {
         $this->sampleResponse = new Response('some-content');
@@ -45,8 +45,6 @@ class DownloadActionTest extends \PHPUnit_Framework_TestCase
             $this->getMock('Floppy\Server\FileHandler\FileHandler'),
         );
         $this->eventDispatcher = new EventDispatcherStub();
-
-        $this->action = new DownloadAction($this->storage, new DownloadActionTest_DownloadResponseFactory($this->getSampleResponse()), $this->fileHandlers, $this->eventDispatcher);
     }
 
     /**
@@ -67,7 +65,7 @@ class DownloadActionTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $actualResponse = $this->action->execute($this->createDownloadRequest());
+        $actualResponse = $this->createAction()->execute($this->createDownloadRequest());
 
         //then
 
@@ -75,6 +73,25 @@ class DownloadActionTest extends \PHPUnit_Framework_TestCase
         $this->assertResponseOk($actualResponse);
     }
 
+    /**
+     * @test
+     */
+    public function fileHandlerFound_shouldBeUsedFileIdProcessedBySecurityRule()
+    {
+        //given
+
+        $fileSource = $this->createFileSource();
+        $fileId = $this->createProcessedFileId();
+        $info = array('name' => 'value');
+
+        $this->expectsFileHandlerMatchesAndMatch($this->fileHandlers[0], $fileId);
+        $this->expectsProcessedFileExistsInStorage($fileId->withInfo($info));
+        $this->expectsGetFileSourceFromStorage($fileId->withInfo($info), $fileSource);
+
+        //when
+
+        $this->createAction(new SecurityRuleStub($info))->execute($this->createDownloadRequest());
+    }
 
     /**
      * @test
@@ -100,7 +117,7 @@ class DownloadActionTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $actualResponse = $this->action->execute($this->createDownloadRequest());
+        $actualResponse = $this->createAction()->execute($this->createDownloadRequest());
 
         //then
 
@@ -129,7 +146,7 @@ class DownloadActionTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $this->action->execute($this->createDownloadRequest());
+        $this->createAction()->execute($this->createDownloadRequest());
     }
 
     /**
@@ -146,7 +163,7 @@ class DownloadActionTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $this->action->execute($this->createDownloadRequest());
+        $this->createAction()->execute($this->createDownloadRequest());
     }
 
     /**
@@ -162,7 +179,7 @@ class DownloadActionTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $this->action->execute($this->createDownloadRequest());
+        $this->createAction()->execute($this->createDownloadRequest());
     }
 
     /**
@@ -180,7 +197,7 @@ class DownloadActionTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $this->action->execute($this->createDownloadRequest());
+        $this->createAction()->execute($this->createDownloadRequest());
     }
 
     /**
@@ -202,7 +219,7 @@ class DownloadActionTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $actualResponse = $this->action->execute($this->createDownloadRequest());
+        $actualResponse = $this->createAction()->execute($this->createDownloadRequest());
 
         //then
 
@@ -231,7 +248,7 @@ class DownloadActionTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $actualResponse = $this->action->execute($this->createDownloadRequest());
+        $actualResponse = $this->createAction()->execute($this->createDownloadRequest());
 
         //then
 
@@ -397,6 +414,11 @@ class DownloadActionTest extends \PHPUnit_Framework_TestCase
     private function assertResponseOk($actualResponse)
     {
         $this->assertEquals($this->getSampleResponse()->getContent(), $actualResponse->getContent());
+    }
+
+    private function createAction(Rule $securityRule = null)
+    {
+        return new DownloadAction($this->storage, new DownloadActionTest_DownloadResponseFactory($this->getSampleResponse()), $this->fileHandlers, $this->eventDispatcher, $securityRule);
     }
 }
 

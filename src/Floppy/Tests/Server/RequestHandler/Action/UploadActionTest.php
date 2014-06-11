@@ -9,7 +9,9 @@ use Floppy\Common\FileType;
 use Floppy\Common\Stream\StringInputStream;
 use Floppy\Server\RequestHandler\Action\UploadAction;
 use Floppy\Server\RequestHandler\Exception\FileSourceNotFoundException;
+use Floppy\Server\RequestHandler\Security\Rule;
 use Floppy\Server\Storage\Exception\StoreException;
+use Floppy\Tests\Server\Stub\SecurityRuleStub;
 use Symfony\Component\HttpFoundation\Request;
 
 class UploadActionTest extends \PHPUnit_Framework_TestCase
@@ -30,8 +32,6 @@ class UploadActionTest extends \PHPUnit_Framework_TestCase
     private $storage;
     private $checksumChecker;
 
-    private $action;
-
     protected function setUp()
     {
         $this->storage = $this->getMock('Floppy\Server\Storage\Storage');
@@ -41,8 +41,6 @@ class UploadActionTest extends \PHPUnit_Framework_TestCase
             self::FILE_HANDLER_TYPE2 => $this->getMock('Floppy\Server\FileHandler\FileHandler'),
         );
         $this->checksumChecker = $this->getMock('Floppy\Common\ChecksumChecker');
-
-        $this->action = new UploadAction($this->storage, $this->fileSourceFactory, $this->fileHandlers, $this->checksumChecker);
     }
 
     /**
@@ -61,7 +59,7 @@ class UploadActionTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $response = $this->action->execute($request);
+        $response = $this->createAction()->execute($request);
 
         //then
 
@@ -74,6 +72,26 @@ class UploadActionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedAttributes + array('checksum' => self::VALID_CHECKSUM), $actualResponseData['attributes']);
     }
 
+    /**
+     * @test
+     */
+    public function fileSourceExists_shouldBeUsedFileSourceProcessedBySecurityRule()
+    {
+        //given
+
+        $request = $this->createUploadRequest();
+
+        $fileSource = $this->createFileSource();
+        $info = array('name' => 'value');
+
+        $this->expectsCreateFileSource($request, $fileSource);
+        $this->expectsFileHandlerProcess($this->fileHandlers[self::FILE_HANDLER_TYPE1], $fileSource->withInfo($info), self::$attrs);
+        $this->expectsStore($fileSource->withInfo($info), self::FILE_ID);
+
+        //when
+
+        $this->createAction(new SecurityRuleStub($info))->execute($request);
+    }
 
     /**
      * @test
@@ -94,7 +112,7 @@ class UploadActionTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $this->action->execute($request);
+        $this->createAction()->execute($request);
     }
 
     /**
@@ -118,7 +136,7 @@ class UploadActionTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $this->action->execute($request);
+        $this->createAction()->execute($request);
     }
 
     /**
@@ -136,7 +154,7 @@ class UploadActionTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $this->action->execute($request);
+        $this->createAction()->execute($request);
     }
 
     private function expectsMakeChecksum($data)
@@ -233,6 +251,11 @@ class UploadActionTest extends \PHPUnit_Framework_TestCase
     {
         $this->storage->expects($this->never())
             ->method('store');
+    }
+
+    private function createAction(Rule $securityRule = null)
+    {
+        return new UploadAction($this->storage, $this->fileSourceFactory, $this->fileHandlers, $this->checksumChecker, $securityRule);
     }
 }
  
