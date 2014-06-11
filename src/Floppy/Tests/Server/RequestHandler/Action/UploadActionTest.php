@@ -51,7 +51,7 @@ class UploadActionTest extends \PHPUnit_Framework_TestCase
         //given
 
         $request = $this->createUploadRequest();
-        $expectedAttributes = self::$attrs + array('id' => self::FILE_ID, 'type' => self::FILE_HANDLER_TYPE1);
+        $expectedAttributes = self::$attrs + array('id' => self::FILE_ID, 'type' => self::FILE_HANDLER_TYPE1, 'extra_info' => array());
 
         $fileSource = $this->expectsCreateFileSourceAndFindFileHandler($request);
         $this->expectsStore($fileSource, self::FILE_ID);

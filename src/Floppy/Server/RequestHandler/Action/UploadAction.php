@@ -47,6 +47,7 @@ class UploadAction implements Action
 
         $attrs['id'] = $id;
         $attrs['type'] = $fileHandlerName;
+        $attrs['extra_info'] = $fileSource->info()->all();
 
         return new JsonResponse(array(
             'code' => 0,

@@ -14,6 +14,7 @@ use Floppy\Server\RequestHandler\Event\CacheSubscriber;
 use Floppy\Server\RequestHandler\Event\CorsSubscriber;
 use Floppy\Server\RequestHandler\Exception\DefaultMapExceptionHandler;
 use Floppy\Server\RequestHandler\Security\NullRule;
+use Floppy\Server\Storage\AccessSupportStorage;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Floppy\Common\ChecksumCheckerImpl;
@@ -81,7 +82,10 @@ class RequestHandlerFactory
      */
     private function storageDefinitions(\Pimple $container)
     {
-        $container['storage'] = function ($container) {
+        $container['storage'] = function($container){
+            return new AccessSupportStorage($container['storage.public'], $container['storage.private']);
+        };
+        $container['storage.public'] = function ($container) {
             return new FilesystemStorage(
                 $container['storage.dir'],
                 $container['storage.filepathChoosingStrategy'],
@@ -90,6 +94,19 @@ class RequestHandlerFactory
                 $container['storage.fileChmod']
             );
         };
+        $container['storage.private'] = function($container){
+            return new FilesystemStorage(
+                $container['storage.private.dir'],
+                $container['storage.filepathChoosingStrategy'],
+                $container['storage.idFactory'],
+                $container['storage.dirChmod'],
+                $container['storage.fileChmod']
+            );
+        };
+        $container['storage.private.dir'] = function($container){
+            return $container['storage.dir'];
+        };
+
         $container['storage.filepathChoosingStrategy'] = function ($container) {
             return new PrefixedFilepathChoosingStrategy(new FilepathChoosingStrategyImpl(), $container['storage.prefix']);
         };
