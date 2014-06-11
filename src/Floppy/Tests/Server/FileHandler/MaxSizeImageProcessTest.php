@@ -33,7 +33,8 @@ class MaxSizeImageProcessTest extends \PHPUnit_Framework_TestCase
         //given
 
         $process = new MaxSizeImageProcess($maxWidth, $maxHeight);
-        $fileSource = $this->createImageFileSource($imageWidth, $imageHeight);
+        $info = array('name' => 'value');
+        $fileSource = $this->createImageFileSource($imageWidth, $imageHeight, $info);
         $attrs = new AttributesBag(array());
 
         //when
@@ -42,13 +43,18 @@ class MaxSizeImageProcessTest extends \PHPUnit_Framework_TestCase
 
         //then
 
+        $this->assertEquals($info, $actualFileSource->info()->all());
         $actualImage = $this->imagine->load($actualFileSource->content());
         $this->assertEquals(new Box($expectedImageWidth, $expectedImageHeight), $actualImage->getSize());
     }
 
-    private function createImageFileSource($width, $height)
+    private function createImageFileSource($width, $height, array $info = array())
     {
-        return new FileSource(new StringInputStream($this->imagine->create(new Box($width, $height))->get('jpg')), new FileType('image/jpeg', 'jpeg'));
+        return new FileSource(
+            new StringInputStream($this->imagine->create(new Box($width, $height))->get('jpg')),
+            new FileType('image/jpeg', 'jpeg'),
+            $info
+        );
     }
 
     public function dataProvider()

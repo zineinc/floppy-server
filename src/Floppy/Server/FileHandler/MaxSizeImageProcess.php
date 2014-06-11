@@ -46,7 +46,7 @@ class MaxSizeImageProcess implements ImageProcess
             $content = $image->get($fileSource->fileType()->extension(), array('quality' => $this->quality));
             $fileSource->discard();
 
-            return new FileSource(new StringInputStream($content), $fileSource->fileType());
+            return new FileSource(new StringInputStream($content), $fileSource->fileType(), $fileSource->info()->all());
         } catch (\Imagine\Exception\Exception $e) {
             throw new FileProcessException('Image processing error', $e);
         }

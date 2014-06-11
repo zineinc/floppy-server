@@ -92,7 +92,8 @@ class ResizeImageProcess implements ImageProcess
 				new StringInputStream(
 					$image->get($fileSource->fileType()->extension(), array('quality' => $this->quality))
 				),
-				$fileSource->fileType()
+				$fileSource->fileType(),
+                $fileSource->info()->all()
 			);
         } catch (\Imagine\Exception\Exception $e) {
             throw new FileProcessException('Image processing error', 0, $e);

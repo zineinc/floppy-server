@@ -104,11 +104,12 @@ class ResizeImageProcessTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * @test
 	 */
-	public function croppedMissingAndCropBackgroundMissing_oneRequestedDimensionGreaterThanOriginal_resizeToSmalerDimensionAndFitRatio()
+	public function croppedMissingAndCropBackgroundMissing_oneRequestedDimensionGreaterThanOriginal_resizeToSmallerDimensionAndFitRatio()
 	{
 		//given
 
-		$fileSource = $this->createImageFileSource(__DIR__ . '/../../Resources/100x80-black.png');
+        $info = array('name' => 'value');
+		$fileSource = $this->createImageFileSource(__DIR__ . '/../../Resources/100x80-black.png', $info);
 		$attrs = new AttributesBag(array('width' => 500, 'height' => 40, 'crop' => false, 'cropBackgroundColor' => null));
 
 		//when
@@ -116,6 +117,8 @@ class ResizeImageProcessTest extends \PHPUnit_Framework_TestCase
 		$actualFileSource = $this->process->process($this->imagine, $fileSource, $attrs);
 
 		//then
+
+        $this->assertEquals($info, $actualFileSource->info()->all());
 
 		$image = $this->imagine->load($actualFileSource->content());
 
@@ -176,9 +179,9 @@ class ResizeImageProcessTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedColor, (string)$actualColor, $message);
     }
 
-    private function createImageFileSource($path)
+    private function createImageFileSource($path, array $info = array())
     {
-        return new FileSource(new StringInputStream(file_get_contents($path)), new FileType('image/png', 'png'));
+        return new FileSource(new StringInputStream(file_get_contents($path)), new FileType('image/png', 'png'), $info);
     }
 }
  
