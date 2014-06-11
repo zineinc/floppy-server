@@ -9,6 +9,7 @@ use Floppy\Common\FileHandler\PathMatchingException;
 use Floppy\Common\FileId;
 use Floppy\Common\FileSource;
 use Floppy\Common\FileType;
+use Floppy\Common\HasFileInfo;
 use Floppy\Server\FileHandler\FileHandler;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +21,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class PolicyRuleTest extends \PHPUnit_Framework_TestCase
 {
+    const ID = 'id';
+
     const VALID_FILE_HANDLER = 'image';
     const INVALID_FILE_HANDLER = 'file';
 
@@ -51,7 +54,7 @@ class PolicyRuleTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $this->invokeRule($request);
+        $this->invokeRule($request, new PolicyRuleTest_FileInfo());
     }
 
     /**
@@ -66,7 +69,7 @@ class PolicyRuleTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $this->invokeRule($request);
+        $this->invokeRule($request, new PolicyRuleTest_FileInfo());
     }
 
     /**
@@ -81,7 +84,7 @@ class PolicyRuleTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $this->invokeRule($request);
+        $this->invokeRule($request, new PolicyRuleTest_FileInfo());
     }
 
     public function booleanProvider()
@@ -135,6 +138,24 @@ class PolicyRuleTest extends \PHPUnit_Framework_TestCase
         $this->invokeRule($request, $this->createFileSource(self::VALID_FILE_EXT));
     }
 
+    /**
+     * @test
+     */
+    public function givenPolicyWithAccess_addAccessInfoToObject()
+    {
+        //given
+
+        $request = $this->createRequest(self::VALID_SIGNATURE, $this->createValidPolicyWith(array(
+            'access' => 'private',
+        )));
+
+        //when
+
+        $object = $this->invokeRule($request, $this->createFileSource(self::VALID_FILE_EXT));
+
+        $this->assertEquals('private', $object->info()->get('access'));
+    }
+
     private function createRequest($signature, $policy, $policyInPostVariables = true)
     {
         $request = new Request();
@@ -147,9 +168,14 @@ class PolicyRuleTest extends \PHPUnit_Framework_TestCase
 
     private function createValidPolicy()
     {
+        return $this->createValidPolicyWith(array());
+    }
+
+    private function createValidPolicyWith(array $policy)
+    {
         return base64_encode(json_encode(array(
             'expiration' => time() + 60*5,
-        )));
+        ) + $policy));
     }
 
     private function createValidPolicyWithFileType($fileType)
@@ -170,9 +196,13 @@ class PolicyRuleTest extends \PHPUnit_Framework_TestCase
     /**
      * @param $request
      */
-    protected function invokeRule($request, $object = null)
+    protected function invokeRule($request, HasFileInfo $object)
     {
-        $this->rule->checkRule($request, $object);
+        $actualObject = $this->rule->processRule($request, $object);
+
+        $this->assertNotNull($actualObject);
+
+        return $actualObject;
     }
 
     private function createFileSource($ext)
@@ -224,6 +254,19 @@ class PolicyRuleTest_FileHandler implements FileHandler
     public function filterResponse(Response $response, FileSource $fileSource, FileId $fileId)
     {
         throw new \BadMethodCallException();
+    }
+}
+
+class PolicyRuleTest_FileInfo implements HasFileInfo
+{
+    public function info()
+    {
+        return new AttributesBag();
+    }
+
+    public function withInfo(array $info)
+    {
+        return $this;
     }
 }
  

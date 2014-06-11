@@ -45,7 +45,7 @@ class DownloadAction implements Action
 
         $fileId = $handler->match($path);
 
-        $this->securityRule->checkRule($request, $fileId);
+        $this->securityRule->processRule($request, $fileId);
 
         $response = $this->dispatchPreProcessingEvent($request, $fileId, $handlerName);
         //skip processing when event delivered response

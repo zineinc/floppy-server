@@ -4,6 +4,7 @@
 namespace Floppy\Server\RequestHandler\Security;
 
 
+use Floppy\Common\HasFileInfo;
 use Symfony\Component\HttpFoundation\Request;
 
 class CallbackRule implements Rule
@@ -19,8 +20,8 @@ class CallbackRule implements Rule
         $this->callback = $callback;
     }
 
-    public function checkRule(Request $request, $object = null)
+    public function processRule(Request $request, HasFileInfo $object)
     {
-        call_user_func($this->callback, $request, $object);
+        return call_user_func($this->callback, $request, $object);
     }
 }
