@@ -58,7 +58,7 @@ class PolicyRuleTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $object = $this->createRule(true)->processRule($request, new FileId('id'));
+        $object = $this->createRule(false)->processRule($request, new FileId('id'));
         $this->assertNotNull($object);
     }
 
@@ -74,7 +74,7 @@ class PolicyRuleTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $this->createRule(false)->processRule($request, new FileId('id'));
+        $this->createRule(true)->processRule($request, new FileId('id'));
     }
 
     /**

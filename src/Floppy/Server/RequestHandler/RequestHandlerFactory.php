@@ -262,14 +262,14 @@ class RequestHandlerFactory
         };
 
         $container['action.download.securityRule'] = function($container){
-            return new PolicyRule($container['checksumChecker'], $container['fileHandlers'], !$container['action.download.securityRule.allowEmptyPolicy']);
+            return new PolicyRule($container['checksumChecker'], $container['fileHandlers'], $container['action.download.securityRule.requirePolicy']);
         };
 
         $container['action.upload.securityRule'] = function($container){
-            return new PolicyRule($container['checksumChecker'], $container['fileHandlers'], !$container['action.upload.securityRule.allowEmptyPolicy']);
+            return new PolicyRule($container['checksumChecker'], $container['fileHandlers'], $container['action.upload.securityRule.requirePolicy']);
         };
 
-        $container['action.upload.securityRule.allowEmptyPolicy'] = $container['action.download.securityRule.allowEmptyPolicy'] = true;
+        $container['action.upload.securityRule.requirePolicy'] = $container['action.download.securityRule.requirePolicy'] = false;
 
         $container['action.upload.fileSourceFactory'] = function ($container) {
             return new FileSourceFactoryImpl();

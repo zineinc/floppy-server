@@ -16,13 +16,13 @@ class PolicyRule implements Rule
 {
     private $checksumChecker;
     private $fileHandlerProvider;
-    private $exceptionWhenPolicyIsMissing;
+    private $requirePolicy;
 
-    public function __construct(ChecksumChecker $checksumChecker, array $fileHandlers, $exceptionWhenPolicyIsMissing = false)
+    public function __construct(ChecksumChecker $checksumChecker, array $fileHandlers, $requirePolicy = false)
     {
         $this->checksumChecker = $checksumChecker;
         $this->fileHandlerProvider = new FileHandlerProvider($fileHandlers);
-        $this->exceptionWhenPolicyIsMissing = (boolean) $exceptionWhenPolicyIsMissing;
+        $this->requirePolicy = (boolean) $requirePolicy;
     }
 
     public function processRule(Request $request, HasFileInfo $object)
@@ -46,7 +46,7 @@ class PolicyRule implements Rule
         $policy = $request->get('policy');
         $signature = $request->get('signature');
 
-        if($this->exceptionWhenPolicyIsMissing && !($policy || $signature)) {
+        if(!$this->requirePolicy && !($policy || $signature)) {
             return null;
         }
 
