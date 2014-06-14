@@ -14,6 +14,7 @@ use Floppy\Server\RequestHandler\Event\CacheSubscriber;
 use Floppy\Server\RequestHandler\Event\CorsSubscriber;
 use Floppy\Server\RequestHandler\Exception\DefaultMapExceptionHandler;
 use Floppy\Server\RequestHandler\Security\NullRule;
+use Floppy\Server\RequestHandler\Security\PolicyRule;
 use Floppy\Server\Storage\AccessSupportStorage;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
@@ -260,9 +261,15 @@ class RequestHandlerFactory
             );
         };
 
-        $container['action.download.securityRule'] = $container['action.upload.securityRule'] = function($container){
-            return new NullRule();
+        $container['action.download.securityRule'] = function($container){
+            return new PolicyRule($container['checksumChecker'], $container['fileHandlers'], !$container['action.download.securityRule.allowEmptyPolicy']);
         };
+
+        $container['action.upload.securityRule'] = function($container){
+            return new PolicyRule($container['checksumChecker'], $container['fileHandlers'], !$container['action.upload.securityRule.allowEmptyPolicy']);
+        };
+
+        $container['action.upload.securityRule.allowEmptyPolicy'] = $container['action.download.securityRule.allowEmptyPolicy'] = true;
 
         $container['action.upload.fileSourceFactory'] = function ($container) {
             return new FileSourceFactoryImpl();

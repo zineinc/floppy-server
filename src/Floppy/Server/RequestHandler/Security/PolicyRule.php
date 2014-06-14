@@ -3,7 +3,6 @@
 
 namespace Floppy\Server\RequestHandler\Security;
 
-
 use Floppy\Common\FileId;
 use Floppy\Common\FileSource;
 use Floppy\Common\HasFileInfo;
@@ -17,16 +16,23 @@ class PolicyRule implements Rule
 {
     private $checksumChecker;
     private $fileHandlerProvider;
+    private $exceptionWhenPolicyIsMissing;
 
-    public function __construct(ChecksumChecker $checksumChecker, array $fileHandlers)
+    public function __construct(ChecksumChecker $checksumChecker, array $fileHandlers, $exceptionWhenPolicyIsMissing = false)
     {
         $this->checksumChecker = $checksumChecker;
         $this->fileHandlerProvider = new FileHandlerProvider($fileHandlers);
+        $this->exceptionWhenPolicyIsMissing = (boolean) $exceptionWhenPolicyIsMissing;
     }
 
     public function processRule(Request $request, HasFileInfo $object)
     {
         $policy = $this->retrievePolicy($request);
+
+        if($policy === null) {
+            return $object;
+        }
+
         $this->checkExpiration($policy);
         $object = $this->checkFileType($policy, $object);
         $object = $this->checkFileId($policy, $object);
@@ -39,6 +45,10 @@ class PolicyRule implements Rule
     {
         $policy = $request->get('policy');
         $signature = $request->get('signature');
+
+        if($this->exceptionWhenPolicyIsMissing && !($policy || $signature)) {
+            return null;
+        }
 
         if (!$policy || !$signature || !$this->checksumChecker->isChecksumValid($signature, $policy)) {
             throw new AccessDeniedException();

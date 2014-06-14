@@ -32,19 +32,9 @@ class PolicyRuleTest extends \PHPUnit_Framework_TestCase
     const VALID_SIGNATURE = 'valid-signature';
     const INVALID_SIGNATURE = 'invalid-signature';
 
-    private $rule;
-
-    protected function setUp()
-    {
-        $this->rule = new \Floppy\Server\RequestHandler\Security\PolicyRule(new ChecksumChecker(self::VALID_SIGNATURE), array(
-            self::VALID_FILE_HANDLER => new PolicyRuleTest_FileHandler(self::VALID_FILE_EXT),
-            self::INVALID_FILE_HANDLER => new PolicyRuleTest_FileHandler(self::INVALID_FILE_EXT),
-        ));
-    }
-
     /**
      * @test
-     * @expectedException Floppy\Server\RequestHandler\Exception\AccessDeniedException
+     * @expectedException \Floppy\Server\RequestHandler\Exception\AccessDeniedException
      */
     public function givenInvalidSignature_throwEx()
     {
@@ -59,7 +49,37 @@ class PolicyRuleTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Floppy\Server\RequestHandler\Exception\AccessDeniedException
+     */
+    public function givenRuleWithAllowedMissingPolicy_givenRequestWithoutPolicy_ok()
+    {
+        //given
+
+        $request = new Request();
+
+        //when
+
+        $object = $this->createRule(true)->processRule($request, new FileId('id'));
+        $this->assertNotNull($object);
+    }
+
+    /**
+     * @test
+     * @expectedException \Floppy\Server\RequestHandler\Exception\AccessDeniedException
+     */
+    public function givenRuleWithPolicyRequired_givenRequestWithoutPolicy_throwEx()
+    {
+        //given
+
+        $request = new Request();
+
+        //when
+
+        $this->createRule(false)->processRule($request, new FileId('id'));
+    }
+
+    /**
+     * @test
+     * @expectedException \Floppy\Server\RequestHandler\Exception\AccessDeniedException
      */
     public function givenPolicyExpired_throwEx()
     {
@@ -198,7 +218,7 @@ class PolicyRuleTest extends \PHPUnit_Framework_TestCase
      */
     protected function invokeRule($request, HasFileInfo $object)
     {
-        $actualObject = $this->rule->processRule($request, $object);
+        $actualObject = $this->createRule()->processRule($request, $object);
 
         $this->assertNotNull($actualObject);
 
@@ -208,6 +228,17 @@ class PolicyRuleTest extends \PHPUnit_Framework_TestCase
     private function createFileSource($ext)
     {
         return new FileSource(new StringInputStream(''), new FileType('', $ext));
+    }
+
+    /**
+     * @return PolicyRule
+     */
+    private function createRule($policyMissingAllowed = false)
+    {
+        return new \Floppy\Server\RequestHandler\Security\PolicyRule(new ChecksumChecker(self::VALID_SIGNATURE), array(
+            self::VALID_FILE_HANDLER => new PolicyRuleTest_FileHandler(self::VALID_FILE_EXT),
+            self::INVALID_FILE_HANDLER => new PolicyRuleTest_FileHandler(self::INVALID_FILE_EXT),
+        ), $policyMissingAllowed);
     }
 }
 
