@@ -1,13 +1,13 @@
 FloppyServer
 ============
 
-FloppyServer is a file storage library. There is also FloppyClient library and symfony2 bundle that adds few integration 
+FloppyServer is a file storage library. There is also [FloppyClient][3] library and [symfony2 bundle][4] that adds few integration 
 points to symfony2 applications.
 
 When your application uses images and other files intensively, there is a **problem** with generation required **thumbnails**,
 code to handle file **upload is full of boilerplate**, dealing with files is awkward. There are very good bundles to Imagine
-that partially resolves first problem, but other problems not. This documentation covers only FloppyServer library, if
-you want to see how to use FloppyServer from the client side, check FloppyBundle and FloppyClient libraries.
+that partially resolves first problem, but not other problems. This documentation covers only FloppyServer library, if
+you want to see how to use FloppyServer from the client side, check [FloppyBundle][4] and [FloppyClient][3] libraries.
 
 FloppyServer is able to do some extra processing before store file into storage and before send file to client, for 
 example: 
@@ -23,11 +23,12 @@ types would and how to be optimized, what security credentials would be required
 
 CORS / crossdomain.xml / clientaccesspolicy.xml are supported by adding simple entry into configuration so you can upload
 to FloppyServer directly from web browser even if FloppyServer instance is running on different host than your app. There 
-is also nice symfony2 integration (see FloppyBundle documentation), so uploading files and using files in application is 
+is also nice symfony2 integration (see [FloppyBundle][4] documentation), so uploading files and using files in application is 
 very simple and elegant.
 
 ![Architecture][1]
 
+<a name="simple-setup"></a>
 Simple setup example
 ====================
 
@@ -53,7 +54,7 @@ web/index.php file:
     $requestHandler = $requestHandlerFactory->createRequestHandler(array(
         'storage.dir' => __DIR__.'/../storage',
         'secretKey' => 'super-secret-key',
-        'action.cors.allowedOriginHosts' => array(
+        'cors.allowedOriginHosts' => array(
             '*.your-client-host.com',
         ),
     ));
@@ -71,6 +72,7 @@ Virtual host should be created in web directory, storage will be in web/../stora
 Detailed configuration and extension points
 ======================
 
+<a name="security"></a>
 Security
 --------
 
@@ -99,7 +101,7 @@ To define firewall for given action, use this code:
 
 ```
 
-FloppyServer uses **Pimple2** library as dependency injection container, so $container variable in Closure param is Pimple
+FloppyServer uses [**Pimple2**][5] library as dependency injection container, so $container variable in Closure param is Pimple
 instance.
 
 You can also use security rules to have access to information about file that is being uploaded or downloaded while taking
@@ -116,27 +118,27 @@ decision about permissions:
     ));
 ```
 
-`Floppy\Server\RequestHandler\Security\Rule` interface has one method: `checkRule(Request $request, $object = null)`.
-Object can be a Floppy\Common\FileSource when action is upload, Floppy\Common\FileId when action is download. Current 
-only implementation of this interface is `PolicyRule` that is able to check expiration of request and type of uploaded 
+`Floppy\Server\RequestHandler\Security\Rule` interface has one method: `processRule(Request $request, HasFileInfo $object)`.
+`$object` can be a Floppy\Common\FileSource when action is upload, Floppy\Common\FileId when action is download. Current 
+only implementation of `Security\Rule` interface is `PolicyRule` that is able to check expiration of request and type of uploaded 
 file. `PolicyRule` checks two parameters from `Request`: `policy` and `signature`. `Policy` contains information about 
 request expiration time and supported file types of the request, `signature` ensures policy was send by approved client 
-and was not modified by third-party entity.
-
-PolicyRule configuration:
+and was not modified by third-party entity. `PolicyRule` is default security rule. By default when in `Request` policy is
+missing, the rule allows perform requested action (download / upload). You can change this behaviour and configure
+`PolicyRule` to throw security exception when policy is missing. This is able thanks to two options:
 
 ```php
 
     $requestHandler = $requestHandlerFactory->createRequestHandler(array(
-        //other options...
-            'action.upload.securityRule' => function($container){ //it can be also action.download.securityRule
-                return new \Floppy\Server\RequestHandler\Security\PolicyRule($container['checksumChecker'], $container['fileHandlers']),
-            },
+        //...
+        'action.upload.securityRule.requirePolicy' => true,
+        'action.download.securityRule.requirePolicy' => true,
         //...
     ));
+
 ```
 
-When you **define PolicyRule to upload** (or/and download) action, **every upload** (or/and download) request should contains 
+When you **define PolicyRule to upload** (or/and download) action to require policy, **every upload** (or/and download) request should contains 
 **security credentials**. To generate proper url to file from **FloppyClient**, you should provide security credentials in third
 argument of `Floppy\Client\UrlGenerator`::`generate($fileId, $fileType = null, $credentialAttributes = array())` method,
 example:
@@ -229,8 +231,8 @@ There is an example how to configure your own file handler:
 Recommended setups
 ==================
 
-FloppyServer can be setup in few ways, there are 3 recommended setups. **Before reading this section** read "Simple setup 
-example" section, because it says how composer.json and index.php files should to be.
+FloppyServer can be setup in few ways, there are 4 recommended setups. **Before reading this section** read [Simple setup 
+example](#simple-setup) section, because it says how composer.json and index.php files should to be.
 
 Public directory + apache htaccess (or nginx replacement) fallback for unexisting files
 ----------------
@@ -276,7 +278,7 @@ Example:
 Non-public directory + apache x-sendfile (or nginx replacement)
 ----------------
 
-The alternative is to setup FloppyServer in **non-public directory** and adds **x-sendfile** (or nginx replacement) support for
+The alternative is to setup FloppyServer in **non-public directory** and adds **x-sendfile** (or nginx replacement) support to
 gain performance.
 
 Advantages:
@@ -322,11 +324,59 @@ Example:
 
 More about x-sendfile configuration you can read in [documentation][2]
 
-If you have no x-sendfile mod on your webserver, you should use configuration from "Simple setup example" section. It will
+If you have no x-sendfile mod on your webserver, you should use configuration from [Simple setup example](#simple-setup) section. It will
 be working but would be inefficient.
 
+Both non-public and public directory
+-------------
 
-Bundle FloppyServer into your symfony application
+You can also setup your floppy server to store files in two root directories. One of those directories should be 
+non-public. Client that is uploading file says whether file should be stored in public or non-public directory.
+
+Example:
+
+```php
+
+    //part of web/index.php file in public directory
+    
+    $requestHandler = $requestHandlerFactory->createRequestHandler(array(
+        'storage.dir' => __DIR__, //path to public directory
+        'storage.dir.private' => __DIR__.'/../storage, //path to private directory
+        'secretKey' => 'super-secret-key',
+        'action.cors.allowedOriginHosts' => array(
+            '*.your-client-host.com',
+        ),
+        //if you have xsendfile on your webserver this response factory is recommended
+        'action.download.responseFactory' => new \Floppy\Server\RequestHandler\XSendFileDownloadResponseFactory(),
+    ));
+    
+    //eventual xsendfile configuration as in previous example
+
+```
+
+On the client side you should tell do you want to upload private or public file (default value is public):
+
+*(in [Security](#security) section is more info about usage $client, floppy form and twig function in symfony2 bundle)*
+
+```php
+
+    //using Floppy\Client\FloppyClient
+    
+    $client->upload($someFileSource, array('access' => 'private'));
+
+    //using symfony2 form
+    $form = $this->createFormBuilder($document)
+        ->add('file', 'floppy_file', array('credentials' => array('access' => 'private')))
+        ->getForm();
+        
+    //generate url to private file using twig function from symfony2 bundle    
+    <img src="{{ floppy_url(document.file, { "width": 100, "height": 100 }, { 
+        "access": "private"
+    }) }}" />
+
+```
+
+Bundle FloppyServer into your symfony2 application
 -------------
 
 Not yet available ;)
@@ -338,3 +388,6 @@ This project is under **MIT** license.
 
 [1]: doc/Resources/FloppyServer.png
 [2]: https://tn123.org/mod_xsendfile/
+[3]: https://github.com/zineinc/floppy-client
+[4]: https://github.com/zineinc/floppy-bundle
+[5]: https://github.com/fabpot/Pimple
