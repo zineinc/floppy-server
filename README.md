@@ -228,6 +228,7 @@ There is an example how to configure your own file handler:
 
 ```
 
+<a name="setups"></a>
 Recommended setups
 ==================
 
