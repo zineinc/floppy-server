@@ -11,6 +11,11 @@ use Floppy\Common\AttributesBag;
 use Floppy\Common\FileSource;
 use Floppy\Common\Stream\StringInputStream;
 
+/**
+ * Legacy class that provides ability to create thumbnails
+ *
+ * @deprecated
+ */
 class ResizeImageProcess implements ImageProcess
 {
 	private $quality;

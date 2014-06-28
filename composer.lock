@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "7d0f1bdb3fb2c4639d009286026db406",
+    "hash": "a3ef4273f0122704833e83e53121408c",
     "packages": [
         {
             "name": "floppy/common",
@@ -12,7 +12,7 @@
             "source": {
                 "type": "git",
                 "url": "git@codebasehq.com:advisio/zineinc/storage-common.git",
-                "reference": "a27bc2d2939bd1f66f33a87953d878ff4d71bafc"
+                "reference": "fdffa41fd918af8bceeaaec5a8681496cbe3c188"
             },
             "type": "library",
             "autoload": {
@@ -29,7 +29,7 @@
                     "email": "piotr.sliwa@zineinc.com"
                 }
             ],
-            "time": "2014-06-26 20:13:02"
+            "time": "2014-07-05 13:23:22"
         },
         {
             "name": "imagine/imagine",
@@ -198,12 +198,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/psliwa/ImagineExtra.git",
-                "reference": "c42b14df817b113a27539fc6fcec018ff0bf364c"
+                "reference": "b15f1e6398cdf62de567cd9573f1f524e72143c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/psliwa/ImagineExtra/zipball/c42b14df817b113a27539fc6fcec018ff0bf364c",
-                "reference": "c42b14df817b113a27539fc6fcec018ff0bf364c",
+                "url": "https://api.github.com/repos/psliwa/ImagineExtra/zipball/b15f1e6398cdf62de567cd9573f1f524e72143c8",
+                "reference": "b15f1e6398cdf62de567cd9573f1f524e72143c8",
                 "shasum": ""
             },
             "require": {
@@ -213,7 +213,7 @@
             "type": "library",
             "autoload": {
                 "psr-0": {
-                    "ImagineExtra\\": "src/"
+                    "ImagineExtra\\": ""
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -227,7 +227,7 @@
                     "homepage": "http://ohey.pl"
                 }
             ],
-            "time": "2014-06-28 14:11:17"
+            "time": "2014-06-28 22:58:17"
         },
         {
             "name": "psr/log",

@@ -4,9 +4,12 @@
 namespace Floppy\Server\RequestHandler;
 
 use Floppy\Common\FileHandler\Base64PathMatcher;
+use Floppy\Common\FileHandler\FilenameFileInfoAssembler;
+use Floppy\Common\FileHandler\QueryStringFileInfoAssembler;
 use Floppy\Common\Storage\PrefixedFilepathChoosingStrategy;
 use Floppy\Common\StringUtils;
 use Floppy\Server\FileHandler\CacheResponseFilter;
+use Floppy\Server\Imagine\DefaultFilterFactory;
 use Floppy\Server\RequestHandler\Action\CorsEtcAction;
 use Floppy\Server\RequestHandler\Action\DownloadAction;
 use Floppy\Server\RequestHandler\Action\UploadAction;
@@ -168,11 +171,39 @@ class RequestHandlerFactory
             return new \Imagine\Gd\Imagine();
         };
         $container['fileHandlers.image.pathMatcher'] = function ($container) {
-            return new Base64PathMatcher($container['checksumChecker'], $container['fileHandlers.image.extensions']);
+            return new Base64PathMatcher(
+                $container['checksumChecker'],
+                new QueryStringFileInfoAssembler($container['storage.filepathChoosingStrategy']),
+                $container['fileHandlers.image.extensions']
+            );
         };
         $container['fileHandlers.image.beforeSendImageProcess'] = function ($container) {
-            return new ResizeImageProcess($container['fileHandlers.image.quality']);
+            return new \Floppy\Server\FileHandler\FilterImageProcess(
+                $container['fileHandlers.image.filterFactory'],
+                $container['fileHandlers.image.quality']
+            );
         };
+
+        $container['fileHandlers.image.filterFactory'] = function($container){
+            $factory = new DefaultFilterFactory($container['imagine'], $container['fileHandlers.image.filterFactory.rootPath']);
+
+            $factory->registerFilter('auto_rotate', 'ImagineExtra\Filter\AutoRotateFilter');
+            $factory->registerFilter('background', 'ImagineExtra\Filter\BackgroundFilter');
+            $factory->registerFilter('crop', 'ImagineExtra\Filter\CropFilter');
+            $factory->registerFilter('paste', 'ImagineExtra\Filter\PasteFilter');
+            $factory->registerFilter('relative_resize', 'ImagineExtra\Filter\RelativeResizeFilter');
+            $factory->registerFilter('resize', 'ImagineExtra\Filter\ResizeFilter');
+            $factory->registerFilter('thumbnail', 'ImagineExtra\Filter\ThumbnailFilter');
+            $factory->registerFilter('upscale', 'ImagineExtra\Filter\UpscaleFilter');
+            $factory->registerFilter('watermark', 'ImagineExtra\Filter\WatermarkFilter');
+
+            return $factory;
+        };
+
+        $container['fileHandlers.image.filterFactory.rootPath'] = function($container){
+            return $container['storage.dir'].'/..';
+        };
+
         $container['fileHandlers.image.beforeStoreImageProcess'] = function($container) {
             return new MaxSizeImageProcess(
 				$container['fileHandlers.image.maxWidth'],
@@ -192,7 +223,11 @@ class RequestHandlerFactory
             );
         };
         $container['fileHandlers.file.pathMatcher'] = function ($container) {
-            return new Base64PathMatcher($container['checksumChecker'], $container['fileHandlers.file.extensions']);
+            return new Base64PathMatcher(
+                $container['checksumChecker'],
+                new FilenameFileInfoAssembler($container['storage.filepathChoosingStrategy']),
+                $container['fileHandlers.file.extensions']
+            );
         };
         $container['fileHandlers.file.mimeTypes'] = function ($container) {
             return array();
