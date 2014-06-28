@@ -4,8 +4,8 @@ namespace Floppy\Server\FileHandler;
 
 use Floppy\Server\FileHandler\Exception\FileProcessException;
 use Imagine\Image\Box;
-use Imagine\Image\Color;
 use Imagine\Image\ImagineInterface;
+use Imagine\Image\Palette;
 use Imagine\Image\Point;
 use Floppy\Common\AttributesBag;
 use Floppy\Common\FileSource;
@@ -14,10 +14,12 @@ use Floppy\Common\Stream\StringInputStream;
 class ResizeImageProcess implements ImageProcess
 {
 	private $quality;
+    private $palette;
 
 	public function __construct($quality = 95)
 	{
 		$this->quality = (int) $quality;
+        $this->palette = new Palette\RGB();
 	}
 
 
@@ -79,7 +81,7 @@ class ResizeImageProcess implements ImageProcess
                 $image->resize($newSize);
 
                 if ($requestedSize != $newSize) {
-                    $destImage = $imagine->create($requestedSize, $requestedColor === null || $requestedColor > 'ffffff' ? null : new Color($requestedColor));
+                    $destImage = $imagine->create($requestedSize, $requestedColor === null || $requestedColor > 'ffffff' ? null : $this->palette->color($requestedColor));
                     $x = ($requestedSize->getWidth() - $newSize->getWidth()) / 2;
                     $y = ($requestedSize->getHeight() - $newSize->getHeight()) / 2;
                     $destImage->paste($image, new Point($x, $y));

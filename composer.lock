@@ -4,15 +4,15 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "421c8636e2648a039447005ac20d73d7",
+    "hash": "7d0f1bdb3fb2c4639d009286026db406",
     "packages": [
         {
             "name": "floppy/common",
-            "version": "dev-private-storage",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@codebasehq.com:advisio/zineinc/storage-common.git",
-                "reference": "b96c8e1e7af3bebc08e0ab4159ac16d3b232bcf5"
+                "reference": "a27bc2d2939bd1f66f33a87953d878ff4d71bafc"
             },
             "type": "library",
             "autoload": {
@@ -29,20 +29,20 @@
                     "email": "piotr.sliwa@zineinc.com"
                 }
             ],
-            "time": "2014-06-05 20:51:25"
+            "time": "2014-06-26 20:13:02"
         },
         {
             "name": "imagine/imagine",
-            "version": "v0.5.0",
+            "version": "v0.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/avalanche123/Imagine.git",
-                "reference": "f64ec666baaa800edcbf237db41121a569230709"
+                "reference": "725279fd560faa1c7012a80b427b31d7f08f36ff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/avalanche123/Imagine/zipball/f64ec666baaa800edcbf237db41121a569230709",
-                "reference": "f64ec666baaa800edcbf237db41121a569230709",
+                "url": "https://api.github.com/repos/avalanche123/Imagine/zipball/725279fd560faa1c7012a80b427b31d7f08f36ff",
+                "reference": "725279fd560faa1c7012a80b427b31d7f08f36ff",
                 "shasum": ""
             },
             "require": {
@@ -57,6 +57,11 @@
                 "ext-imagick": "to use the Imagick implementation"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop": "0.6-dev"
+                }
+            },
             "autoload": {
                 "psr-0": {
                     "Imagine": "lib/"
@@ -81,7 +86,7 @@
                 "image manipulation",
                 "image processing"
             ],
-            "time": "2013-07-10 17:25:36"
+            "time": "2014-06-16 20:53:48"
         },
         {
             "name": "jbroadway/urlify",
@@ -185,6 +190,44 @@
                 "dependency injection"
             ],
             "time": "2014-02-10 08:05:32"
+        },
+        {
+            "name": "ps/imagine-extra",
+            "version": "dev-master",
+            "target-dir": "ImagineExtra",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/psliwa/ImagineExtra.git",
+                "reference": "c42b14df817b113a27539fc6fcec018ff0bf364c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/psliwa/ImagineExtra/zipball/c42b14df817b113a27539fc6fcec018ff0bf364c",
+                "reference": "c42b14df817b113a27539fc6fcec018ff0bf364c",
+                "shasum": ""
+            },
+            "require": {
+                "imagine/imagine": ">=0.6.0,<0.7.0",
+                "symfony/options-resolver": ">=2.1.0,<3.0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "ImagineExtra\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Piotr Śliwa",
+                    "email": "peter.pl7@gmail.com",
+                    "homepage": "http://ohey.pl"
+                }
+            ],
+            "time": "2014-06-28 14:11:17"
         },
         {
             "name": "psr/log",
@@ -383,6 +426,60 @@
             "description": "Symfony HttpFoundation Component",
             "homepage": "http://symfony.com",
             "time": "2014-05-22 16:21:00"
+        },
+        {
+            "name": "symfony/options-resolver",
+            "version": "v2.5.0",
+            "target-dir": "Symfony/Component/OptionsResolver",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/OptionsResolver.git",
+                "reference": "1b4a27c83460b315bb7c81ffa803ecbdccb59960"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/OptionsResolver/zipball/1b4a27c83460b315bb7c81ffa803ecbdccb59960",
+                "reference": "1b4a27c83460b315bb7c81ffa803ecbdccb59960",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.5-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\OptionsResolver\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com",
+                    "homepage": "http://fabien.potencier.org",
+                    "role": "Lead Developer"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony OptionsResolver Component",
+            "homepage": "http://symfony.com",
+            "keywords": [
+                "config",
+                "configuration",
+                "options"
+            ],
+            "time": "2014-04-16 10:36:21"
         }
     ],
     "packages-dev": [
@@ -393,7 +490,8 @@
     ],
     "minimum-stability": "stable",
     "stability-flags": {
-        "floppy/common": 20
+        "floppy/common": 20,
+        "ps/imagine-extra": 20
     },
     "platform": [
 
