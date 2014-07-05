@@ -1,5 +1,7 @@
 {
     "name": "floppy/server",
+    "description": "Floppy is a file storage library. This library allows you to create your own storage file server that simplify file uploading and usage uploaded file.",
+    "keywords": ["filesystem", "file", "file storage", "file upload", "image"],
     "license": "MIT",
     "authors": [
         {
@@ -8,23 +10,17 @@
         }
     ],
     "require": {
-        "floppy/common": "dev-master",
+        "floppy/common": ">=0.1.0,<0.2.0",
         "symfony/http-foundation": ">=2.1,<2.5",
         "symfony/event-dispatcher": ">=2.1,<2.5",
         "imagine/imagine": ">=0.6.0,<0.7.0",
         "symfony/filesystem": ">=2.1,<2.5",
         "pimple/pimple": "2.0.*",
         "psr/log": "1.0.0",
-        "ps/imagine-extra": "dev-master"
+        "ps/imagine-extra": ">=1.0.0,<2.0.0"
     },
     "autoload": {
     	"psr-0": { "Floppy\\": "src/" }
     },
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "http://packages.julita.zineinc.pl"
-        }
-    ],
     "minimum-stability": "stable"
 }
