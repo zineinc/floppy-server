@@ -12,7 +12,8 @@ you want to see how to use FloppyServer from the client side, check [FloppyBundl
 FloppyServer is able to do some extra processing before store file into storage and before send file to client, for 
 example: 
 
-* before sending file to client: thumbnail of image with requested dimensions can be created
+* before sending file to client: bunch of filters can be applied, for example thumbnail (see [FloppyClient][6] docs for
+more details about filters)
 * before storing: file optimizations, now there is implemented resizing very large images but in very near feature there
 will be few nice optimizations
 
@@ -173,7 +174,7 @@ You can also provide credentials while generating url from floppy_url twig funct
 
 ```
 
-    <img src="{{ floppy_url(document.file, { "width": 100, "height": 100 }, { 
+    <img src="{{ floppy_url(document.file, { 
         "expiration": date().timestamp + 60, "some-custom-attr": "custom-value" 
     }) }}" />
 
@@ -371,7 +372,7 @@ On the client side you should tell do you want to upload private or public file 
         ->getForm();
         
     //generate url to private file using twig function from symfony2 bundle    
-    <img src="{{ floppy_url(document.file, { "width": 100, "height": 100 }, { 
+    <img src="{{ floppy_url(document.file.with({ "thumbnail": { "size": [50, 50] } }), { 
         "access": "private"
     }) }}" />
 
@@ -392,3 +393,4 @@ This project is under **MIT** license.
 [3]: https://github.com/zineinc/floppy-client
 [4]: https://github.com/zineinc/floppy-bundle
 [5]: https://github.com/fabpot/Pimple
+[6]: https://github.com/zineinc/floppy-client#filters
