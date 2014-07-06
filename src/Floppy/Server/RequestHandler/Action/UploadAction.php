@@ -58,7 +58,7 @@ class UploadAction implements Action
     /**
      * @return string
      */
-    public static function name()
+    public function name()
     {
         return 'upload';
     }

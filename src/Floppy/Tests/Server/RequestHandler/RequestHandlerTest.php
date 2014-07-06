@@ -149,7 +149,7 @@ class RequestHandlerTest_ActionResolver implements ActionResolver
 {
     private $action;
 
-    public function __construct($action)
+    public function __construct(Action $action)
     {
         $this->action = $action;
     }

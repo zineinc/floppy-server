@@ -18,5 +18,5 @@ interface Action
     /**
      * @return string
      */
-    public static function name();
+    public function name();
 } 
