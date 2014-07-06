@@ -23,6 +23,8 @@ class UploadAction implements Action
     private $checksumChecker;
     private $securityRule;
 
+    const NAME = 'upload';
+
     public function __construct(Storage $storage, FileSourceFactory $fileSourceFactory, array $fileHandlers, ChecksumChecker $checksumChecker, Security\Rule $securityRule = null)
     {
         $this->fileSourceFactory = $fileSourceFactory;
@@ -60,6 +62,6 @@ class UploadAction implements Action
      */
     public function name()
     {
-        return 'upload';
+        return self::NAME;
     }
 }

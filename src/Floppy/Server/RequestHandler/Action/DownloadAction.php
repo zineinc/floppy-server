@@ -27,6 +27,8 @@ class DownloadAction implements Action
     private $eventDispatcher;
     private $securityRule;
 
+    const NAME = 'download';
+
     public function __construct(Storage $storage, DownloadResponseFactory $downloadResponseFactory, array $fileHandlers, EventDispatcherInterface $eventDispatcher, Security\Rule $securityRule = null)
     {
         $this->downloadResponseFactory = $downloadResponseFactory;
@@ -87,7 +89,7 @@ class DownloadAction implements Action
      */
     public function name()
     {
-        return 'download';
+        return self::NAME;
     }
 
     /**

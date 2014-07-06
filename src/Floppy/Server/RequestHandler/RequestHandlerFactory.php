@@ -317,8 +317,8 @@ class RequestHandlerFactory
             $uploadAction = $container['requestHandler.firewall.upload'];
 
             return new CallbackFirewall(array(
-                $downloadAction->name() => $downloadAction,
-                $uploadAction->name() => $uploadAction,
+                DownloadAction::NAME => $downloadAction,
+                UploadAction::NAME => $uploadAction,
             ));
         };
         $container['requestHandler.firewall.download'] = function($container) {
