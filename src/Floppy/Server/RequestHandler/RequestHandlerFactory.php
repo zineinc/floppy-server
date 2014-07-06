@@ -313,9 +313,12 @@ class RequestHandlerFactory
             return new DownloadResponseFactoryImpl();
         };
         $container['requestHandler.firewall'] = function($container) {
+            $downloadAction = $container['requestHandler.firewall.download'];
+            $uploadAction = $container['requestHandler.firewall.upload'];
+
             return new CallbackFirewall(array(
-                DownloadAction::name() => $container['requestHandler.firewall.download'],
-                UploadAction::name() => $container['requestHandler.firewall.upload'],
+                $downloadAction->name() => $downloadAction,
+                $uploadAction->name() => $uploadAction,
             ));
         };
         $container['requestHandler.firewall.download'] = function($container) {
