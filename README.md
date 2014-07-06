@@ -1,20 +1,21 @@
-FloppyServer
-============
+# FloppyServer
+
+[![Build Status](https://travis-ci.org/zineinc/floppy-server.svg?branch=master)](https://travis-ci.org/zineinc/floppy-server)
 
 FloppyServer is a file storage library. There is also [FloppyClient][3] library and [symfony2 bundle][4] that adds few integration 
 points to symfony2 applications.
 
-When your application uses images and other files intensively, there is a **problem** with generation required **thumbnails**,
-code to handle file **upload is full of boilerplate**, dealing with files is awkward. There are very good bundles to Imagine
+When your application uses images and other files intensively, there is a problem with generation required thumbnails,
+code to handle file upload is full of boilerplate, dealing with files is awkward. There are very good bundles to Imagine
 that partially resolves first problem, but not other problems. This documentation covers only FloppyServer library, if
 you want to see how to use FloppyServer from the client side, check [FloppyBundle][4] and [FloppyClient][3] libraries.
 
 FloppyServer is able to do some extra processing before store file into storage and before send file to client, for 
 example: 
 
-* before sending file to client: bunch of filters can be applied, for example thumbnail (see [FloppyClient][6] docs for
-more details about filters)
-* before storing: file optimizations, now there is implemented resizing very large images but in very near feature there
+* filters before sending file to client: bunch of filters can be applied, for example thumbnail, watermark, etc. (see [FloppyClient][6] docs for
+more details about filters, supported filters are similar to filters from [LiipImagineBundle][7])
+* filters before storing: file optimizations, now there is implemented resizing very large images but in very near feature there
 will be few nice optimizations
 
 FloppyServer is designed to **handle multiple clients**, so you can setup **one instance** of FloppyServer and use it in **many
@@ -29,9 +30,23 @@ very simple and elegant.
 
 ![Architecture][1]
 
+# Documentation
+
+## ToC
+
+* [Simple setup example](#simple-setup)
+* [Detailed configuration and extension points](#detailed-config)
+    * [Security](#security)
+    * [File handlers](#file-handlers)
+* [Recommended setups](#setups)
+    * [Public directory](#setup-public-dir)
+    * [Non-public directory](#setup-non-public-dir)
+    * [Both non-public and public directory](#setup-non-public-public-dir)
+    * [Bundle FloppyServer into your symfony2 application](#setup-symfony2)
+* [License](#license)
+
 <a name="simple-setup"></a>
-Simple setup example
-====================
+## Simple setup example
 
 To create your floppy server application you should create **empty composer project**, add dependency to floppy/server 
 package and create following index.php file.
@@ -70,12 +85,11 @@ web/index.php file:
 
 Virtual host should be created in web directory, storage will be in web/../storage dir.
 
-Detailed configuration and extension points
-======================
+<a name="detailed-config"></a>
+## Detailed configuration and extension points
 
 <a name="security"></a>
-Security
---------
+### Security
 
 There are two levels to define security rules:
 
@@ -183,9 +197,8 @@ You can also provide credentials while generating url from floppy_url twig funct
 If you want to add extra security attributes, you can extend PolicyRule and add support for your extra attributes, for 
 example user id etc.
 
-
-File handlers
--------------
+<a name="file-handlers"></a>
+### File handlers
 
 There are two **file groups** by default: images and other files. Images has its own `FileHandler` that adds support for
 processing before storing and sending file to a client. If you want to create your own files' group you should create
@@ -230,14 +243,13 @@ There is an example how to configure your own file handler:
 ```
 
 <a name="setups"></a>
-Recommended setups
-==================
+## Recommended setups
 
 FloppyServer can be setup in few ways, there are 4 recommended setups. **Before reading this section** read [Simple setup 
 example](#simple-setup) section, because it says how composer.json and index.php files should to be.
 
-Public directory + apache htaccess (or nginx replacement) fallback for unexisting files
-----------------
+<a name="setup-public-dir"></a>
+### Public directory + apache htaccess (or nginx replacement) fallback for unexisting files
 
 The idea is to put your storage directory to **public directory** and **configure htaccess** to fallback requests to unexisting 
 files to your index.php file. This is the most efficient way to setup Floppy. When requested thumbnail exists (because
@@ -277,8 +289,8 @@ Example:
 
 ```
 
-Non-public directory + apache x-sendfile (or nginx replacement)
-----------------
+<a name="setup-non-public-dir"></a>
+### Non-public directory + apache x-sendfile (or nginx replacement)
 
 The alternative is to setup FloppyServer in **non-public directory** and adds **x-sendfile** (or nginx replacement) support to
 gain performance.
@@ -329,8 +341,8 @@ More about x-sendfile configuration you can read in [documentation][2]
 If you have no x-sendfile mod on your webserver, you should use configuration from [Simple setup example](#simple-setup) section. It will
 be working but would be inefficient.
 
-Both non-public and public directory
--------------
+<a name="setup-non-public-public-dir"></a>
+### Both non-public and public directory
 
 You can also setup your floppy server to store files in two root directories. One of those directories should be 
 non-public. Client that is uploading file says whether file should be stored in public or non-public directory.
@@ -378,13 +390,13 @@ On the client side you should tell do you want to upload private or public file 
 
 ```
 
-Bundle FloppyServer into your symfony2 application
--------------
+<a name="setup-symfony2"></a>
+### Bundle FloppyServer into your symfony2 application
 
 Not yet available ;)
 
-License
-=======
+<a name="license"></a>
+## License
 
 This project is under **MIT** license.
 
@@ -394,3 +406,4 @@ This project is under **MIT** license.
 [4]: https://github.com/zineinc/floppy-bundle
 [5]: https://github.com/fabpot/Pimple
 [6]: https://github.com/zineinc/floppy-client#filters
+[7]: https://github.com/liip/LiipImagineBundle/blob/master/Resources/doc/filters.md
