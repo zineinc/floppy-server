@@ -312,7 +312,7 @@ Example:
     //part of web/index.php file in public directory
 
     $requestHandler = $requestHandlerFactory->createRequestHandler(array(
-        'storage.dir' => __DIR__.'/../storage,//path to private directory
+        'storage.dir' => __DIR__.'/../storage', //path to private directory
         'secretKey' => 'super-secret-key',
         'action.cors.allowedOriginHosts' => array(
             '*.your-client-host.com',
@@ -355,7 +355,7 @@ Example:
     
     $requestHandler = $requestHandlerFactory->createRequestHandler(array(
         'storage.dir' => __DIR__, //path to public directory
-        'storage.dir.private' => __DIR__.'/../storage, //path to private directory
+        'storage.dir.private' => __DIR__.'/../storage', //path to private directory
         'secretKey' => 'super-secret-key',
         'action.cors.allowedOriginHosts' => array(
             '*.your-client-host.com',
