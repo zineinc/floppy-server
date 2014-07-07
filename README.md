@@ -5,6 +5,10 @@
 FloppyServer is a file storage library. There is also [FloppyClient][3] library and [symfony2 bundle][4] that adds few integration 
 points to symfony2 applications.
 
+The main goal of Floppy-family libraries is to make dealing with every aspect of files as easy as possible. Floppy-family
+libraries improve dealing with: file uploading, file storing, generating various file versions (thumbnails, watermarks etc.),
+representing files in Entities and more.
+
 When your application uses images and other files intensively, there is a problem with generation required thumbnails,
 code to handle file upload is full of boilerplate, dealing with files is awkward. There are very good bundles to Imagine
 that partially resolves first problem, but not other problems. This documentation covers only FloppyServer library, if
