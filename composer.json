@@ -1,5 +1,6 @@
 {
     "name": "floppy/server",
+    "type": "library",
     "description": "Floppy is a file storage library. This library allows you to create your own storage file server that simplify file uploading and usage uploaded file.",
     "keywords": ["filesystem", "file", "file storage", "file upload", "image"],
     "license": "MIT",
