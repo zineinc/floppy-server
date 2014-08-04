@@ -14,13 +14,24 @@ code to handle file upload is full of boilerplate, dealing with files is awkward
 that partially resolves first problem, but not other problems. This documentation covers only FloppyServer library, if
 you want to see how to use FloppyServer from the client side, check [FloppyBundle][4] and [FloppyClient][3] libraries.
 
-FloppyServer is able to do some extra processing before store file into storage and before send file to client, for 
-example: 
+## File optimizations
 
-* filters before sending file to client: bunch of filters can be applied, for example thumbnail, watermark, etc. (see [FloppyClient][6] docs for
-more details about filters, supported filters are similar to filters from [LiipImagineBundle][7])
-* filters before storing: file optimizations, now there is implemented resizing very large images but in very near feature there
-will be few nice optimizations
+FloppyServer is able to **do some extra processing on uploaded file**. It is able to **resize large images** before store it to
+storage and **execute various optimizations** on images thanks to [ImageOptimizer][8] library. Resizing images greater
+that Full HD size is enabled by default, but other optimizations are disabled and you could enable it manually thanks to
+`fileHandlers.image.enableOptimizations` option. Be aware of that, image optimizations could be cpu extensive, however
+default optimizers are as lightweight as possible.
+
+## File filters
+
+Floppy supports applying filters on files, especially on images. Original, optimized files are stored in storage, but
+it is possibility to generate different version of the file on the fly when users are requesting for the file. Different
+version of the file could be thumbnails, images with watermark, cropped images and more. See [FloppyClient][6] docs for
+more details about filters, supported filters are similar to filters from [LiipImagineBundle][7]. After generating 
+thumbnail or other version of the file, it is cached and on the next request for the same version, file would be fetched
+from cache, so processing is done once.
+
+## Extensible architecture
 
 FloppyServer is designed to **handle multiple clients**, so you can setup **one instance** of FloppyServer and use it in **many
 applications**. This library is fully customizable and extensible, you can define what file types can be stored, what file 
@@ -77,6 +88,8 @@ web/index.php file:
         'cors.allowedOriginHosts' => array(
             '*.your-client-host.com',
         ),
+        //enable images optimizations
+        'fileHandlers.image.enableOptimizations' => true,
     ));
     
     $request = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
@@ -411,3 +424,4 @@ This project is under **MIT** license.
 [5]: https://github.com/fabpot/Pimple
 [6]: https://github.com/zineinc/floppy-client#filters
 [7]: https://github.com/liip/LiipImagineBundle/blob/master/Resources/doc/filters.md
+[8]: https://github.com/psliwa/image-optimizer

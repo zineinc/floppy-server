@@ -9,6 +9,8 @@ use Floppy\Common\FileHandler\QueryStringFileInfoAssembler;
 use Floppy\Common\Storage\PrefixedFilepathChoosingStrategy;
 use Floppy\Common\StringUtils;
 use Floppy\Server\FileHandler\CacheResponseFilter;
+use Floppy\Server\FileHandler\ChainImageProcess;
+use Floppy\Server\FileHandler\OptimizationImageProcess;
 use Floppy\Server\Imagine\DefaultFilterFactory;
 use Floppy\Server\RequestHandler\Action\CorsEtcAction;
 use Floppy\Server\RequestHandler\Action\DownloadAction;
@@ -19,6 +21,8 @@ use Floppy\Server\RequestHandler\Exception\DefaultMapExceptionHandler;
 use Floppy\Server\RequestHandler\Security\NullRule;
 use Floppy\Server\RequestHandler\Security\PolicyRule;
 use Floppy\Server\Storage\AccessSupportStorage;
+use ImageOptimizer\OptimizerFactory;
+use Psr\Log\NullLogger;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Floppy\Common\ChecksumCheckerImpl;
@@ -178,11 +182,31 @@ class RequestHandlerFactory
             );
         };
         $container['fileHandlers.image.beforeSendImageProcess'] = function ($container) {
-            return new \Floppy\Server\FileHandler\FilterImageProcess(
+            $processes = array(new \Floppy\Server\FileHandler\FilterImageProcess(
                 $container['fileHandlers.image.filterFactory'],
                 $container['fileHandlers.image.quality']
+            ));
+
+            if($container['fileHandlers.image.enableOptimizations']) {
+                $processes[] = $container['fileHandlers.image.optimizationImageProcess'];
+            }
+
+            return new \Floppy\Server\FileHandler\ChainImageProcess($processes);
+        };
+
+        $container['fileHandlers.image.optimizationImageProcess'] = function($container) {
+            return new OptimizationImageProcess(
+                $container['fileHandlers.image.optimizer'],
+                $container['logger']
             );
         };
+
+        $container['fileHandlers.image.optimizer'] = function($container) {
+            $factory = new OptimizerFactory(array(), $container['logger']);
+            return $factory->get();
+        };
+
+        $container['fileHandlers.image.enableOptimizations'] = false;
 
         $container['fileHandlers.image.filterFactory'] = function($container){
             $factory = new DefaultFilterFactory($container['imagine'], $container['fileHandlers.image.filterFactory.rootPath']);
@@ -205,11 +229,19 @@ class RequestHandlerFactory
         };
 
         $container['fileHandlers.image.beforeStoreImageProcess'] = function($container) {
-            return new MaxSizeImageProcess(
-				$container['fileHandlers.image.maxWidth'],
-				$container['fileHandlers.image.maxHeight'],
-				$container['fileHandlers.image.quality']
-			);
+            $processes = array(
+                new MaxSizeImageProcess(
+                    $container['fileHandlers.image.maxWidth'],
+                    $container['fileHandlers.image.maxHeight'],
+                    $container['fileHandlers.image.quality']
+                ),
+            );
+
+            if($container['fileHandlers.image.enableOptimizations']) {
+                $processes[] = $container['fileHandlers.image.optimizationImageProcess'];
+            }
+
+            return new ChainImageProcess($processes);
         };
 		$container['fileHandlers.image.quality'] = 95;
         $container['fileHandlers.image.maxWidth'] = 1920;
@@ -261,13 +293,22 @@ class RequestHandlerFactory
             return new EventDispatcher();
         };
         $container['requestHandler'] = function ($container) {
-            return new RequestHandler(
+            $requestHandler = new RequestHandler(
                 $container['actionResolver'],
                 $container['requestHandler.firewall'],
                 $container['eventDispatcher'],
                 $container['requestHandler.exceptionHandler']
             );
+
+            $requestHandler->setLogger($container['logger']);
+
+            return $requestHandler;
         };
+
+        $container['logger'] = function($container){
+            return new NullLogger();
+        };
+
         $container['requestHandler.exceptionHandler'] = function($container){
             return new DefaultMapExceptionHandler();
         };
