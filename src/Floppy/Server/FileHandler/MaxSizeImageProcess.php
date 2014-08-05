@@ -13,21 +13,23 @@ use Floppy\Common\Stream\StringInputStream;
 
 class MaxSizeImageProcess implements ImageProcess
 {
+    private $imagine;
     private $maxWidth;
     private $maxHeight;
 	private $quality;
 
-    function __construct($maxWidth, $maxHeight, $quality = 95)
+    public function __construct(ImagineInterface $imagine, $maxWidth, $maxHeight, $quality = 95)
     {
+        $this->imagine = $imagine;
         $this->maxHeight = (int) $maxHeight;
         $this->maxWidth = (int) $maxWidth;
 		$this->quality = (int) $quality;
     }
 
-    public function process(ImagineInterface $imagine, FileSource $fileSource, AttributesBag $attrs)
+    public function process(FileSource $fileSource, AttributesBag $attrs)
     {
         try {
-            $image = $imagine->load($fileSource->content());
+            $image = $this->imagine->load($fileSource->content());
 
             $size = $image->getSize();
 

@@ -13,31 +13,33 @@ use Imagine\Image\ImagineInterface;
 
 class FilterImageProcess implements ImageProcess
 {
+    private $imagine;
     private $filterFactory;
     private $defaultQuality;
 
-    public function __construct(FilterFactory $filterFactory, $defaultQuality = 90)
+    public function __construct(ImagineInterface $imagine, FilterFactory $filterFactory, $defaultQuality = 90)
     {
+        $this->imagine = $imagine;
         $this->filterFactory = $filterFactory;
         $this->defaultQuality = (int) $defaultQuality;
     }
 
-    public function process(ImagineInterface $imagine, FileSource $fileSource, AttributesBag $attrs)
+    public function process(FileSource $fileSource, AttributesBag $attrs)
     {
         if(count($attrs->all()) === 0) {
             return $fileSource;
         }
 
         try {
-            return $this->doProcess($imagine, $fileSource, $attrs);
+            return $this->doProcess($fileSource, $attrs);
         } catch (\Imagine\Exception\Exception $e) {
             throw new FileProcessException('Image processing error', 0, $e);
         }
     }
 
-    private function doProcess(ImagineInterface $imagine, FileSource $fileSource, AttributesBag $attrs)
+    private function doProcess(FileSource $fileSource, AttributesBag $attrs)
     {
-        $image = $imagine->load($fileSource->content());
+        $image = $this->imagine->load($fileSource->content());
 
         $quality = $this->defaultQuality;
 

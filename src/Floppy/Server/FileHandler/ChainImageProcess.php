@@ -25,10 +25,10 @@ class ChainImageProcess implements ImageProcess
         $this->imageProcesses[] = $imageProcess;
     }
 
-    public function process(ImagineInterface $imagine, FileSource $fileSource, AttributesBag $attrs)
+    public function process(FileSource $fileSource, AttributesBag $attrs)
     {
         foreach($this->imageProcesses as $imageProcess) {
-            $fileSource = $imageProcess->process($imagine, $fileSource, $attrs);
+            $fileSource = $imageProcess->process($fileSource, $attrs);
         }
 
         return $fileSource;

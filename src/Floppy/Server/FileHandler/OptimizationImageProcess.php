@@ -25,7 +25,7 @@ class OptimizationImageProcess implements ImageProcess
         $this->logger = $logger ?: new NullLogger();
     }
 
-    public function process(ImagineInterface $imagine, FileSource $fileSource, AttributesBag $attrs)
+    public function process(FileSource $fileSource, AttributesBag $attrs)
     {
         $filename = tempnam(sys_get_temp_dir(), 'floppy');
 

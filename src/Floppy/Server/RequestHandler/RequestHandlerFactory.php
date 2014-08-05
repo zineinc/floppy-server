@@ -183,6 +183,7 @@ class RequestHandlerFactory
         };
         $container['fileHandlers.image.beforeSendImageProcess'] = function ($container) {
             $processes = array(new \Floppy\Server\FileHandler\FilterImageProcess(
+                $container['imagine'],
                 $container['fileHandlers.image.filterFactory'],
                 $container['fileHandlers.image.quality']
             ));
@@ -231,6 +232,7 @@ class RequestHandlerFactory
         $container['fileHandlers.image.beforeStoreImageProcess'] = function($container) {
             $processes = array(
                 new MaxSizeImageProcess(
+                    $container['imagine'],
                     $container['fileHandlers.image.maxWidth'],
                     $container['fileHandlers.image.maxHeight'],
                     $container['fileHandlers.image.quality']

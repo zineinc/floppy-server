@@ -63,12 +63,12 @@ class ImageFileHandler extends AbstractFileHandler
 
     public function beforeSendProcess(FileSource $file, FileId $fileId)
     {
-        return $this->beforeSendImageProcess->process($this->imagine, $file, $fileId->attributes());
+        return $this->beforeSendImageProcess->process($file, $fileId->attributes());
     }
 
     public function beforeStoreProcess(FileSource $file)
     {
-        return $this->beforeStoreImageProcess->process($this->imagine, $file, new AttributesBag());
+        return $this->beforeStoreImageProcess->process($file, new AttributesBag());
     }
 
     protected function doGetStoreAttributes(FileSource $file)

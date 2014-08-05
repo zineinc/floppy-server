@@ -10,7 +10,6 @@ use Floppy\Common\FileSource;
 interface ImageProcess
 {
     /**
-     * @param ImagineInterface $imagine
      * @param FileSource $fileSource
      * @param AttributesBag $attrs
      *
@@ -18,5 +17,5 @@ interface ImageProcess
      *
      * @throws FileProcessException
      */
-    public function process(ImagineInterface $imagine, FileSource $fileSource, AttributesBag $attrs);
+    public function process(FileSource $fileSource, AttributesBag $attrs);
 }

@@ -18,24 +18,26 @@ use Floppy\Common\Stream\StringInputStream;
  */
 class ResizeImageProcess implements ImageProcess
 {
+    private $imagine;
 	private $quality;
     private $palette;
 
-	public function __construct($quality = 95)
+	public function __construct(ImagineInterface $imagine, $quality = 95)
 	{
+        $this->imagine = $imagine;
 		$this->quality = (int) $quality;
         $this->palette = new Palette\RGB();
 	}
 
 
-	public function process(ImagineInterface $imagine, FileSource $fileSource, AttributesBag $attrs)
+	public function process(FileSource $fileSource, AttributesBag $attrs)
     {
         if(count($attrs->all()) === 0) {
             return $fileSource;
         }
 
         try {
-            $image = $imagine->load($fileSource->content());
+            $image = $this->imagine->load($fileSource->content());
 
             $size = $image->getSize();
             $ratio = $size->getWidth() / $size->getHeight();
@@ -86,7 +88,7 @@ class ResizeImageProcess implements ImageProcess
                 $image->resize($newSize);
 
                 if ($requestedSize != $newSize) {
-                    $destImage = $imagine->create($requestedSize, $requestedColor === null || $requestedColor > 'ffffff' ? null : $this->palette->color($requestedColor));
+                    $destImage = $this->imagine->create($requestedSize, $requestedColor === null || $requestedColor > 'ffffff' ? null : $this->palette->color($requestedColor));
                     $x = ($requestedSize->getWidth() - $newSize->getWidth()) / 2;
                     $y = ($requestedSize->getHeight() - $newSize->getHeight()) / 2;
                     $destImage->paste($image, new Point($x, $y));

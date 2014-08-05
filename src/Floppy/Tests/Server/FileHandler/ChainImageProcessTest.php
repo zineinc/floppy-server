@@ -29,11 +29,7 @@ class ChainImageProcessTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $actualFileSource = $chain->process(
-            $this->getMock('Imagine\Image\ImagineInterface'),
-            $fileSource,
-            new AttributesBag()
-        );
+        $actualFileSource = $chain->process($fileSource, new AttributesBag());
 
         //then
 
@@ -50,7 +46,7 @@ class ChainImageProcessTest_ImageProcess implements ImageProcess
         $this->append = $append;
     }
 
-    public function process(ImagineInterface $imagine, FileSource $fileSource, AttributesBag $attrs)
+    public function process(FileSource $fileSource, AttributesBag $attrs)
     {
         return new FileSource(new StringInputStream($fileSource->content().$this->append), $fileSource->fileType());
     }

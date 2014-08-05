@@ -32,14 +32,14 @@ class MaxSizeImageProcessTest extends \PHPUnit_Framework_TestCase
     {
         //given
 
-        $process = new MaxSizeImageProcess($maxWidth, $maxHeight);
+        $process = new MaxSizeImageProcess($this->imagine, $maxWidth, $maxHeight);
         $info = array('name' => 'value');
         $fileSource = $this->createImageFileSource($imageWidth, $imageHeight, $info);
         $attrs = new AttributesBag(array());
 
         //when
 
-        $actualFileSource = $process->process($this->imagine, $fileSource, $attrs);
+        $actualFileSource = $process->process($fileSource, $attrs);
 
         //then
 

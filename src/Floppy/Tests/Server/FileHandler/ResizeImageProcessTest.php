@@ -27,7 +27,7 @@ class ResizeImageProcessTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->imagine = new Imagine();
-        $this->process = new ResizeImageProcess();
+        $this->process = new ResizeImageProcess($this->imagine);
     }
 
     /**
@@ -43,7 +43,7 @@ class ResizeImageProcessTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $actualFileSource = $this->process->process($this->imagine, $fileSource, $attrs);
+        $actualFileSource = $this->process->process($fileSource, $attrs);
 
         //then
 
@@ -94,7 +94,7 @@ class ResizeImageProcessTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $actualFileSource = $this->process->process($this->imagine, $fileSource, $attrs);
+        $actualFileSource = $this->process->process($fileSource, $attrs);
 
         //then
 
@@ -114,7 +114,7 @@ class ResizeImageProcessTest extends \PHPUnit_Framework_TestCase
 
 		//when
 
-		$actualFileSource = $this->process->process($this->imagine, $fileSource, $attrs);
+		$actualFileSource = $this->process->process($fileSource, $attrs);
 
 		//then
 
@@ -137,7 +137,7 @@ class ResizeImageProcessTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $actualFileSource = $this->process->process($this->imagine, $fileSource, $attrs);
+        $actualFileSource = $this->process->process($fileSource, $attrs);
 
         //then
 
@@ -157,7 +157,7 @@ class ResizeImageProcessTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $actualFileSource = $this->process->process($this->imagine, $fileSource, $attrs);
+        $actualFileSource = $this->process->process($fileSource, $attrs);
 
         //then
 

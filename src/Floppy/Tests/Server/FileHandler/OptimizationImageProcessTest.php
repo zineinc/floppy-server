@@ -32,11 +32,7 @@ class OptimizationImageProcessTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $actualFileSource = $imageProcess->process(
-            $this->getMock('Imagine\\Image\\ImagineInterface'),
-            $fileSource,
-            new AttributesBag()
-        );
+        $actualFileSource = $imageProcess->process($fileSource, new AttributesBag());
 
         //then
         $expectedContent = $fileContent.self::OPTIMIZED_SUFFIX;
@@ -65,11 +61,7 @@ class OptimizationImageProcessTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $actualFileSource = $imageProcess->process(
-            $this->getMock('Imagine\\Image\\ImagineInterface'),
-            $fileSource,
-            new AttributesBag()
-        );
+        $actualFileSource = $imageProcess->process($fileSource, new AttributesBag());
 
         //then
 
