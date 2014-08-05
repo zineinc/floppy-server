@@ -7,12 +7,12 @@ namespace Floppy\Tests\Server\FileHandler;
 use Floppy\Common\AttributesBag;
 use Floppy\Common\FileSource;
 use Floppy\Common\Stream\StringInputStream;
-use Floppy\Server\FileHandler\ImageProcess;
-use Floppy\Server\FileHandler\OptimizationImageProcess;
+use Floppy\Server\FileHandler\FileProcessor;
+use Floppy\Server\FileHandler\OptimizationImageProcessor;
 use ImageOptimizer\Exception\Exception;
 use ImageOptimizer\Optimizer;
 
-class OptimizationImageProcessTest extends \PHPUnit_Framework_TestCase
+class OptimizationImageProcessorTest extends \PHPUnit_Framework_TestCase
 {
     const OPTIMIZED_SUFFIX = 'optimized';
 
@@ -23,7 +23,7 @@ class OptimizationImageProcessTest extends \PHPUnit_Framework_TestCase
     {
         //given
 
-        $imageProcess = new OptimizationImageProcess(
+        $processor = new OptimizationImageProcessor(
             new OptimizationImageProcessTest_Optimizer(self::OPTIMIZED_SUFFIX)
         );
 
@@ -32,7 +32,7 @@ class OptimizationImageProcessTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $actualFileSource = $imageProcess->process($fileSource, new AttributesBag());
+        $actualFileSource = $processor->process($fileSource, new AttributesBag());
 
         //then
         $expectedContent = $fileContent.self::OPTIMIZED_SUFFIX;
@@ -48,7 +48,7 @@ class OptimizationImageProcessTest extends \PHPUnit_Framework_TestCase
 
         $optimizer = $this->getMock('ImageOptimizer\\Optimizer');
 
-        $imageProcess = new OptimizationImageProcess(
+        $processor = new OptimizationImageProcessor(
             $optimizer
         );
 
@@ -61,7 +61,7 @@ class OptimizationImageProcessTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $actualFileSource = $imageProcess->process($fileSource, new AttributesBag());
+        $actualFileSource = $processor->process($fileSource, new AttributesBag());
 
         //then
 

@@ -7,12 +7,12 @@ namespace Floppy\Tests\Server\FileHandler;
 use Imagine\Gd\Imagine;
 use Imagine\Image\Box;
 use Floppy\Common\AttributesBag;
-use Floppy\Server\FileHandler\MaxSizeImageProcess;
+use Floppy\Server\FileHandler\MaxSizeImageProcessor;
 use Floppy\Common\FileSource;
 use Floppy\Common\FileType;
 use Floppy\Common\Stream\StringInputStream;
 
-class MaxSizeImageProcessTest extends \PHPUnit_Framework_TestCase
+class MaxSizeImageProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Imagine
@@ -32,14 +32,14 @@ class MaxSizeImageProcessTest extends \PHPUnit_Framework_TestCase
     {
         //given
 
-        $process = new MaxSizeImageProcess($this->imagine, $maxWidth, $maxHeight);
+        $processor = new MaxSizeImageProcessor($this->imagine, $maxWidth, $maxHeight);
         $info = array('name' => 'value');
         $fileSource = $this->createImageFileSource($imageWidth, $imageHeight, $info);
         $attrs = new AttributesBag(array());
 
         //when
 
-        $actualFileSource = $process->process($fileSource, $attrs);
+        $actualFileSource = $processor->process($fileSource, $attrs);
 
         //then
 

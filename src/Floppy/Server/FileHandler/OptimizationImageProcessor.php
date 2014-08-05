@@ -14,7 +14,7 @@ use Imagine\Image\ImagineInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-class OptimizationImageProcess implements ImageProcess
+class OptimizationImageProcessor implements FileProcessor
 {
     private $optimizer;
     private $logger;

@@ -6,12 +6,12 @@ namespace Floppy\Tests\Server\FileHandler;
 use Floppy\Common\AttributesBag;
 use Floppy\Common\FileSource;
 use Floppy\Common\Stream\StringInputStream;
-use Floppy\Server\FileHandler\ChainImageProcess;
+use Floppy\Server\FileHandler\ChainFileProcessor;
 use Floppy\Server\FileHandler\Exception\FileProcessException;
-use Floppy\Server\FileHandler\ImageProcess;
+use Floppy\Server\FileHandler\FileProcessor;
 use Imagine\Image\ImagineInterface;
 
-class ChainImageProcessTest extends \PHPUnit_Framework_TestCase
+class ChainFileProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test
@@ -20,9 +20,9 @@ class ChainImageProcessTest extends \PHPUnit_Framework_TestCase
     {
         //given
 
-        $chain = new ChainImageProcess(array(
-            new ChainImageProcessTest_ImageProcess('first'),
-            new ChainImageProcessTest_ImageProcess(' and second process'),
+        $chain = new ChainFileProcessor(array(
+            new ChainFileProcessorTest_ImageProcess('first'),
+            new ChainFileProcessorTest_ImageProcess(' and second process'),
         ));
 
         $fileSource = new FileSource(new StringInputStream('executed '));
@@ -37,7 +37,7 @@ class ChainImageProcessTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class ChainImageProcessTest_ImageProcess implements ImageProcess
+class ChainFileProcessorTest_ImageProcess implements FileProcessor
 {
     private $append;
 

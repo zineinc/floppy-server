@@ -11,7 +11,7 @@ use Floppy\Server\FileHandler\Exception\FileProcessException;
 use Floppy\Server\Imagine\FilterFactory;
 use Imagine\Image\ImagineInterface;
 
-class FilterImageProcess implements ImageProcess
+class FilterImageProcessor implements FileProcessor
 {
     private $imagine;
     private $filterFactory;

@@ -8,12 +8,12 @@ use Imagine\Image\Box;
 use Imagine\Image\ImagineInterface;
 use Imagine\Image\Point;
 use Floppy\Common\AttributesBag;
-use Floppy\Server\FileHandler\ResizeImageProcess;
+use Floppy\Server\FileHandler\ResizeImageProcessor;
 use Floppy\Common\FileSource;
 use Floppy\Common\FileType;
 use Floppy\Common\Stream\StringInputStream;
 
-class ResizeImageProcessTest extends \PHPUnit_Framework_TestCase
+class ResizeImageProcessorTest extends \PHPUnit_Framework_TestCase
 {
     const CROP_COLOR = 'eeeeee';
     const DELTA = 2;
@@ -22,12 +22,12 @@ class ResizeImageProcessTest extends \PHPUnit_Framework_TestCase
      * @var ImagineInterface
      */
     private $imagine;
-    private $process;
+    private $processor;
 
     protected function setUp()
     {
         $this->imagine = new Imagine();
-        $this->process = new ResizeImageProcess($this->imagine);
+        $this->processor = new ResizeImageProcessor($this->imagine);
     }
 
     /**
@@ -43,7 +43,7 @@ class ResizeImageProcessTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $actualFileSource = $this->process->process($fileSource, $attrs);
+        $actualFileSource = $this->processor->process($fileSource, $attrs);
 
         //then
 
@@ -94,7 +94,7 @@ class ResizeImageProcessTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $actualFileSource = $this->process->process($fileSource, $attrs);
+        $actualFileSource = $this->processor->process($fileSource, $attrs);
 
         //then
 
@@ -114,7 +114,7 @@ class ResizeImageProcessTest extends \PHPUnit_Framework_TestCase
 
 		//when
 
-		$actualFileSource = $this->process->process($fileSource, $attrs);
+		$actualFileSource = $this->processor->process($fileSource, $attrs);
 
 		//then
 
@@ -137,7 +137,7 @@ class ResizeImageProcessTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $actualFileSource = $this->process->process($fileSource, $attrs);
+        $actualFileSource = $this->processor->process($fileSource, $attrs);
 
         //then
 
@@ -157,7 +157,7 @@ class ResizeImageProcessTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $actualFileSource = $this->process->process($fileSource, $attrs);
+        $actualFileSource = $this->processor->process($fileSource, $attrs);
 
         //then
 

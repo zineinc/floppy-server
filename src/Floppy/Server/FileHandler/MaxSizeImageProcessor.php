@@ -11,7 +11,7 @@ use Floppy\Common\AttributesBag;
 use Floppy\Common\FileSource;
 use Floppy\Common\Stream\StringInputStream;
 
-class MaxSizeImageProcess implements ImageProcess
+class MaxSizeImageProcessor implements FileProcessor
 {
     private $imagine;
     private $maxWidth;

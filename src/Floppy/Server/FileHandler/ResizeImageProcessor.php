@@ -16,7 +16,7 @@ use Floppy\Common\Stream\StringInputStream;
  *
  * @deprecated
  */
-class ResizeImageProcess implements ImageProcess
+class ResizeImageProcessor implements FileProcessor
 {
     private $imagine;
 	private $quality;

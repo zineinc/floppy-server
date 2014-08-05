@@ -9,8 +9,8 @@ use Floppy\Common\FileHandler\QueryStringFileInfoAssembler;
 use Floppy\Common\Storage\PrefixedFilepathChoosingStrategy;
 use Floppy\Common\StringUtils;
 use Floppy\Server\FileHandler\CacheResponseFilter;
-use Floppy\Server\FileHandler\ChainImageProcess;
-use Floppy\Server\FileHandler\OptimizationImageProcess;
+use Floppy\Server\FileHandler\ChainFileProcessor;
+use Floppy\Server\FileHandler\OptimizationImageProcessor;
 use Floppy\Server\Imagine\DefaultFilterFactory;
 use Floppy\Server\RequestHandler\Action\CorsEtcAction;
 use Floppy\Server\RequestHandler\Action\DownloadAction;
@@ -29,8 +29,8 @@ use Floppy\Common\ChecksumCheckerImpl;
 use Floppy\Server\FileHandler\DispositionResponseFilter;
 use Floppy\Server\FileHandler\FallbackFileHandler;
 use Floppy\Server\FileHandler\ImageFileHandler;
-use Floppy\Server\FileHandler\MaxSizeImageProcess;
-use Floppy\Server\FileHandler\ResizeImageProcess;
+use Floppy\Server\FileHandler\MaxSizeImageProcessor;
+use Floppy\Server\FileHandler\ResizeImageProcessor;
 use Floppy\Common\Storage\FilepathChoosingStrategyImpl;
 use Floppy\Server\RequestHandler\Security\CallbackFirewall;
 use Floppy\Server\Storage\FilesystemStorage;
@@ -146,8 +146,8 @@ class RequestHandlerFactory
             return new ImageFileHandler(
                 $container['imagine'],
                 $container['fileHandlers.image.pathMatcher'],
-                $container['fileHandlers.image.beforeStoreImageProcess'],
-                $container['fileHandlers.image.beforeSendImageProcess'],
+                $container['fileHandlers.image.beforeStoreImageProcessor'],
+                $container['fileHandlers.image.beforeSendImageProcessor'],
                 $container['fileHandlers.image.responseFilters'],
                 array(
                     'supportedMimeTypes' => $container['fileHandlers.image.mimeTypes'],
@@ -181,22 +181,22 @@ class RequestHandlerFactory
                 $container['fileHandlers.image.extensions']
             );
         };
-        $container['fileHandlers.image.beforeSendImageProcess'] = function ($container) {
-            $processes = array(new \Floppy\Server\FileHandler\FilterImageProcess(
+        $container['fileHandlers.image.beforeSendImageProcessor'] = function ($container) {
+            $processes = array(new \Floppy\Server\FileHandler\FilterImageProcessor(
                 $container['imagine'],
                 $container['fileHandlers.image.filterFactory'],
                 $container['fileHandlers.image.quality']
             ));
 
             if($container['fileHandlers.image.enableOptimizations']) {
-                $processes[] = $container['fileHandlers.image.optimizationImageProcess'];
+                $processes[] = $container['fileHandlers.image.optimizationImageProcessor'];
             }
 
-            return new \Floppy\Server\FileHandler\ChainImageProcess($processes);
+            return new \Floppy\Server\FileHandler\ChainFileProcessor($processes);
         };
 
-        $container['fileHandlers.image.optimizationImageProcess'] = function($container) {
-            return new OptimizationImageProcess(
+        $container['fileHandlers.image.optimizationImageProcessor'] = function($container) {
+            return new OptimizationImageProcessor(
                 $container['fileHandlers.image.optimizer'],
                 $container['logger']
             );
@@ -229,9 +229,9 @@ class RequestHandlerFactory
             return $container['storage.dir'].'/..';
         };
 
-        $container['fileHandlers.image.beforeStoreImageProcess'] = function($container) {
+        $container['fileHandlers.image.beforeStoreImageProcessor'] = function($container) {
             $processes = array(
-                new MaxSizeImageProcess(
+                new MaxSizeImageProcessor(
                     $container['imagine'],
                     $container['fileHandlers.image.maxWidth'],
                     $container['fileHandlers.image.maxHeight'],
@@ -240,10 +240,10 @@ class RequestHandlerFactory
             );
 
             if($container['fileHandlers.image.enableOptimizations']) {
-                $processes[] = $container['fileHandlers.image.optimizationImageProcess'];
+                $processes[] = $container['fileHandlers.image.optimizationImageProcessor'];
             }
 
-            return new ChainImageProcess($processes);
+            return new ChainFileProcessor($processes);
         };
 		$container['fileHandlers.image.quality'] = 95;
         $container['fileHandlers.image.maxWidth'] = 1920;

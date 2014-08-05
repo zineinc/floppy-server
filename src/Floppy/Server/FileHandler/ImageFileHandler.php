@@ -26,15 +26,22 @@ class ImageFileHandler extends AbstractFileHandler
         'png', 'jpeg', 'gif', 'jpg'
     );
     private $imagine;
-    private $beforeStoreImageProcess;
-    private $beforeSendImageProcess;
+    private $beforeStoreImageProcessor;
+    private $beforeSendImageProcessor;
 
     private $options = array(
         'supportedMimeTypes' => null,
         'supportedExtensions' => null,
     );
 
-    public function __construct(ImagineInterface $imagine, PathMatcher $variantMatcher, ImageProcess $beforeStoreImageProcess, ImageProcess $beforeSendImageProcess, array $responseFilters = array(), array $options = array())
+    public function __construct(
+        ImagineInterface $imagine,
+        PathMatcher $variantMatcher,
+        FileProcessor $beforeStoreImageProcessor,
+        FileProcessor $beforeSendImageProcessor,
+        array $responseFilters = array(),
+        array $options = array()
+    )
     {
         parent::__construct($variantMatcher, $responseFilters);
 
@@ -44,8 +51,8 @@ class ImageFileHandler extends AbstractFileHandler
         $this->setOptions($options);
 
         $this->imagine = $imagine;
-        $this->beforeSendImageProcess = $beforeSendImageProcess;
-        $this->beforeStoreImageProcess = $beforeStoreImageProcess;
+        $this->beforeSendImageProcessor = $beforeSendImageProcessor;
+        $this->beforeStoreImageProcessor = $beforeStoreImageProcessor;
     }
 
     public function setOptions(array $options)
@@ -63,12 +70,12 @@ class ImageFileHandler extends AbstractFileHandler
 
     public function beforeSendProcess(FileSource $file, FileId $fileId)
     {
-        return $this->beforeSendImageProcess->process($file, $fileId->attributes());
+        return $this->beforeSendImageProcessor->process($file, $fileId->attributes());
     }
 
     public function beforeStoreProcess(FileSource $file)
     {
-        return $this->beforeStoreImageProcess->process($file, new AttributesBag());
+        return $this->beforeStoreImageProcessor->process($file, new AttributesBag());
     }
 
     protected function doGetStoreAttributes(FileSource $file)

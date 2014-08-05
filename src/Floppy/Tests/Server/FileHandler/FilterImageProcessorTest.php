@@ -8,14 +8,14 @@ use Floppy\Common\AttributesBag;
 use Floppy\Common\FileSource;
 use Floppy\Common\FileType;
 use Floppy\Common\Stream\StringInputStream;
-use Floppy\Server\FileHandler\FilterImageProcess;
+use Floppy\Server\FileHandler\FilterImageProcessor;
 use Floppy\Server\Imagine\FilterFactory;
 use Imagine\Filter\FilterInterface;
 use Imagine\Gd\Imagine;
 use Imagine\Image\Box;
 use Imagine\Image\ImageInterface;
 
-class FilterImageProcessTest extends \PHPUnit_Framework_TestCase
+class FilterImageProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Imagine
@@ -35,19 +35,19 @@ class FilterImageProcessTest extends \PHPUnit_Framework_TestCase
         //given
 
         $ratio = 2;
-        $factory = new FilterImageProcessTest_FilterFactory(array(
-            'filter1' => new FilterImageProcessTest_ResizeFilter($ratio),
-            'filter2' => new FilterImageProcessTest_ResizeFilter($ratio),
-            'filter3' => new FilterImageProcessTest_ResizeFilter($ratio),
+        $factory = new FilterImageProcessorTest_FilterFactory(array(
+            'filter1' => new FilterImageProcessorTest_ResizeFilter($ratio),
+            'filter2' => new FilterImageProcessorTest_ResizeFilter($ratio),
+            'filter3' => new FilterImageProcessorTest_ResizeFilter($ratio),
         ));
-        $process = new FilterImageProcess($this->imagine, $factory);
+        $processor = new FilterImageProcessor($this->imagine, $factory);
 
         $image = $this->imagine->create(new Box(100, 100));
         $options = array('filter1' => array('some options1'), 'filter3' => array('some options3'));
 
         //when
 
-        $actualSource = $process->process($this->createFileSource($image), new AttributesBag($options));
+        $actualSource = $processor->process($this->createFileSource($image), new AttributesBag($options));
 
         //then
 
@@ -66,10 +66,10 @@ class FilterImageProcessTest extends \PHPUnit_Framework_TestCase
     {
         //given
 
-        $factory = new FilterImageProcessTest_FilterFactory(array(
-            'filter1' => new FilterImageProcessTest_ResizeFilter(1),
+        $factory = new FilterImageProcessorTest_FilterFactory(array(
+            'filter1' => new FilterImageProcessorTest_ResizeFilter(1),
         ));
-        $process = new FilterImageProcess($this->imagine, $factory);
+        $process = new FilterImageProcessor($this->imagine, $factory);
 
         $invalidOptions = array('filter1' => 'some options');
         $image = $this->imagine->create(new Box(100, 100));
@@ -85,7 +85,7 @@ class FilterImageProcessTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class FilterImageProcessTest_FilterFactory implements FilterFactory
+class FilterImageProcessorTest_FilterFactory implements FilterFactory
 {
     public $filters = array();
 
@@ -104,7 +104,7 @@ class FilterImageProcessTest_FilterFactory implements FilterFactory
     }
 }
 
-class FilterImageProcessTest_ResizeFilter implements FilterInterface
+class FilterImageProcessorTest_ResizeFilter implements FilterInterface
 {
     public $options;
     public $applyExecuted = false;

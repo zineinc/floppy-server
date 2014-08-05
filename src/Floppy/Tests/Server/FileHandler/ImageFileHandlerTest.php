@@ -31,8 +31,8 @@ class ImageFileHandlerTest extends PHPUnit_Framework_TestCase
         $this->handler = new ImageFileHandler(
             $this->imagine,
             $this->getMock('Floppy\Common\FileHandler\PathMatcher'),
-            $this->getMock('Floppy\Server\FileHandler\ImageProcess'),
-            $this->getMock('Floppy\Server\FileHandler\ImageProcess'),
+            $this->getMock('Floppy\Server\FileHandler\FileProcessor'),
+            $this->getMock('Floppy\Server\FileHandler\FileProcessor'),
             array()
         );
     }

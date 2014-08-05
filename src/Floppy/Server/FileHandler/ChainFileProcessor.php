@@ -9,7 +9,7 @@ use Floppy\Common\FileSource;
 use Floppy\Server\FileHandler\Exception\FileProcessException;
 use Imagine\Image\ImagineInterface;
 
-class ChainImageProcess implements ImageProcess
+class ChainFileProcessor implements FileProcessor
 {
     private $imageProcesses = array();
 
@@ -20,7 +20,7 @@ class ChainImageProcess implements ImageProcess
         }
     }
 
-    private function addProcess(ImageProcess $imageProcess)
+    private function addProcess(FileProcessor $imageProcess)
     {
         $this->imageProcesses[] = $imageProcess;
     }

@@ -7,7 +7,7 @@ use Imagine\Image\ImagineInterface;
 use Floppy\Common\AttributesBag;
 use Floppy\Common\FileSource;
 
-interface ImageProcess
+interface FileProcessor
 {
     /**
      * @param FileSource $fileSource
